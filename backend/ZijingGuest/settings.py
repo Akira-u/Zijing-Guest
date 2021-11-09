@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'application',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,11 @@ WSGI_APPLICATION = 'ZijingGuest.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': BASE_DIR / 'db.mysql',
+        'NAME': 'ZijingGuest',
+        'USER': 'c02',
+        'PASSWORD': 'LDq1w2e3r4!',
+        'HOST': '49.232.106.46',
+        'PORT': '3306',
     }
 }
 
