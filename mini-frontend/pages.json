@@ -1,10 +1,21 @@
 {
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "uni-app"
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "紫荆来客"
+			}
 		}
-	}],
+	    ,{
+            "path" : "pages/guest-form/guest-form",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "来访申请",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -14,7 +25,7 @@
 			"background": "#efeff4"
 		}
 	},
-	"condition" : { //模式配置，仅开发期间生效
+	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
 		"list": [
 			{
