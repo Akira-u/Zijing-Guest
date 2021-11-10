@@ -9,8 +9,8 @@
           placeholder="请输入姓名"
         />
       </uni-forms-item>
-      <uni-forms-item required label="学号" name="student_id">
-        <uni-easyinput v-model="formData.student_id" placeholder="请输入学号" />
+      <uni-forms-item required label="学号" name="custom_id">
+        <uni-easyinput v-model="formData.custom_id" placeholder="请输入学号" />
       </uni-forms-item>
     </uni-forms>
     <button @click="submit">提交</button>
@@ -23,14 +23,14 @@ export default {
     return {
       formData: {
         name: undefined,
-        student_id: undefined,
+        cumstom_id: undefined,
       },
       rules: {
         // 对name字段进行必填验证
         name: {
           rules: [
             {
-              required: true,
+              //   required: true,
               errorMessage: "请输入姓名",
             },
             {
@@ -49,6 +49,25 @@ export default {
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
+          //   https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/user-encryptkey.html
+          var raw_data = JSON.stringify(res); //TODO:add time-stamp
+          const userCryptoManager = wx.getUserCryptoManager();
+          userCryptoManager.getLatestUserKey({
+            success({ encryptKey, iv, version, expireTime }) {
+              const encryptedData = someAESEncryptMethod(
+                encryptKey,
+                iv,
+                raw_data
+              );
+              wx.request({
+                data: encryptedData,
+                success(res) {
+                  console.log("request success");
+                },
+              });
+            },
+          });
+          uni.navigateTo({ url: "/pages/guest-form/guest-qrcode" });//TODO: pass encryptData
         })
         .catch((err) => {
           console.log("表单错误信息：", err);

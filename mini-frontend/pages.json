@@ -10,7 +10,16 @@
             "path" : "pages/guest-form/guest-form",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "来访申请",
+                "navigationBarTitleText": "填写申请",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/guest-form/guest-qrcode",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "申请码",
                 "enablePullDownRefresh": false
             }
             
