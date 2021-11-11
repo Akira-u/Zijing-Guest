@@ -21,4 +21,11 @@ function navigateTo(url, args = {}) {
     return uni.navigateTo({ url: url })
 }
 
-export default navigateTo
+function decodeOption(option) {
+    for (var k in option) {
+        option[k]=decodeURIComponent(option[k])
+    }
+}
+
+export { decodeOption }
+export default navigateTo;
