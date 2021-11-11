@@ -6,7 +6,7 @@
 		<uni-link :href="href" :text="href"></uni-link>
 		<button @click="studentVerify">学生访客</button>
 		<button>其它访客</button>
-		<button>管理员入口</button>
+		<button @click="guardEntry">管理员入口</button>
 	</view>
 </template>
 
@@ -20,6 +20,9 @@
 		methods: {
 			studentVerify(){
 				uni.navigateTo({ url: '/pages/guest-form/guest-form' })
+			},
+			guardEntry(){
+				uni.navigateTo({ url: '/pages/guard-form/guard-form' })
 			}
 		}
 	}

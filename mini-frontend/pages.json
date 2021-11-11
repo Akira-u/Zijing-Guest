@@ -23,7 +23,43 @@
                 "enablePullDownRefresh": false
             }
             
-        }
+        },
+		{
+            "path" : "pages/guard-form/guard-form",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "管理员入口",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+		{
+		    "path" : "pages/guard-form/scan-qrcode",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "扫码页面",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/guard-form/decide-pass",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "确认通过",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/guard-form/check-backstage",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "查看后台",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
