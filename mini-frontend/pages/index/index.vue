@@ -4,6 +4,9 @@
 		<view class="intro">本项目已包含uni ui组件，无需import和注册，可直接使用。在代码区键入字母u，即可通过代码助手列出所有可用组件。光标置于组件名称处按F1，即可查看组件文档。</view>
 		<text class="intro">详见：</text>
 		<uni-link :href="href" :text="href"></uni-link>
+		<button @click="studentVerify">学生访客</button>
+		<button>其它访客</button>
+		<button @click="guardEntry">管理员入口</button>
 	</view>
 </template>
 
@@ -15,7 +18,12 @@
 			}
 		},
 		methods: {
-
+			studentVerify(){
+				uni.navigateTo({ url: '/pages/guest-form/guest-form' })
+			},
+			guardEntry(){
+				uni.navigateTo({ url: '/pages/guard-form/guard-form' })
+			}
 		}
 	}
 </script>

@@ -1,10 +1,66 @@
 {
-	"pages": [{
-		"path": "pages/index/index",
-		"style": {
-			"navigationBarTitleText": "uni-app"
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "紫荆来客"
+			}
 		}
-	}],
+	    ,{
+            "path" : "pages/guest-form/guest-form",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "填写申请",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/guest-form/guest-qrcode",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "申请码",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+		{
+            "path" : "pages/guard-form/guard-form",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "管理员入口",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+		{
+		    "path" : "pages/guard-form/scan-qrcode",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "扫码页面",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/guard-form/decide-pass",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "确认通过",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/guard-form/check-backstage",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "查看后台",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -14,7 +70,7 @@
 			"background": "#efeff4"
 		}
 	},
-	"condition" : { //模式配置，仅开发期间生效
+	"condition": { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
 		"list": [
 			{
