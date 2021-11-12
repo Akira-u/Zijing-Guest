@@ -18,12 +18,14 @@
 </template>
 
 <script>
+import CryptoJS from "crypto-js";
+import navigateTo from "@/api/navigate";
 export default {
   data() {
     return {
       formData: {
         name: undefined,
-        cumstom_id: undefined,
+        custom_id: undefined,
       },
       rules: {
         // 对name字段进行必填验证
@@ -40,6 +42,12 @@ export default {
             },
           ],
         },
+        cumstom_id:{
+          rules:[{
+            maxLength: 10,
+            errorMessage: "学号长度最大为{maxLength}",
+          }]
+        }
       },
     };
   },
@@ -49,25 +57,17 @@ export default {
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
+
           //   https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/user-encryptkey.html
-          var raw_data = JSON.stringify(res); //TODO:add time-stamp
+          let raw_data = CryptoJS.enc.Utf8.parse(JSON.stringify(res)); //TODO:add time-stamp
           const userCryptoManager = wx.getUserCryptoManager();
           userCryptoManager.getLatestUserKey({
             success({ encryptKey, iv, version, expireTime }) {
-              const encryptedData = someAESEncryptMethod(
-                encryptKey,
-                iv,
-                raw_data
-              );
-              wx.request({
-                data: encryptedData,
-                success(res) {
-                  console.log("request success");
-                },
-              });
+              const encryptedData = CryptoJS.AES.encrypt(raw_data, encryptKey, { iv: iv, });
+              console.log({key: encryptKey,data: encryptedData.toString()});
+              navigateTo("/pages/guest-form/guest-qrcode", { encrypt_data: encryptedData.toString(), });
             },
           });
-          uni.navigateTo({ url: "/pages/guest-form/guest-qrcode" });//TODO: pass encryptData
         })
         .catch((err) => {
           console.log("表单错误信息：", err);
