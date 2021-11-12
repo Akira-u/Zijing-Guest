@@ -25,7 +25,7 @@ export default {
     return {
       formData: {
         name: undefined,
-        cumstom_id: undefined,
+        custom_id: undefined,
       },
       rules: {
         // 对name字段进行必填验证
@@ -42,6 +42,12 @@ export default {
             },
           ],
         },
+        cumstom_id:{
+          rules:[{
+            maxLength: 10,
+            errorMessage: "学号长度最大为{maxLength}",
+          }]
+        }
       },
     };
   },
@@ -58,8 +64,8 @@ export default {
           userCryptoManager.getLatestUserKey({
             success({ encryptKey, iv, version, expireTime }) {
               const encryptedData = CryptoJS.AES.encrypt(raw_data, encryptKey, { iv: iv, });
-              console.log("key:", encryptKey);
-              navigateTo("/pages/guest-form/guest-qrcode", { encrypt_data: encryptedData, });
+              console.log({key: encryptKey,data: encryptedData.toString()});
+              navigateTo("/pages/guest-form/guest-qrcode", { encrypt_data: encryptedData.toString(), });
             },
           });
         })
