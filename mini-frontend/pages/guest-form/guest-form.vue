@@ -42,7 +42,7 @@ export default {
             },
           ],
         },
-        cumstom_id:{
+        custom_id:{
           rules:[{
             maxLength: 10,
             errorMessage: "学号长度最大为{maxLength}",
@@ -50,6 +50,11 @@ export default {
         }
       },
     };
+  },
+  onLoad(options) {
+    decodeOption(options)
+    this.name = options.name;
+    this.custom_id = options.custom_id
   },
   methods: {
     submit() {

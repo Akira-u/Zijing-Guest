@@ -7,6 +7,14 @@
 		<button @click="studentVerify">学生访客</button>
 		<button>其它访客</button>
 		<button>管理员入口</button>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <span>请稍等……</span>
+    </el-dialog>
+
 	</view>
 </template>
 
@@ -14,12 +22,36 @@
 	export default {
 		data() {
 			return {
+        dailogVisible: false,
 				href: 'https://uniapp.dcloud.io/component/README?id=uniui'
 			}
 		},
 		methods: {
 			studentVerify(){
-				uni.navigateTo({ url: '/pages/guest-form/guest-form' })
+        this.dialogVisible = true;
+				wx.login({
+					success (res1) {
+						if (res1.code) {
+							wx.request({
+                url: 'https://49.232.106.46:8000',
+								data: {
+									code: res1.code
+								},
+                success: function(res2){
+                  this.dialogVisible = false;
+                  console.log(res2);
+                  if (res2.data.openid){
+                    navigateTo({ url: '/pages/guest-form/guest-form', arg: res2.data });
+                  } else {
+                    navigateTo({ url: '/pages/guest-form/guest-register'});
+                  }
+                }
+							})
+            } else {
+							console.log('登陆失败！' + res1.errMsg);
+						}
+					}
+				});
 			}
 		}
 	}
