@@ -20,6 +20,7 @@
 <script>
 import CryptoJS from "crypto-js";
 import navigateTo from "@/api/navigate";
+import {decodeOption} from '@/api/navigate'
 export default {
   data() {
     return {
