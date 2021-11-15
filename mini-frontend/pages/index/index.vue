@@ -33,10 +33,11 @@
 					success (res1) {
 						if (res1.code) {
 							wx.request({
-                url: 'https://49.232.106.46:8000',
+                url: 'https://49.232.106.46:8000/guard/user/',
 								data: {
 									code: res1.code
 								},
+                methods: "GET",
                 success: function(res2){
                   this.dialogVisible = false;
                   console.log(res2);

@@ -54,16 +54,24 @@ export default {
 				uni.showToast({ title: '请输入正确手机号', icon: 'none' });
 				return;
 			}
-      wx.request({
-        url: 'https://49.232.106.46:8000',
-				data: {
-					phone: this.phone,
-          name: this.name,
-				},
-			})
+      wx.login({
+				success (res1) {
+					if (res1.code) {
+						wx.request({
+            url: 'https://49.232.106.46:8000/guard/user/',
+				    data: {
+              code: res1.code,
+				      phone: this.phone,
+              name: this.name,
+				    },
+            methods: "POST",
+			    })
+          } else {
+					  console.log('登陆失败！' + res1.errMsg);
+				  }
+				}
+			});
 		}
-		
-
 	}
 };
 </script>
