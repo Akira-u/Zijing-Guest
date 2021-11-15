@@ -1,8 +1,16 @@
 <template>
   <view>
     <h1>INFO</h1>
-    <!-- <input :value='info' type='text' ></input> -->
-    <text>{{ info }}</text>
+    <uni-table border stripe emptyText="暂无更多数据">
+      <uni-tr>
+        <uni-th>name</uni-th>
+        <uni-td v-text="info.name"></uni-td>
+      </uni-tr>
+      <uni-tr>
+        <uni-th>cumstom_id</uni-th>
+        <uni-td v-text="info.custom_id"></uni-td>
+      </uni-tr>
+    </uni-table>
     <button @click="Pass">通过</button>
     <button @click="Deny">禁入</button>
   </view>
@@ -13,15 +21,19 @@ import { decodeOption } from "@/api/navigate";
 export default {
   data() {
     return {
-      info: {},
+      info: {
+        name: undefined,
+        custom_id: undefined,
+      },
     };
   },
   onLoad(options) {
-    //option为object类型，会序列化上个页面传递的参数
     decodeOption(options);
     console.log(options.info);
-    this.info = options.info;
-    //this.$set(this.data, "info", option.info)
+    this.info = JSON.parse(options.info);
+    console.log(this.info);
+    console.log(this.info.name);
+    console.log(this.info.custom_id);
   },
   methods: {
     Pass() {
