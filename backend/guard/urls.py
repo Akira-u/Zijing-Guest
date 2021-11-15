@@ -6,6 +6,7 @@ app_name = 'guard'
 
 router = DefaultRouter()
 router.register(r'log', views.LogViewSet)
+router.register(r'user', views.UserViewSet)
 urlpatterns = [
     path('',include(router.urls)),
 ]

@@ -4,4 +4,8 @@ django-filters=0.2.1
 django-utils-six=2.0
 djangorestframework=3.12.4
 djangorestframework-filters=0.11.1
+django-extensions=3.1.5
+django-werkzeug-debugger-runserver=0.3.1
+pyOpenSSL=19.0.0
+pycryptodome=3.11.0
 gunicorn==20.1.0

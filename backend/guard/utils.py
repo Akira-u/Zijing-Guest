@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django_filters import rest_framework as filters
-from guard.models import Log
+from guard.models import Log, User
 
 class LogFilter(filters.FilterSet):
     sort = filters.OrderingFilter(fields=('id','custom_id'))
@@ -18,4 +18,13 @@ class LogSerializer(serializers.ModelSerializer):
             'id', # primary key
             'name',
             'custom_id',
+        ]
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id', # primary key
+            'name',
+            'phone',
         ]
