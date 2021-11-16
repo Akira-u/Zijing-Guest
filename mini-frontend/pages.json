@@ -28,7 +28,14 @@
             "path" : "pages/guest-form/in-dorm",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "宿舍访问中"
+            }
+		},
+        {
+            "path" : "pages/guest-form/guest-register",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "注册表单",
                 "enablePullDownRefresh": false
             }
             
