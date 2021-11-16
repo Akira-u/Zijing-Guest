@@ -54,7 +54,10 @@
             "urlCheck" : false,
             "postcss" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "useExtendedLib": {
+            "weui": true
+        }
     },
     "vueVersion" : "2"
 }

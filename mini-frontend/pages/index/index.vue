@@ -1,34 +1,34 @@
 <template>
   <view class="container">
-    <el-dialog title="提示" width="30%">
-      <span>请稍等……</span>
-    </el-dialog>
-
-    <view class="intro">本项目已包含uni ui组件，无需import和注册，可直接使用。在代码区键入字母u，即可通过代码助手列出所有可用组件。光标置于组件名称处按F1，即可查看组件文档。</view>
-    <text class="intro">详见：</text>
-    <uni-link :href="href" :text="href"></uni-link>
-    <button @click="studentVerify">学生访客</button>
-    <button>其它访客</button>
-    <button>管理员入口</button>
+    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    <view class= "button_list">
+      <button @click="studentVerify">学生访客</button>
+      <button>其它访客</button>
+      <button>管理员入口</button>
+    </view>
+    <mp-dialog :show="DialogShow" @buttontap="onSubmitDialog" :buttons="buttonArray">
+      <view class="dialog-submit-content">请稍候……</view>
+    </mp-dialog>
   </view>
 </template>
 
 <script>
+
 import { decodeOption } from "@/api/navigate";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
     return {
-      //dailogVisible: false,
-      href: "https://uniapp.dcloud.io/component/README?id=uniui",
+      DialogShow: false,
     };
   },
   methods: {
     studentVerify() {
-      //this.dialogVisible = true;
+      var that = this;
       wx.login({
         success(res1) {
           if (res1.code) {
+            that.DialogShow = true;
             wx.request({
               url: "https://49.232.106.46:8000/guard/user/",
               data: {
@@ -36,7 +36,7 @@ export default {
               },
               method: 'GET',
               success: function (res2) {
-                //this.dialogVisible = false;
+                that.DialogShow = false;
                 if (res2.data.openid) {
                   navigateTo("/pages/guest-form/guest-form", res2.data);
                 } else {
@@ -55,9 +55,36 @@ export default {
 </script>
 
 <style>
+
+.img-xiaohui {
+  position: absolute;
+  width: 1000rpx;
+  height: 1000rpx;
+  right: 0%;
+  z-index:-1;
+  opacity: 0.1;
+}
+
 .container {
   padding: 20px;
   font-size: 14px;
   line-height: 24px;
+}
+
+.button_list {
+  position: relative;
+  width: 100%;
+  top: 100px;
+}
+
+.container button {
+  font-size: 28rpx;
+  background: #5677fc;
+  color: #fff;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 50rpx;
+  margin: 10px;
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 </style>

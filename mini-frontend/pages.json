@@ -3,7 +3,12 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "紫荆来客"
+				"navigationBarTitleText": "紫荆来客",
+				"mp-weixin": {
+					"usingComponents": {
+						"mp-dialog": "weui-miniprogram/dialog/dialog"
+					}
+				}
 			}
 		}
 	    ,{
