@@ -24,6 +24,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/guest-form/in-dorm",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
