@@ -29,7 +29,14 @@
             }
             
         }
-		,{
+        ,{
+            "path" : "pages/guest-form/in-dorm",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "宿舍访问中"
+            }
+		},
+        {
             "path" : "pages/guest-form/guest-register",
             "style" :                                                                                    
             {

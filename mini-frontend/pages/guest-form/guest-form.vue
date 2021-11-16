@@ -63,7 +63,16 @@ export default {
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-
+          var code;// login code should be send to backend as plaintext so that backend can get guest user's openid
+          wx.login({
+            success: function(login_res) {
+              if(login_res.code) {
+                code=login_res.code
+              } else {
+                console.log(login_res.errMsg)
+              }
+            }
+          })
           //   https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/user-encryptkey.html
           let raw_data = CryptoJS.enc.Utf8.parse(JSON.stringify(res)); //TODO:add time-stamp
           const userCryptoManager = wx.getUserCryptoManager();
@@ -71,7 +80,7 @@ export default {
             success({ encryptKey, iv, version, expireTime }) {
               const encryptedData = CryptoJS.AES.encrypt(raw_data, encryptKey, { iv: iv, });
               console.log({key: encryptKey,data: encryptedData.toString()});
-              navigateTo("/pages/guest-form/guest-qrcode", { encrypt_data: encryptedData.toString(), });
+              navigateTo("/pages/guest-form/guest-qrcode", { encrypt_data: encryptedData.toString(), code: code});
             },
           });
         })
