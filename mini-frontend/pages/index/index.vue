@@ -4,7 +4,10 @@
       <span>请稍等……</span>
     </el-dialog>
 
-    <view class="intro">本项目已包含uni ui组件，无需import和注册，可直接使用。在代码区键入字母u，即可通过代码助手列出所有可用组件。光标置于组件名称处按F1，即可查看组件文档。</view>
+    <view class="intro"
+      >本项目已包含uni
+      ui组件，无需import和注册，可直接使用。在代码区键入字母u，即可通过代码助手列出所有可用组件。光标置于组件名称处按F1，即可查看组件文档。</view
+    >
     <text class="intro">详见：</text>
     <uni-link :href="href" :text="href"></uni-link>
     <button @click="studentVerify">学生访客</button>
@@ -34,13 +37,42 @@ export default {
               data: {
                 code: res1.code,
               },
-              method: 'GET',
+              method: "GET",
               success: function (res2) {
                 //this.dialogVisible = false;
                 if (res2.data.openid) {
                   navigateTo("/pages/guest-form/guest-form", res2.data);
                 } else {
                   navigateTo("/pages/guest-form/guest-register");
+                }
+              },
+            });
+          } else {
+            console.log("登陆失败！" + res1.errMsg);
+          }
+        },
+      });
+    },
+    guardEntry() {
+      //navigateTo("/pages/guard-form/guard-form");
+      wx.login({
+        success(res1) {
+          if (res1.code) {
+            wx.request({
+              url: "https://49.232.106.46:8000/guard/guard/login",
+              data: {
+                code: res1.code,
+              },
+              method: 'GET',
+              success: function (res2) {
+      			console.log(res2);
+                //this.dialogVisible = false;
+                if (res2.data.open_id) {
+      			console.log("登录");
+                  navigateTo("/pages/guard-form/guard-form", res2.data);
+                } else {
+      			console.log("注册");
+                  navigateTo("/pages/guard-form/guard-register");
                 }
               },
              });
@@ -50,9 +82,6 @@ export default {
         },
       });
     },
-    guardEntry(){
-				uni.navigateTo({ url: '/pages/guard-form/guard-form' })
-			}
   },
 };
 </script>

@@ -61,7 +61,7 @@ export default {
           if (res1.code) {
             console.log(that.phone);
             wx.request({
-              url: 'https://49.232.106.46:8000/guard/user/',
+              url: 'https://49.232.106.46:8000/guard/guard',
               data: {
                 code: res1.code,
                 phone: that.phone,
@@ -69,6 +69,7 @@ export default {
 			  },
             method: 'POST',
             });
+			navigateTo("/pages/guard-form/guard-form");
           } else {
             console.log('登陆失败！' + res1.errMsg);
           }
