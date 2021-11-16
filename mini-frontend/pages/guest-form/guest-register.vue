@@ -2,8 +2,7 @@
 <template>
   <view class="t-login">
   <!-- 页面装饰图片 -->
-    <image class="img-a" src="@/static/2.png"></image>
-    <image class="img-b" src="@/static/3.png"></image>
+    <image class="img-a" src="@/static/xiaohui.jpg"></image>
     <!-- 标题 -->
     <view class="t-b">{{ title }}</view>
     <form class="cl">
@@ -66,7 +65,7 @@ export default {
                 code: res1.code,
                 phone: that.phone,
                 name: that.name,
-			  },
+			        },
             method: 'POST',
             })
           } else {
@@ -82,15 +81,10 @@ export default {
 .img-a {
   position: absolute;
   width: 100%;
-  top: -280rpx;
-  right: -100rpx;
-}
-.img-b {
-  position: absolute;
-  width: 50%;
-  bottom: 0;
-  left: -50rpx;
-  margin-bottom: -200rpx;
+  top: -300%;
+  right: 0%;
+  z-index:-1;
+  opacity: 0.1;
 }
 .t-login {
   width: 600rpx;
@@ -136,17 +130,15 @@ export default {
 
 .t-login .t-b {
   text-align: left;
-  font-size: 46rpx;
+  font-size: 60rpx;
   color: #000;
-  padding: 300rpx 0 120rpx 0;
+  padding: 0rpx 0 120rpx 0;
   font-weight: bold;
 }
 
 .t-login {
   position: absolute;
-  right: 22rpx;
-  top: 22rpx;
-  background: #5677fc;
+  right: 20%;
   color: #fff;
   font-size: 24rpx;
   border-radius: 50rpx;
@@ -173,8 +165,8 @@ export default {
 }
 
 .t-login image {
-  width: 50rpx;
-  height: 50rpx;
+  width: 1000rpx;
+  height: 1000rpx;
 }
 
 .t-login {
