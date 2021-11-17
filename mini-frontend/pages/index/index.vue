@@ -30,14 +30,15 @@ export default {
           if (res1.code) {
             that.DialogShow = true;
             wx.request({
-              url: "https://49.232.106.46:8000/guard/user/",
+              url: "https://49.232.106.46:8000/guard/user/login/",
               data: {
                 code: res1.code,
               },
               method: 'GET',
               success: function (res2) {
                 that.DialogShow = false;
-                if (res2.data.openid) {
+                console.log(res2.data)
+                if (res2.data.open_id) {
                   navigateTo("/pages/guest-form/guest-form", res2.data);
                 } else {
                   navigateTo("/pages/guest-form/guest-register");
