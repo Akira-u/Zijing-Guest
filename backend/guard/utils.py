@@ -1,36 +1,39 @@
 from rest_framework import serializers
 from django_filters import rest_framework as filters
-from guard.models import Log, User, Guard
+from guard.models import Log, Guest, Guard
 import requests
 
-class LogFilter(filters.FilterSet):
-    sort = filters.OrderingFilter(fields=('id','custom_id'))
-    class Meta:
-        model = Log
-        fields = {
-            'id':['exact'],
-            'name':['icontains','exact'],
-            'custom_id':['icontains','exact'],
-        }
-class LogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Log
-        fields = [
-            'id', # primary key
-            'name',
-            'custom_id',
-        ]
+# TODO
+# class LogFilter(filters.FilterSet):
+#     sort = filters.OrderingFilter(fields=("id",""))
+#     class Meta:
+#         model = Log
+#         fields = {
+#             "id":["exact"],
+#             "name":["icontains","exact"],
+#             "custom_id":["icontains","exact"],
+#         }
 
-class UserSerializer(serializers.ModelSerializer):
+class LogSerializer(serializers.ModelSerializer):
+    guest = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
-        model = User
+        model = Log
         fields = [
-            'id', # primary key
-            'name',
-            'open_id',
-            'phone',
+            "guest", # foreign key
+            "purpose",
+            "in_time",
+            "out_time",
         ]
-        extra_kwargs = {'open_id': {'allow_null': False}}
+        extra_kwargs = {"out_time":{"required": False}}
+
+class GuestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Guest
+        fields = [
+            "open_id", # primary key
+            "name",
+            "phone",
+        ]
 
 
 
@@ -38,9 +41,7 @@ class GuardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guard
         fields = [
-            'id', # primary key
-            'name',
-            'open_id',
-            'phone',
+            "open_id", # primary key
+            "name",
+            "phone",
         ]
-        extra_kwargs = {'open_id': {'required': False}}
