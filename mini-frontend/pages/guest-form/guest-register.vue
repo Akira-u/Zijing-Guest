@@ -14,7 +14,7 @@
         <image src="@/static/sj.png"></image>
         <input type="number" name="phone" placeholder="请输入手机号" maxlength="11" v-model="phone" />
       </view>
-      <button @tap="register()">注 册</button>
+      <button @tap="register">注 册</button>
     </form>
   </view>
 </template>
@@ -22,18 +22,11 @@
 import {decodeOption} from '@/api/navigate'
 import navigateTo from '@/api/navigate'
 export default {
-  /**
-   * 2020年12月1日   李新雷编写（练习）  适用所有app登录
-   * vue版本简洁又美观的登录页面（个人感觉插件市场的登录都不太好看，哈哈 O(∩_∩)O）
-   * 该模板只是登录模板：验证、倒计时等都已经写好，
-   * 如果需要注册（注册可以设计在登录按钮下方），
-   * 直接复制该页面稍微改动即可
-   */
   data() {
     return {
-      title: '注册', //填写logo或者app名称，也可以用：欢迎回来，看您需求
-      phone: '', //手机号码
-      name: '' //姓名
+      title: '注册', //填写logo或者app名称
+      phone: '',
+      name: ''
     };
   },
   onLoad(options) {
@@ -60,13 +53,13 @@ export default {
           if (res1.code) {
             console.log(that.phone);
             wx.request({
-              url: 'https://49.232.106.46:8000/guard/user/',
+              url: 'https://49.232.106.46:8000/guard/guest/',
               data: {
                 code: res1.code,
                 phone: that.phone,
                 name: that.name,
 			        },
-            method: 'POST',
+              method: 'POST',
             })
           } else {
             console.log('登陆失败！' + res1.errMsg);

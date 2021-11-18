@@ -1,33 +1,44 @@
 <template>
   <view>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
-    <uni-forms ref="form" :modelValue="formData" :rules="rules">
-      <uni-forms-item required label="姓名" name="name">
+    <uni-forms ref="form" :modelValue="form_data" :rules="rules">
+      <!-- <uni-forms-item required label="姓名" name="name">
+        <uni-easyinput v-model="form_data.name" placeholder="请输入姓名" />
+      </uni-forms-item> -->
+      <uni-forms-item required label="目的宿舍" name="target_dorm">
         <uni-easyinput
-          type="text"
-          v-model="formData.name"
-          placeholder="请输入姓名"
+          v-model="form_data.target_dorm"
+          placeholder="您要拜访的宿舍号"
         />
       </uni-forms-item>
-      <uni-forms-item required label="学号" name="custom_id">
-        <uni-easyinput v-model="formData.custom_id" placeholder="请输入学号" />
+      <uni-forms-item required label="接待人" name="host_student">
+        <uni-easyinput
+          v-model="form_data.host_student"
+          placeholder="您要拜访的人姓名"
+        />
+      </uni-forms-item>
+      <uni-forms-item label="访问事由" name="reason">
+        <uni-easyinput v-model="form_data.reason" placeholder="请描述访问事由" />
       </uni-forms-item>
     </uni-forms>
-    <button @click="submit">提交</button>
+    <button @tap="submit">提交</button>
   </view>
 </template>
 
 <script>
-import CryptoJS from "crypto-js";
+import requestData from "@/api/request"
 import navigateTo from "@/api/navigate";
-import {decodeOption} from '@/api/navigate'
 export default {
+  // components: { uniEasyinput },
   data() {
     return {
-      formData: {
-        name: undefined,
-        custom_id: undefined,
+      form_data: {
+        name: '香香孙沛渝',
+        target_dorm: '403',
+        host_student: '创世洐炎',
+        reason: '拿杯'
       },
+      
       rules: {
         // 对name字段进行必填验证
         name: {
@@ -43,46 +54,56 @@ export default {
             },
           ],
         },
-        custom_id:{
-          rules:[{
-            maxLength: 10,
-            errorMessage: "学号长度最大为{maxLength}",
+        target_dorm: {
+          rules: [{
+            maxLength: 4,
+            errorMessage: "宿舍号长度最大为{maxLength}",
           }]
         }
       },
     };
   },
-  onLoad(options) {
-    decodeOption(options)
-    this.name = options.name;
-    this.custom_id = options.custom_id
-  },
+  // onLoad(options) {
+  //   decodeOption(options)
+  //   this.name = options.name;
+  //   this.custom_id = options.custom_id
+  // },
   methods: {
     submit() {
+      var that=this
       this.$refs.form
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-          var code;// login code should be send to backend as plaintext so that backend can get guest user's openid
+
+          //   https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/user-encryptkey.html
+          // let raw_data = CryptoJS.enc.Utf8.parse(JSON.stringify(res));
+
+          // const userCryptoManager = wx.getUserCryptoManager();
+          // userCryptoManager.getLatestUserKey({
+          //   success({ encryptKey, iv, version, expireTime }) {
+          //     encryptKey=CryptoJS.enc.Utf8.parse(encryptKey)
+          //     iv=CryptoJS.enc.Utf8.parse(iv)
+          //     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(res), encryptKey, { iv: iv, mode: CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7});
+          //     console.log({key: encryptKey.toString(CryptoJS.enc.Utf8) ,data: encryptedData.ciphertext.toString(CryptoJS.enc.Base64),iv:iv.toString(CryptoJS.enc.Utf8)});
+          //     navigateTo("/pages/guest-form/guest-qrcode", { ciphertext: encryptedData.ciphertext.toString(CryptoJS.enc.Base64)});
+          //   },
+          // });
           wx.login({
-            success: function(login_res) {
-              if(login_res.code) {
-                code=login_res.code
+            success: function(res) {
+              if(res.code) {
+                that.form_data.code=res.code
+                requestData({ url: "https://c02.whiteffire.cn:8000/guard/log/", method: "POST", data: that.form_data })
+            .then((res) => {
+              console.log({ res_data: res })
+              navigateTo("/pages/guest-form/guest-qrcode");
+            })
               } else {
-                console.log(login_res.errMsg)
+                console.log(res.errMsg)
               }
             }
           })
-          //   https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/user-encryptkey.html
-          let raw_data = CryptoJS.enc.Utf8.parse(JSON.stringify(res)); //TODO:add time-stamp
-          const userCryptoManager = wx.getUserCryptoManager();
-          userCryptoManager.getLatestUserKey({
-            success({ encryptKey, iv, version, expireTime }) {
-              const encryptedData = CryptoJS.AES.encrypt(raw_data, encryptKey, { iv: iv, });
-              console.log({key: encryptKey,data: encryptedData.toString()});
-              navigateTo("/pages/guest-form/guest-qrcode", { encrypt_data: encryptedData.toString(), code: code});
-            },
-          });
+          
         })
         .catch((err) => {
           console.log("表单错误信息：", err);
