@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import CryptoJS from "crypto-js";
 import navigateTo from "@/api/navigate";
 export default {
   name: "scan",

@@ -1,6 +1,6 @@
 {
-    "name" : "testapp",
-    "appid" : "",
+    "name" : "ZijingGuest",
+    "appid" : "__UNI__748F835",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -52,9 +52,12 @@
         "appid" : "wxb628d9e8ab4ac444",
         "setting" : {
             "urlCheck" : false,
-            "postcss" : false
+            "postcss" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "useExtendedLib" : {
+            "weui" : true
+        }
     },
     "vueVersion" : "2"
 }
