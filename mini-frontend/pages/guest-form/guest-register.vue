@@ -73,12 +73,14 @@ export default {
 <style>
 .img-a {
   position: absolute;
-  width: 100%;
+  width: 1000rpx;
+  height: 1000rpx;
   top: -300%;
   right: 0%;
   z-index:-1;
   opacity: 0.1;
 }
+
 .t-login {
   width: 600rpx;
   margin: 0 auto;
@@ -148,22 +150,9 @@ export default {
 
 .t-login{
   text-align: center;
-  width: 250rpx;
-  margin: 80rpx auto 0;
-}
-
-.t-login {
   float: left;
-  width: 50%;
-}
-
-.t-login image {
-  width: 1000rpx;
-  height: 1000rpx;
-}
-
-.t-login {
-  text-align: center;
+  width: 80%;
+  right: 7%;
   margin: 200rpx 0 0 0;
   color: #666;
 }
