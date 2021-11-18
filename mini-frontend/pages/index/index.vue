@@ -29,7 +29,7 @@ export default {
           if (res1.code) {
             that.DialogShow = true;
             wx.request({
-              url: "https://49.232.106.46:8000/guard/guest/login",
+              url: "http://49.232.106.46:8000/guard/guest/login",
               data: {
                 code: res1.code,
               },
@@ -45,7 +45,7 @@ export default {
               },
             });
           } else {
-            console.log("登陆失败！" + res1.errMsg);
+            console.log("登录失败！" + res1.errMsg);
           }
         },
       });
