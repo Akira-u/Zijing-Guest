@@ -14,7 +14,6 @@
 
 <script>
 
-import { decodeOption } from "@/api/navigate";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -46,7 +45,7 @@ export default {
               },
              });
           } else {
-            console.log("登陆失败！" + res1.errMsg);
+            console.log("登录失败！" + res1.errMsg);
           }
         },
       });
