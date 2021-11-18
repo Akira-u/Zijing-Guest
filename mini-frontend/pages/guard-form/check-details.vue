@@ -1,30 +1,44 @@
 <template>
-	<view>
-		<uni-table border stripe emptyText="暂无更多数据">
-		  <uni-tr>
-		    <uni-th>name</uni-th>
-		    <uni-td v-text="user.name"></uni-td>
-		  </uni-tr>
-		  <uni-tr>
-		    <uni-th>cumstom_id</uni-th>
-		    <uni-td v-text="user.custom_id"></uni-td>
-		  </uni-tr>
-		</uni-table>
-	</view>
+  <view>
+    <uni-table border stripe emptyText="暂无更多数据">
+      <uni-tr>
+        <uni-th>guest</uni-th>
+        <uni-td>{{ user.guest }}</uni-td>
+      </uni-tr>
+      <uni-tr>
+        <uni-th>purpose</uni-th>
+        <uni-td>{{ user.purpose }}</uni-td>
+      </uni-tr>
+      <uni-tr>
+        <uni-th>target_dorm</uni-th>
+        <uni-td>{{ user.target_dorm }}</uni-td>
+      </uni-tr>
+      <uni-tr>
+        <uni-th>host_student</uni-th>
+        <uni-td>{{ user.host_student }}</uni-td>
+      </uni-tr>
+      <uni-tr>
+        <uni-th>in_time</uni-th>
+        <uni-td>{{ user.in_time }}</uni-td>
+      </uni-tr>
+      <uni-tr>
+        <uni-th>out_time</uni-th>
+        <uni-td>{{ user.out_time }}</uni-td>
+      </uni-tr>
+    </uni-table>
+  </view>
 </template>
 
 <script>
- data() {
-    return {user: {},};
+import { decodeOption } from "@/api/navigate";
+export default {
+  data() {
+    return { user: {} };
   },
   onLoad(options) {
-     decodeOption(options);
-     console.log(options.code);
-     this.user = JSON.parse(options.code);
-     console.log(this.user);
-  //    console.log(this.info.name);
-  //    console.log(this.info.custom_id);
-   },
+    decodeOption(options);
+    this.user = JSON.parse(options.code);
+  },
   methods: {},
 };
 </script>
