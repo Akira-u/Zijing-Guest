@@ -28,7 +28,7 @@ export default {
         success(res) {
           console.log(res.result);
           uni.request({
-            url: "http://49.232.106.46:8000/guard/log/",
+            url: "https://49.232.106.46:8000/guard/log/",
             data: {
               code: res.result,
             },
