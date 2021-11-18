@@ -61,7 +61,7 @@ export default {
           if (res1.code) {
             console.log(that.phone);
             wx.request({
-              url: 'https://49.232.106.46:8000/guard/guard',
+              url: 'http://49.232.106.46:8000/guard/guard',
               data: {
                 code: res1.code,
                 phone: that.phone,

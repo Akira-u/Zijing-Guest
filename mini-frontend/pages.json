@@ -68,8 +68,17 @@
 		        "enablePullDownRefresh": false
 		    }
 		    
-		}
-		,{
+		},
+		{
+		    "path" : "pages/guard-form/check-details",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "查看详情",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
             "path" : "pages/guest-form/guest-register",
             "style" :                                                                                    
             {

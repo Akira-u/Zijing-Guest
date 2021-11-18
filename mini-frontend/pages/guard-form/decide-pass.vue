@@ -29,11 +29,12 @@ export default {
   },
   onLoad(options) {
     decodeOption(options);
-    console.log(options.info);
-    this.info = JSON.parse(options.info);
-    console.log(this.info);
-    console.log(this.info.name);
-    console.log(this.info.custom_id);
+    console.log(options.code);
+    //this.info = JSON.parse(options.code);
+	// this.info = options.code;
+ //    console.log(this.info);
+ //    console.log(this.info.name);
+ //    console.log(this.info.custom_id);
   },
   methods: {
     Pass() {

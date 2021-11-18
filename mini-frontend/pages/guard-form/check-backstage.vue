@@ -1,11 +1,11 @@
 <template>
   <view>
-	<uni-table>
+	<uni-table border stripe emptyText="暂无更多数据">
 		<uni-tr>
 			<uni-th>name</uni-th>
 			<uni-th>custom_id</uni-th>
 		</uni-tr>
-		<uni-tr  v-for="user in users" :key="index">
+		<uni-tr  v-for="user in users" :key="index" @click="checkDetails">
 			<uni-td>{{user.name}}</uni-td>
 			<uni-td>{{user.custom_id}}</uni-td>
 		</uni-tr>
@@ -27,7 +27,7 @@ export default {
   methods: {
 	update(){
 		uni.request({
-		  url: "https://49.232.106.46:8000/guard/log/", //仅为示例，并非真实接口地址。
+		  url: "http://49.232.106.46:8000/guard/log/", //仅为示例，并非真实接口地址。
 		  method: "GET",
 		  success: (res) => {
 		    console.log("get success");
@@ -41,6 +41,9 @@ export default {
 		  },
 		});
 		console.log(this.users);
+	},
+	checkDetails(){
+		navigate()
 	}
   },
 };
