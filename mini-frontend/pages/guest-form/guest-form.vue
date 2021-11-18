@@ -1,30 +1,42 @@
 <template>
   <view>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
-    <uni-forms ref="form" :modelValue="formData" :rules="rules">
-      <uni-forms-item required label="姓名" name="name">
+    <uni-forms ref="form" :modelValue="form_data" :rules="rules">
+      <uni-forms-item required label="目的宿舍" name="target_dorm">
         <uni-easyinput
-          type="text"
-          v-model="formData.name"
-          placeholder="请输入姓名"
+          v-model="form_data.target_dorm"
+          placeholder="您要拜访的宿舍号"
         />
       </uni-forms-item>
-      <uni-forms-item required label="学号" name="custom_id">
-        <uni-easyinput v-model="formData.custom_id" placeholder="请输入学号" />
+      <uni-forms-item required label="接待人" name="host_student">
+        <uni-easyinput
+          v-model="form_data.host_student"
+          placeholder="您要拜访的人姓名"
+        />
+      </uni-forms-item>
+      <uni-forms-item label="访问事由" name="purpose">
+        <uni-easyinput
+          v-model="form_data.purpose"
+          placeholder="请描述访问事由"
+        />
       </uni-forms-item>
     </uni-forms>
-    <button @click="submit">提交</button>
+    <button @tap="submit">提交</button>
   </view>
 </template>
 
 <script>
+import requestData from "@/api/request"
+import navigateTo from "@/api/navigate";
 export default {
   data() {
     return {
-      formData: {
-        name: undefined,
-        cumstom_id: undefined,
+      form_data: {
+        target_dorm: '403',
+        host_student: '创世洐炎',
+        purpose: '拿杯'
       },
+
       rules: {
         // 对name字段进行必填验证
         name: {
@@ -40,34 +52,37 @@ export default {
             },
           ],
         },
+        target_dorm: {
+          rules: [{
+            maxLength: 4,
+            errorMessage: "宿舍号长度最大为{maxLength}",
+          }]
+        }
       },
     };
   },
   methods: {
     submit() {
+      var that = this
       this.$refs.form
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-          //   https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/user-encryptkey.html
-          var raw_data = JSON.stringify(res); //TODO:add time-stamp
-          const userCryptoManager = wx.getUserCryptoManager();
-          userCryptoManager.getLatestUserKey({
-            success({ encryptKey, iv, version, expireTime }) {
-              const encryptedData = someAESEncryptMethod(
-                encryptKey,
-                iv,
-                raw_data
-              );
-              wx.request({
-                data: encryptedData,
-                success(res) {
-                  console.log("request success");
-                },
-              });
-            },
-          });
-          uni.navigateTo({ url: "/pages/guest-form/guest-qrcode" });//TODO: pass encryptData
+          wx.login({
+            success: function (res) {
+              if (res.code) {
+                that.form_data.code = res.code
+                requestData({ url: "https://c02.whiteffire.cn:8000/guard/log/", method: "POST", data: that.form_data })
+                  .then((resp_data) => {
+                    console.log({ resp_data: resp_data })
+                    navigateTo("/pages/guest-form/guest-qrcode",{code:res.code});
+                  })
+              } else {
+                console.log(res.errMsg)
+              }
+            }
+          })
+
         })
         .catch((err) => {
           console.log("表单错误信息：", err);

@@ -3,7 +3,12 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "紫荆来客"
+				"navigationBarTitleText": "紫荆来客",
+				"mp-weixin": {
+					"usingComponents": {
+						"mp-dialog": "weui-miniprogram/dialog/dialog"
+					}
+				}
 			}
 		}
 	    ,{
@@ -23,43 +28,23 @@
                 "enablePullDownRefresh": false
             }
             
-        },
-		{
-            "path" : "pages/guard-form/guard-form",
+        }
+        ,{
+            "path" : "pages/guest-form/in-dorm",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "管理员入口",
+                "navigationBarTitleText": "宿舍访问中"
+            }
+		},
+        {
+            "path" : "pages/guest-form/guest-register",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "注册表单",
                 "enablePullDownRefresh": false
             }
             
-        },
-		{
-		    "path" : "pages/guard-form/scan-qrcode",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "扫码页面",
-		        "enablePullDownRefresh": false
-		    }
-		    
-		},
-		{
-		    "path" : "pages/guard-form/decide-pass",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "确认通过",
-		        "enablePullDownRefresh": false
-		    }
-		    
-		},
-		{
-		    "path" : "pages/guard-form/check-backstage",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "查看后台",
-		        "enablePullDownRefresh": false
-		    }
-		    
-		}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
