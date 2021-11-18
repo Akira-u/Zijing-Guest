@@ -33,7 +33,7 @@ export default {
               data: {
                 code: res1.code,
               },
-              method: 'GET',
+              method: "GET",
               success: function (res2) {
                 that.DialogShow = false;
                 console.log(res2.data)
@@ -43,7 +43,33 @@ export default {
                   navigateTo("/pages/guest-form/guest-register");
                 }
               },
-             });
+            });
+          } else {
+            console.log("登陆失败！" + res1.errMsg);
+          }
+        },
+      });
+    },
+    guardEntry() {
+      wx.login({
+        success(res1) {
+          if (res1.code) {
+            wx.request({
+              url: "https://49.232.106.46:8000/guard/guard/login",
+              data: {
+                code: res1.code,
+              },
+              method: "GET",
+              success: function (res2) {
+                console.log(res2);
+                //this.dialogVisible = false;
+                if (res2.data.open_id) {
+                  navigateTo("/pages/guard-form/guard-form", res2.data);
+                } else {
+                  navigateTo("/pages/guard-form/guard-register");
+                }
+              },
+            });
           } else {
             console.log("登录失败！" + res1.errMsg);
           }

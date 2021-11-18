@@ -2,7 +2,8 @@
 <template>
   <view class="t-login">
   <!-- 页面装饰图片 -->
-    <image class="img-a" src="@/static/xiaohui.jpg"></image>
+    <image class="img-a" src="@/static/2.png"></image>
+    <image class="img-b" src="@/static/3.png"></image>
     <!-- 标题 -->
     <view class="t-b">{{ title }}</view>
     <form class="cl">
@@ -14,7 +15,7 @@
         <image src="@/static/sj.png"></image>
         <input type="number" name="phone" placeholder="请输入手机号" maxlength="11" v-model="phone" />
       </view>
-      <button @tap="register">注 册</button>
+      <button @tap="register()">注 册</button>
     </form>
   </view>
 </template>
@@ -24,8 +25,8 @@ import navigateTo from '@/api/navigate'
 export default {
   data() {
     return {
-      title: '注册', //填写logo或者app名称
-      phone: '',
+      title: '注册', 
+      phone: '', 
       name: ''
     };
   },
@@ -53,20 +54,15 @@ export default {
           if (res1.code) {
             console.log(that.phone);
             wx.request({
-              url: 'https://49.232.106.46:8000/guard/guest/',
+              url: 'https://49.232.106.46:8000/guard/guard/',
               data: {
                 code: res1.code,
                 phone: that.phone,
                 name: that.name,
-<<<<<<< HEAD
 			  },
             method: 'POST',
             });
-=======
-			        },
-              method: 'POST',
-            })
->>>>>>> develop
+			navigateTo("/pages/guard-form/guard-form");
           } else {
             console.log('登陆失败！' + res1.errMsg);
           }
@@ -79,14 +75,17 @@ export default {
 <style>
 .img-a {
   position: absolute;
-  width: 1000rpx;
-  height: 1000rpx;
-  top: -300%;
-  right: 0%;
-  z-index:-1;
-  opacity: 0.1;
+  width: 100%;
+  top: -280rpx;
+  right: -100rpx;
 }
-
+.img-b {
+  position: absolute;
+  width: 50%;
+  bottom: 0;
+  left: -50rpx;
+  margin-bottom: -200rpx;
+}
 .t-login {
   width: 600rpx;
   margin: 0 auto;
@@ -131,15 +130,17 @@ export default {
 
 .t-login .t-b {
   text-align: left;
-  font-size: 60rpx;
+  font-size: 46rpx;
   color: #000;
-  padding: 0rpx 0 120rpx 0;
+  padding: 300rpx 0 120rpx 0;
   font-weight: bold;
 }
 
 .t-login {
   position: absolute;
-  right: 20%;
+  right: 22rpx;
+  top: 22rpx;
+  background: #5677fc;
   color: #fff;
   font-size: 24rpx;
   border-radius: 50rpx;
@@ -156,9 +157,22 @@ export default {
 
 .t-login{
   text-align: center;
+  width: 250rpx;
+  margin: 80rpx auto 0;
+}
+
+.t-login {
   float: left;
-  width: 80%;
-  right: 7%;
+  width: 50%;
+}
+
+.t-login image {
+  width: 50rpx;
+  height: 50rpx;
+}
+
+.t-login {
+  text-align: center;
   margin: 200rpx 0 0 0;
   color: #666;
 }

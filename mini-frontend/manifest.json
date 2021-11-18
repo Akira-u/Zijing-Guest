@@ -52,7 +52,7 @@
         "appid" : "wxb628d9e8ab4ac444",
         "setting" : {
             "urlCheck" : false,
-            "postcss" : false
+            "postcss" : true
         },
         "usingComponents" : true,
         "useExtendedLib" : {

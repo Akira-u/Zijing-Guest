@@ -26,8 +26,6 @@
         <uni-td>{{ user.out_time }}</uni-td>
       </uni-tr>
     </uni-table>
-    <button @click="Pass">通过</button>
-    <button @click="Deny">禁入</button>
   </view>
 </template>
 
@@ -39,12 +37,9 @@ export default {
   },
   onLoad(options) {
     decodeOption(options);
-    console.log(options.code);//TO DO
+    this.user = JSON.parse(options.code);
   },
-  methods: {
-    Pass() {},//TO DO
-    Deny() {},
-  },
+  methods: {},
 };
 </script>
 

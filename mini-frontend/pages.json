@@ -28,6 +28,12 @@
                 "enablePullDownRefresh": false
             }
             
+        },
+		{
+            "path" : "pages/guard-form/guard-form",
+			"style": {
+				"navigationBarTitleText": "紫荆来客"
+			}
         }
         ,{
             "path" : "pages/guest-form/in-dorm",
@@ -35,8 +41,54 @@
             {
                 "navigationBarTitleText": "宿舍访问中"
             }
+            
+        },
+		{
+		    "path" : "pages/guard-form/guard-register",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "管理员注册",
+		        "enablePullDownRefresh": false
+		    }
+		    
 		},
-        {
+		{
+		    "path" : "pages/guard-form/scan-qrcode",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "扫码页面",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/guard-form/decide-pass",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "确认通过",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/guard-form/check-backstage",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "查看后台",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+		    "path" : "pages/guard-form/check-details",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "查看详情",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
             "path" : "pages/guest-form/guest-register",
             "style" :                                                                                    
             {
