@@ -32,12 +32,23 @@ class LogViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=request.data.get("code"))
         log_object = request.data
+        print(log_object)
         del log_object["code"]
-        log_object["open_id"] = log_info.get("open_id")
+        # log_object["open_id"] = log_info.get("open_id")
+        guest_objects = Guest.objects.filter(open_id=log_info.get("open_id"))
+        # list(instance)[0]
+        # log_object["guest"]=guest_object
+        # print(log_object)
+        # instance = Log.objects.create(**log_object)
+        print(list(guest_objects)[0])
+        guest_object=list(guest_objects)[0]
+        log_object["guest_id"]=guest_object.open_id # confusing????
+        # print(instance)
         serializer = self.get_serializer(data=log_object)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        # TODO
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
     """ POST """
@@ -111,7 +122,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         code = request.GET.get("code")
         log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
         print(log_info)
-        query = Guest.objects.filter(open_id=resp.get("open_id"))
+        query = Guest.objects.filter(open_id=log_info.get("open_id"))
         if query:
             serializer = GuestSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
@@ -145,7 +156,7 @@ class GuardViewSet(viewsets.ModelViewSet):
         code = request.GET.get("code")
         log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=code)
         print(log_info)
-        query = Guard.objects.filter(open_id=resp.get("open_id"))
+        query = Guard.objects.filter(open_id=log_info.get("open_id"))
         if query:
             serializer = GuardSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
@@ -153,3 +164,21 @@ class GuardViewSet(viewsets.ModelViewSet):
             return Response(serializer.data[0])
         else:
             return Response({})
+
+from .utils import Test1Serializer,Test2Serializer
+from .models import Test1,Test2
+class Test1ViewSet(viewsets.ModelViewSet):
+    queryset = Test1.objects.all()
+    serializer_class = Test1Serializer
+class Test2ViewSet(viewsets.ModelViewSet):
+    queryset = Test2.objects.all()
+    serializer_class = Test1Serializer
+    def create(self,request,*args,**kwargs):
+        open_id= request.data.get("open_id")
+        print(Test2.objects.all())
+        test1 = Test1.objects.get(open_id=open_id)
+        test2 = Test2.objects.create(test1=test1,**{"name":"123123"})
+        print(test2)
+        return Response({})
+
+# print(Log.objects.all().values())

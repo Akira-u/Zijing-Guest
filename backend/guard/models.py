@@ -8,9 +8,11 @@ class Log(models.Model):
         on_delete = models.SET_NULL,
         null=True,
     )
-    purpose = models.CharField(max_length=100)
-    in_time = models.DateTimeField()
-    out_time = models.DateTimeField()
+    purpose = models.CharField(max_length=100,default="empty")
+    target_dorm = models.CharField(max_length=100,default="empty")
+    host_student = models.CharField(max_length=100,default="empty")
+    in_time = models.DateTimeField(null=True, default=None)
+    out_time = models.DateTimeField(null=True, default=None)
     def __str__(self):
         return self.name
 
@@ -21,8 +23,8 @@ class Guest(models.Model):
     open_id = models.CharField(max_length=128,primary_key=True) 
     phone = models.CharField(max_length=15)
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
 
 class Guard(models.Model):
     """ 管理员信息 """
@@ -30,5 +32,15 @@ class Guard(models.Model):
     open_id = models.CharField(max_length=128,primary_key=True) 
     phone = models.CharField(max_length=15)
     
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
+
+class Test1(models.Model):
+    open_id = models.CharField(max_length=128,primary_key=True)
+
+class Test2(models.Model):
+    test1 = models.ForeignKey(
+        "Test1",
+        on_delete = models.SET_NULL,
+        null=True,
+    )

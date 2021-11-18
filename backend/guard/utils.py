@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django_filters import rest_framework as filters
-from guard.models import Log, Guest, Guard
+from guard.models import Log, Guest, Guard,Test1,Test2
 import requests
 
 # TODO
@@ -21,6 +21,8 @@ class LogSerializer(serializers.ModelSerializer):
         fields = [
             "guest", # foreign key
             "purpose",
+            "target_dorm",
+            "host_student",
             "in_time",
             "out_time",
         ]
@@ -45,3 +47,16 @@ class GuardSerializer(serializers.ModelSerializer):
             "name",
             "phone",
         ]
+
+
+class Test1Serializer(serializers.ModelSerializer):
+    test2 = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Test1
+        fields = '__all__'
+
+class Test2Serializer(serializers.ModelSerializer):
+    test1 = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Test2
+        fields = '__all__'

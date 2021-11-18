@@ -12,8 +12,8 @@ ld_appSecret = "ae8c07f1c54cc187d46bb419d6469252"
 # guard_appId = frz_appId
 # guard_appSecret = frz_appSecret
 
-guard_appId = ld_appId
-guard_appSecret = ld_appSecret
+guard_appId = jzy_appId
+guard_appSecret = jzy_appSecret
 
 # guest_appId = jzy_appId
 # guest_appSecret = jzy_appSecret
