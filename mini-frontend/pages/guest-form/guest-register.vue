@@ -58,15 +58,9 @@ export default {
                 code: res1.code,
                 phone: that.phone,
                 name: that.name,
-<<<<<<< HEAD
-			  },
-            method: 'POST',
-            });
-=======
 			        },
               method: 'POST',
             })
->>>>>>> develop
           } else {
             console.log('登陆失败！' + res1.errMsg);
           }
