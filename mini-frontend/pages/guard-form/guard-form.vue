@@ -1,7 +1,7 @@
 <template>
   <view>
-    <button @click="scanQrcode">扫码</button>
-    <button @click="checkBackstage">查看后台</button>
+    <button @tap="scanQrcode">扫码</button>
+    <button @tap="checkBackstage">查看后台</button>
   </view>
 </template>
 

@@ -2,9 +2,9 @@
   <view class="container">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <view class= "button_list">
-      <button @click="studentVerify">学生访客</button>
+      <button @tap="studentVerify">学生访客</button>
       <button>其它访客</button>
-      <button>管理员入口</button>
+      <button @tap="guardEntry">管理员入口</button>
     </view>
     <mp-dialog :show="DialogShow" @buttontap="onSubmitDialog" :buttons="buttonArray">
       <view class="dialog-submit-content">请稍候……</view>
@@ -55,7 +55,7 @@ export default {
         success(res1) {
           if (res1.code) {
             wx.request({
-              url: "https://49.232.106.46:8000/guard/guard/login",
+              url: "http://49.232.106.46:8000/guard/guard/login",
               data: {
                 code: res1.code,
               },

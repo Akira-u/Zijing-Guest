@@ -26,6 +26,7 @@
         <uni-td>{{ user.out_time }}</uni-td>
       </uni-tr>
     </uni-table>
+    <button @tap="Remind">提醒</button>
   </view>
 </template>
 
@@ -39,7 +40,11 @@ export default {
     decodeOption(options);
     this.user = JSON.parse(options.code);
   },
-  methods: {},
+  methods: {
+    Remind() {
+      //TO DO
+    },
+  },
 };
 </script>
 

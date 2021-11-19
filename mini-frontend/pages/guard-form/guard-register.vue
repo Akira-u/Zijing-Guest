@@ -1,7 +1,7 @@
 <!-- 蓝色简洁登录页面 -->
 <template>
   <view class="t-login">
-  <!-- 页面装饰图片 -->
+    <!-- 页面装饰图片 -->
     <image class="img-a" src="@/static/2.png"></image>
     <image class="img-b" src="@/static/3.png"></image>
     <!-- 标题 -->
@@ -9,67 +9,81 @@
     <form class="cl">
       <view class="t-a">
         <image src="@/static/yz.png"></image>
-        <input type="text" name="name" placeholder="请输入姓名" maxlength="20" v-model="name" />
+        <input
+          type="text"
+          name="name"
+          placeholder="请输入姓名"
+          maxlength="20"
+          v-model="name"
+        />
       </view>
       <view class="t-a">
         <image src="@/static/sj.png"></image>
-        <input type="number" name="phone" placeholder="请输入手机号" maxlength="11" v-model="phone" />
+        <input
+          type="number"
+          name="phone"
+          placeholder="请输入手机号"
+          maxlength="11"
+          v-model="phone"
+        />
       </view>
       <button @tap="register()">注 册</button>
     </form>
   </view>
 </template>
 <script>
-import {decodeOption} from '@/api/navigate'
-import navigateTo from '@/api/navigate'
+import requestData from "@/api/request";
+import { decodeOption } from "@/api/navigate";
+import navigateTo from "@/api/navigate";
 export default {
   data() {
     return {
-      title: '注册', 
-      phone: '', 
-      name: ''
+      title: "注册",
+      phone: "",
+      name: "",
     };
   },
   onLoad(options) {
-    decodeOption(options)
+    decodeOption(options);
   },
   methods: {
     //当前注册按钮操作
     register() {
       var that = this;
       if (!that.name.length) {
-        uni.showToast({ title: '请输入姓名', icon: 'none' });
+        uni.showToast({ title: "请输入姓名", icon: "none" });
         return;
       }
       if (!that.phone) {
-        uni.showToast({ title: '请输入手机号', icon: 'none' });
+        uni.showToast({ title: "请输入手机号", icon: "none" });
         return;
       }
       if (!/^[1][3,4,5,7,8,9][0-9]{9}$/.test(that.phone)) {
-        uni.showToast({ title: '请输入正确手机号', icon: 'none' });
+        uni.showToast({ title: "请输入正确手机号", icon: "none" });
         return;
-	  }
+      }
       wx.login({
         success(res1) {
           if (res1.code) {
             console.log(that.phone);
-            wx.request({
-              url: 'https://49.232.106.46:8000/guard/guard/',
+            requestData({
+              url: "http://49.232.106.46:8000/guard/guard/",
+              method: "POST",
               data: {
                 code: res1.code,
                 phone: that.phone,
                 name: that.name,
-			  },
-            method: 'POST',
+              },
+            }).then((res) => {
+              navigateTo("/pages/guard-form/guard-form");
             });
-			navigateTo("/pages/guard-form/guard-form");
           } else {
-            console.log('登陆失败！' + res1.errMsg);
+            console.log("登陆失败！" + res1.errMsg);
           }
-        }
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style>
@@ -155,7 +169,7 @@ export default {
   margin: 80rpx 0;
 }
 
-.t-login{
+.t-login {
   text-align: center;
   width: 250rpx;
   margin: 80rpx auto 0;
@@ -196,6 +210,6 @@ export default {
   display: block;
   visibility: hidden;
   height: 0;
-  content: '\20';
+  content: "\20";
 }
 </style>

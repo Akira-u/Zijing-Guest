@@ -24,27 +24,20 @@ export default {
   data() {
     return { users: [] };
   },
-  created() {
-    this.update();
+  onLoad() {
+    requestData({
+      url: "http://49.232.106.46:8000/guard/log/",
+      method: "GET",
+    }).then((res) => {
+      this.users = res.data.results;
+      console.log(this.users);
+    });
   },
   methods: {
     checkDetails: function (user) {
       navigateTo("/pages/guard-form/check-details", {
         code: JSON.stringify(user),
       });
-    },
-    update() {
-      uni.request({
-        url: "https://49.232.106.46:8000/guard/log/", 
-        method: "GET",
-        success: (res) => {
-          this.users = res.data.results;
-        },
-        fail: (res) => {
-          console.log("get fail");
-        },
-      });
-      console.log(this.users);
     },
   },
 };

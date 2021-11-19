@@ -1,12 +1,11 @@
 <template>
   <view class="form-list">
     <image
-      class="scan"
-      bindtap="scanQrcode"
+      @tap="scanQrcode"
       src="/static/scan.jpeg"
-      mode="widthFix"
+	  mode="widthFix"
     ></image>
-    <button @click="scanQrcode">扫码</button>
+    <button @tap="scanQrcode">扫码</button>
   </view>
 </template>
 
@@ -15,9 +14,7 @@ import navigateTo from "@/api/navigate";
 export default {
   name: "scan",
   data() {
-    return {
-      scanCodeMsg: "123",
-    };
+    return {};
   },
   methods: {
     scanQrcode: function () {
@@ -26,13 +23,6 @@ export default {
       wx.scanCode({
         success(res) {
           console.log(res.result);
-          uni.request({
-            url: "https://49.232.106.46:8000/guard/log/",
-            data: {
-              code: res.result,
-            },
-            method: "POST",
-          });
           navigateTo("/pages/guard-form/decide-pass", { code: res.result });
         },
         fail(res) {

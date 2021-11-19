@@ -26,12 +26,13 @@
         <uni-td>{{ user.out_time }}</uni-td>
       </uni-tr>
     </uni-table>
-    <button @click="Pass">通过</button>
-    <button @click="Deny">禁入</button>
+    <button @tap="Pass">通过</button>
+    <button @tap="Deny">禁入</button>
   </view>
 </template>
 
 <script>
+import requestData from "@/api/request";
 import { decodeOption } from "@/api/navigate";
 export default {
   data() {
@@ -39,10 +40,19 @@ export default {
   },
   onLoad(options) {
     decodeOption(options);
-    console.log(options.code);//TO DO
+    console.log(options.code); //TO DO
+    var that = this;
+    requestData({
+      url: "http://49.232.106.46:8000/guard/log/info/",
+      method: "GET",
+      data: { code: options.code },
+    }).then((res) => {
+      console.log({ res: res });
+      that.user = res.data;
+    });
   },
   methods: {
-    Pass() {},//TO DO
+    Pass() {}, //TO DO
     Deny() {},
   },
 };
