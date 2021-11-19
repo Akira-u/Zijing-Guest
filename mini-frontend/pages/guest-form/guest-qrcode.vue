@@ -8,45 +8,33 @@
 </template>
 
 <script>
-import { decodeOption } from '@/api/navigate'
 import navigateTo from '@/api/navigate'
 export default {
   data() {
     return { qrcode_text: '', };
   },
   methods: {},
-  onLoad(options) {
-    decodeOption(options)
-    this.qrcode_text = options.code
-  },
   onReady() {
     var that = this
-    that.$refs.guest_qrcode
-      .make({
-        size: 354,
-        text: that.qrcode_text
-      })
-      .then((res) => {
-        // 返回的res与uni.canvasToTempFilePath返回一致
-        console.log(that.qrcode_text);
-        var listening_socket = uni.connectSocket({
-          url: 'https://c02.whiteffire.cn:8000/guard/guest/',
-          success: (connect_res) => {
-            console.log('connect success!')
-            listening_socket.onMessage((message) => {
-              if (message == 'pass') {
-                navigateTo("/pages/guest-form/in-dorm")
-              }
-              else {
-                console.log(message)
-              }
+    wx.login({
+      success: function (login_res) {
+        if (login_res.code) {
+          that.qrcode_text=login_res.code
+          that.$refs.guest_qrcode
+            .make({
+              size: 354,
+              text: that.qrcode_text
             })
-          },
-          fail: (error) => {
-            console.log('connect failed')
-          }
-        })
-      });
+            .then((res) => {
+              // 返回的res与uni.canvasToTempFilePath返回一致
+              console.log(that.qrcode_text);
+              // TODO: 轮询后端是否审批通过
+            });
+        } else {
+          console.log(login_res.errMsg)
+        }
+      }
+    })
 
   }
 

@@ -42,7 +42,7 @@ export default {
         name: {
           rules: [
             {
-              //   required: true,
+              required: true,
               errorMessage: "请输入姓名",
             },
             {
@@ -71,11 +71,11 @@ export default {
           wx.login({
             success: function (res) {
               if (res.code) {
-                that.form_data.code = res.code
-                requestData({ url: "https://c02.whiteffire.cn:8000/guard/log/", method: "POST", data: that.form_data })
+                that.form_data.code = res.code // pass a user code to associate guest info and user
+                requestData({ url: "http://c02.whiteffire.cn:8000/guard/log/", method: "POST", data: that.form_data })
                   .then((resp_data) => {
                     console.log({ resp_data: resp_data })
-                    navigateTo("/pages/guest-form/guest-qrcode",{code:res.code});
+                    navigateTo("/pages/guest-form/guest-qrcode");
                   })
               } else {
                 console.log(res.errMsg)
