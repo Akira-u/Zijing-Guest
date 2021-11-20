@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3jccic7m33i&r(3$!+sd0od5e02mg^((*$0a^s=is-_w8351y_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,9 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'werkzeug_debugger_runserver',
+    'django_extensions',
     'rest_framework',
+    'django_filters',
+    # 'channels',
     'visitor',
     'guard',
+    'drf_yasg',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +136,21 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# DRF settings
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+# channels
+ASGI_APPLICATION = "ZijingGuest.asgi.application"
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }
