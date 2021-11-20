@@ -126,6 +126,8 @@ venv.bak/
 dmypy.json
 
 # Pyre type checker
-.pyre/
-
-migrations/
+.pyre
+# frontend part
+.hbuilderx
+node_modules
+unpackage

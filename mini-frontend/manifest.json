@@ -1,6 +1,6 @@
 {
-    "name" : "testapp",
-    "appid" : "",
+    "name" : "ZijingGuest",
+    "appid" : "__UNI__748F835",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -49,12 +49,15 @@
     /* 快应用特有相关 */
     "mp-weixin" : {
         /* 小程序特有相关 */
-        "appid" : "wx86341d09d0dbc4e4",
+        "appid" : "wxb628d9e8ab4ac444",
         "setting" : {
             "urlCheck" : false,
             "postcss" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "useExtendedLib" : {
+            "weui" : true
+        }
     },
-    "vueVersion" : "3"
+    "vueVersion" : "2"
 }
