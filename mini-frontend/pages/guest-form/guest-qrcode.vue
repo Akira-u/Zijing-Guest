@@ -4,6 +4,7 @@
     <uqrcode ref="guest_qrcode"></uqrcode>
     <!-- TODO:add a 5min countdown -->
     二维码有效期为5分钟，请尽快使用！
+    <button @tap="checkResult">审批结束，查看结果</button>
   </view>
 </template>
 
@@ -13,7 +14,11 @@ export default {
   data() {
     return { qrcode_text: '', };
   },
-  methods: {},
+  methods: {
+    checkResult(){
+      navigateTo('/pages/guest-form/in-dorm')
+    }
+  },
   onReady() {
     var that = this
     wx.login({
