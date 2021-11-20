@@ -13,8 +13,8 @@ class Log(models.Model):
     host_student = models.CharField(max_length=100,default="empty")
     in_time = models.DateTimeField(null=True, default=None)
     out_time = models.DateTimeField(null=True, default=None)
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
 
 
 class Guest(models.Model):

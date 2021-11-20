@@ -38,20 +38,22 @@ class LogViewSet(viewsets.ModelViewSet):
         # log_object["open_id"] = log_info.get("open_id")
         guest_objects = Guest.objects.filter(open_id=log_info.get("open_id"))
         # list(instance)[0]
-        # log_object["guest"]=guest_object
         # print(log_object)
         # instance = Log.objects.create(**log_object)
         print(list(guest_objects)[0])
         guest_object=list(guest_objects)[0]
-        log_object["guest_id"]=guest_object.open_id # confusing???? 
+        # log_object["guest_id"]=guest_object.open_id # confusing???? 
+        log_object["guest"]=guest_object
         print(log_object)
-        serializer = self.get_serializer(data=log_object)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        print(serializer.data)
+        resp=Log.objects.create(**log_object)
+        # serializer = self.get_serializer(data=log_object)
+        # serializer.is_valid(raise_exception=False)
+        # print(serializer.errors)
+        # self.perform_create(serializer)
+        # headers = self.get_success_headers(serializer.data)
+        # print(serializer.data)
         # TODO
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"success"}, status=status.HTTP_201_CREATED)
     
     """ POST """
     @action(detail=False,methods=["POST"])
@@ -82,11 +84,12 @@ class LogViewSet(viewsets.ModelViewSet):
         print(log_info)
         instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
         print(instance)
-        serializer = self.get_serializer(data=list(instance)[0])
-        serializer.is_valid(raise_exception=False)
+        # serializer = self.get_serializer(data=list(instance)[0])
+        # serializer.is_valid(raise_exception=False)
         # print(serializer.data)
         # print(serializer.errors)
-        return Response(serializer.data)
+        print(list(instance.values())[0])
+        return Response({"data":list(instance.values())[0]})
 
     #     access_token = getAccessToken(appId=guest_appId, appSecret=guest_appSecret)
     #     log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=code )

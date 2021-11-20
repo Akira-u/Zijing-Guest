@@ -15,7 +15,7 @@ import requests
 #         }
 
 class LogSerializer(serializers.ModelSerializer):
-    guest = serializers.PrimaryKeyRelatedField(read_only=True)
+    guest = serializers.PrimaryKeyRelatedField(queryset=Guest.objects.all())
     class Meta:
         model = Log
         fields = [
