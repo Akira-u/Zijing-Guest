@@ -10,6 +10,7 @@ import requests
 from Crypto.Cipher import AES
 from .const import *
 import datetime
+from .consumers import *
 # Create your views here.
 from guard.models import Log
 
@@ -42,12 +43,13 @@ class LogViewSet(viewsets.ModelViewSet):
         # instance = Log.objects.create(**log_object)
         print(list(guest_objects)[0])
         guest_object=list(guest_objects)[0]
-        log_object["guest_id"]=guest_object.open_id # confusing????
-        # print(instance)
+        log_object["guest_id"]=guest_object.open_id # confusing???? 
+        print(log_object)
         serializer = self.get_serializer(data=log_object)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        print(serializer.data)
         # TODO
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
@@ -61,6 +63,7 @@ class LogViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(list(instance)[0], data={"in_time":datetime.datetime.now()}, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        notice(conn_id=log_info.get("object"),**{"permit":True})
         return Response(serializer.data)
     @action(detail=False,methods=["POST"])
     def check_out(self, request):
@@ -76,9 +79,13 @@ class LogViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["GET"])
     def info(self,request):
         log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=request.GET.get("code"))
+        print(log_info)
         instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
+        print(instance)
         serializer = self.get_serializer(data=list(instance)[0])
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=False)
+        # print(serializer.data)
+        # print(serializer.errors)
         return Response(serializer.data)
 
     #     access_token = getAccessToken(appId=guest_appId, appSecret=guest_appSecret)

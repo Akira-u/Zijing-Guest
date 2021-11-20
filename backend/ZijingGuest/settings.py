@@ -41,8 +41,11 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'django_filters',
+    # 'channels',
     'visitor',
     'guard',
+    'drf_yasg',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -140,5 +143,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
+# channels
+ASGI_APPLICATION = "ZijingGuest.asgi.application"
 
-
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }

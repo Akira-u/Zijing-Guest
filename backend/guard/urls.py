@@ -1,4 +1,4 @@
-from django.urls import path,include 
+from django.urls import path,include,re_path
 from rest_framework.routers import DefaultRouter
 import guard.views as views
 
@@ -13,4 +13,6 @@ router.register(r'test2',views.Test2ViewSet)
 urlpatterns = [
     path('',include(router.urls)),
 ]
+
+
 

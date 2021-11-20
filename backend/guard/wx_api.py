@@ -10,13 +10,13 @@ def code2Session(appId, appSecret, code):
             "js_code": code,
             "grant_type": "authorization_code"
         }
-    print(payload)
+    # print(payload)
     r = requests.get('https://api.weixin.qq.com/sns/jscode2session',params=payload)
     packet = eval(r.text)
     openid=""
     session_key=""
     unionid="" # discard in iter stage 1
-    print(packet)
+    # print(packet)
     openid = packet.get("openid")
     session_key = packet.get("session_key")
     return {"open_id":openid,"session_key":session_key}
