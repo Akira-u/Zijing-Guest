@@ -14,39 +14,26 @@ import requests
 #             "custom_id":["icontains","exact"],
 #         }
 
-class LogSerializer(serializers.ModelSerializer):
-    guest = serializers.PrimaryKeyRelatedField(queryset=Guest.objects.all())
-    class Meta:
-        model = Log
-        fields = [
-            "guest", # foreign key
-            "purpose",
-            "target_dorm",
-            "host_student",
-            "in_time",
-            "out_time",
-        ]
-        extra_kwargs = {"out_time":{"required": False}}
 
 class GuestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest
-        fields = [
-            "open_id", # primary key
-            "name",
-            "phone",
-        ]
+        fields = '__all__'
 
 
 
 class GuardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guard
-        fields = [
-            "open_id", # primary key
-            "name",
-            "phone",
-        ]
+        fields = '__all__'
+class LogSerializer(serializers.ModelSerializer):
+    # guest = serializers.PrimaryKeyRelatedField(queryset=Guest.objects.all())
+    guest = GuestSerializer(read_only=True)
+    guest_id = serializers.CharField(allow_null=True, required=False)
+    class Meta:
+        model = Log
+        fields = '__all__'
+        extra_kwargs = {"out_time":{"required": False}}
 
 
 class Test1Serializer(serializers.ModelSerializer):

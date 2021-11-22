@@ -42,16 +42,16 @@ class LogViewSet(viewsets.ModelViewSet):
         # instance = Log.objects.create(**log_object)
         print(list(guest_objects)[0])
         guest_object=list(guest_objects)[0]
-        # log_object["guest_id"]=guest_object.open_id # confusing???? 
-        log_object["guest"]=guest_object
+        log_object["guest_id"]=guest_object.open_id # confusing???? 
+        # log_object["guest"]=guest_object
         print(log_object)
-        resp=Log.objects.create(**log_object)
-        # serializer = self.get_serializer(data=log_object)
-        # serializer.is_valid(raise_exception=False)
-        # print(serializer.errors)
-        # self.perform_create(serializer)
-        # headers = self.get_success_headers(serializer.data)
-        # print(serializer.data)
+        # resp=Log.objects.create(**log_object)
+        serializer = self.get_serializer(data=log_object)
+        serializer.is_valid(raise_exception=False)
+        print(serializer.validated_data)
+        print(serializer.errors)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
         # TODO
         return Response({"success"}, status=status.HTTP_201_CREATED)
     
@@ -82,16 +82,19 @@ class LogViewSet(viewsets.ModelViewSet):
     def info(self,request):
         log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=request.GET.get("code"))
         print(log_info)
-        instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
-        print(instance)
-        # serializer = self.get_serializer(data=list(instance)[0])
-        # serializer.is_valid(raise_exception=False)
-        # print(serializer.data)
+        # instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
+        instance = Log.objects.filter(guest__open_id=request.GET.get("open_id"))
+        serializer = self.get_serializer(data=list(instance.values())[-1])
+        serializer.is_valid(raise_exception=False)
+        # print(serializer.get_fields())
+        # print(serializer.validated_data)
         # print(serializer.errors)
         # print(list(instance.values())[0])
-        resp = list(instance.values())[0]
-        resp["guest"]= (Guest.objects.filter(open_id=resp.get("guest_id")).values())[0].get("name")
-        return Response({"data":resp})
+        # resp = list(instance.values())[0]
+        # resp["guest"]= (Guest.objects.filter(open_id=resp.get("guest_id")).values())[0].get("name")
+        resp = serializer.validated_data
+        resp["guest"] = (Guest.objects.filter(open_id=resp.get("guest_id")).values())[0].get("name")
+        return Response(resp)
 
     #     access_token = getAccessToken(appId=guest_appId, appSecret=guest_appSecret)
     #     log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=code )
