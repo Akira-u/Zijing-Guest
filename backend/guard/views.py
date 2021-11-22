@@ -88,8 +88,10 @@ class LogViewSet(viewsets.ModelViewSet):
         # serializer.is_valid(raise_exception=False)
         # print(serializer.data)
         # print(serializer.errors)
-        print(list(instance.values())[0])
-        return Response({"data":list(instance.values())[0]})
+        # print(list(instance.values())[0])
+        resp = list(instance.values())[0]
+        resp["guest"]= (Guest.objects.filter(open_id=resp.get("guest_id")).values())[0].get("name")
+        return Response({"data":resp})
 
     #     access_token = getAccessToken(appId=guest_appId, appSecret=guest_appSecret)
     #     log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=code )
