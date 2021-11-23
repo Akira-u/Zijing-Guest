@@ -8,7 +8,7 @@ function isHttpSuccess(status) {
 }
 /**
  * 包装好的request
- * 参数：与wx.request相同
+ * 参数：与wx.request相同。https://developers.weixin.qq.com/miniprogram/dev/api/network/request/wx.request.html
  * 返回值：Promise, 链式调用
  */
 function requestData(options={}) {

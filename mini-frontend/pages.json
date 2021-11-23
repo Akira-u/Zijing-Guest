@@ -25,7 +25,12 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "申请码",
-                "enablePullDownRefresh": false
+                "enablePullDownRefresh": false,
+				"mp-weixin": {
+					"usingComponents": {
+						"mp-dialog": "weui-miniprogram/dialog/dialog"
+					}
+				}
             }
             
         },
