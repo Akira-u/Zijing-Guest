@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     'django_filters',
     'sslserver',
     # 'channels',
-    'visitor',
+    # 'visitor',
+    'guest',
     'guard',
+    'log',
     'drf_yasg',
     'api',
 ]
