@@ -39,7 +39,7 @@ class LogViewSet(viewsets.ModelViewSet):
         log_object = request.data
         del log_object["code"]
         instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
-        serializer = self.get_serializer(list(instance)[0], data={"in_time":datetime.datetime.now()}, partial=True)
+        serializer = self.get_serializer(list(instance.values())[-1], data={"in_time":datetime.datetime.now()}, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         notice(conn_id=log_info.get("object"),**{"permit":True})
@@ -50,7 +50,7 @@ class LogViewSet(viewsets.ModelViewSet):
         log_object = request.data
         del log_object["code"]
         instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
-        serializer = self.get_serializer(list(instance)[0], data={"out_time":datetime.datetime.now()}, partial=True)
+        serializer = self.get_serializer(list(instance.values())[-1], data={"out_time":datetime.datetime.now()}, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)        
@@ -58,7 +58,7 @@ class LogViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["GET"])
     def info(self,request):
         log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=request.GET.get("code"))
-        instance = Log.objects.filter(guest__open_id=request.GET.get("open_id"))
+        instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
         serializer = self.get_serializer(data=list(instance.values())[-1])
         serializer.is_valid(raise_exception=False)
         resp = serializer.validated_data
