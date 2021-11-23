@@ -41,9 +41,12 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'django_filters',
+    'sslserver',
     # 'channels',
-    'visitor',
+    # 'visitor',
+    'guest',
     'guard',
+    'log',
     'drf_yasg',
     'api',
 ]
