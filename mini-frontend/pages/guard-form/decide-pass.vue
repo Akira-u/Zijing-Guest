@@ -43,7 +43,7 @@ export default {
     console.log(options.code); //TO DO
     var that = this;
     requestData({
-      url: "http://49.232.106.46:8000/guard/log/info/",
+      url: "http://49.232.106.46:8000/log/info/",
       method: "GET",
       data: { code: options.code },
     }).then((res) => {

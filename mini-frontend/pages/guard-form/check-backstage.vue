@@ -26,7 +26,7 @@ export default {
   },
   onLoad() {
     requestData({
-      url: "http://49.232.106.46:8000/guard/log/",
+      url: "http://49.232.106.46:8000/log/",
       method: "GET",
     }).then((res) => {
       this.users = res.data.results;

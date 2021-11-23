@@ -29,7 +29,7 @@ export default {
           if (res1.code) {
             that.DialogShow = true;
             wx.request({
-              url: "http://49.232.106.46:8000/guard/guest/login",
+              url: "http://49.232.106.46:8000/guest/login",
               data: {
                 code: res1.code,
               },
@@ -55,7 +55,7 @@ export default {
         success(res1) {
           if (res1.code) {
             wx.request({
-              url: "http://49.232.106.46:8000/guard/guard/login",
+              url: "http://49.232.106.46:8000/guard/login",
               data: {
                 code: res1.code,
               },
