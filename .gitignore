@@ -131,3 +131,5 @@ dmypy.json
 .hbuilderx
 node_modules
 unpackage
+
+/migrations

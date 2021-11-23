@@ -22,8 +22,15 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from api import views
+import guard.views
+import guest.views
+import log.views
 
 router = routers.DefaultRouter()
+router.register(r'log',log.views.LogViewSet)
+router.register(r'guard',guard.views.GuardViewSet)
+router.register(r'guest',guest.views.GuestViewSet)
+
 router.register('api_info', views.APIInfoViewSet)
 schema_view = get_schema_view(
     openapi.Info(
@@ -40,8 +47,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path('visitor/', include('visitor.urls',namespace='visitor')),
-    path('guard/', include('guard.urls',namespace='guard')),
+    path('',include(router.urls)),
     path('admin/', admin.site.urls),
      # 配置django-rest-framwork API路由
     url('api/', include('api.urls')),

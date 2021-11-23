@@ -1,13 +1,9 @@
 from rest_framework import serializers
 from django_filters import rest_framework as filters
-from guard.models import Guard
-import requests
+from guest.models import Guest
 
-
-class GuardSerializer(serializers.ModelSerializer):
+class GuestSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Guard
+        model = Guest
         fields = '__all__'
-
-
 
