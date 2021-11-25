@@ -18,4 +18,7 @@ class LogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Log
         fields = '__all__'
-        extra_kwargs = {"out_time":{"required": False}}
+        extra_kwargs = {
+            "out_time":{"required": False},
+            "approval":{"required": False}
+        }

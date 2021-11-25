@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -121,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -157,3 +158,18 @@ ASGI_APPLICATION = "ZijingGuest.asgi.application"
 #         },
 #     },
 # }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://49.232.106.46:6379',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+}
+
+
+REDIS_TIMEOUT=7*24*60*60
+CUBES_REDIS_TIMEOUT=60*60
+NEVER_REDIS_TIMEOUT=365*24*60*60

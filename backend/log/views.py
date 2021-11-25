@@ -63,6 +63,8 @@ class LogViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=False)
         resp = serializer.validated_data
         resp["guest"] = (Guest.objects.filter(open_id=resp.get("guest_id")).values())[0].get("name")
+        resp["id"]=instance.last().id
+        print(resp)
         return Response(resp)
 
 

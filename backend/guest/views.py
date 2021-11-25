@@ -3,6 +3,7 @@ from rest_framework import viewsets, status
 from django_filters import rest_framework as filters
 from .models import Guest
 from .utils import GuestSerializer
+from log.utils import LogSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from guard.wx_api import *
@@ -38,3 +39,13 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response(serializer.data[0])
         else:
             return Response({})
+    @action(detail=False,methods=['GET'])
+    def approve_result(self,request):
+        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
+        open_id = log_info.get("open_id")
+        guest_object = Guest.objects.get(open_id=open_id)
+        logs=guest_object.guest_log.all()
+        serializer=LogSerializer(data=list(logs.values())[-1])
+        serializer.is_valid(raise_exception=False)
+        return Response(serializer.validated_data)
+        # return Response({})
