@@ -1,19 +1,23 @@
 <template>
   <view class="container">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
-    <view class= "button_list">
+    <view class="button_list">
       <button @tap="studentVerify">学生访客</button>
       <button>其它访客</button>
       <button @tap="guardEntry">管理员入口</button>
     </view>
-    <mp-dialog :show="DialogShow" @buttontap="onSubmitDialog" :buttons="buttonArray">
+    <mp-dialog
+      :show="DialogShow"
+      @buttontap="onSubmitDialog"
+      :buttons="buttonArray"
+    >
       <view class="dialog-submit-content">请稍候……</view>
     </mp-dialog>
   </view>
 </template>
 
 <script>
-
+import requestData from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -28,21 +32,18 @@ export default {
         success(res1) {
           if (res1.code) {
             that.DialogShow = true;
-            wx.request({
+            requestData({
               url: "http://49.232.106.46:8000/guest/login",
-              data: {
-                code: res1.code,
-              },
               method: "GET",
-              success: function (res2) {
-                that.DialogShow = false;
-                console.log(res2.data)
-                if (res2.data.open_id) {
-                  navigateTo("/pages/guest-form/guest-form", res2.data);
-                } else {
-                  navigateTo("/pages/guest-form/guest-register");
-                }
-              },
+              data: { code: res1.code },
+            }).then((res2) => {
+              that.DialogShow = false;
+              console.log(res2);
+              if (res2.open_id) {
+                navigateTo("/pages/guest-form/guest-form", res2);
+              } else {
+                navigateTo("/pages/guest-form/guest-register");
+              }
             });
           } else {
             console.log("登录失败！" + res1.errMsg);
@@ -54,21 +55,17 @@ export default {
       wx.login({
         success(res1) {
           if (res1.code) {
-            wx.request({
+            requestData({
               url: "http://49.232.106.46:8000/guard/login",
-              data: {
-                code: res1.code,
-              },
               method: "GET",
-              success: function (res2) {
-                console.log(res2);
-                //this.dialogVisible = false;
-                if (res2.data.open_id) {
-                  navigateTo("/pages/guard-form/guard-form", res2.data);
-                } else {
-                  navigateTo("/pages/guard-form/guard-register");
-                }
-              },
+              data: { code: res1.code },
+            }).then((res2) => {
+              console.log(res2);
+              if (res2.open_id) {
+                navigateTo("/pages/guard-form/guard-form");
+              } else {
+                navigateTo("/pages/guard-form/guard-register");
+              }
             });
           } else {
             console.log("登录失败！" + res1.errMsg);
@@ -81,13 +78,12 @@ export default {
 </script>
 
 <style>
-
 .img-xiaohui {
   position: absolute;
   width: 1000rpx;
   height: 1000rpx;
   right: 0%;
-  z-index:-1;
+  z-index: -1;
   opacity: 0.1;
 }
 

@@ -71,6 +71,15 @@
 		    
 		},
 		{
+		    "path" : "pages/guard-form/decide-leave",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "确认离开",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
 		    "path" : "pages/guard-form/check-backstage",
 		    "style" :                                                                                    
 		    {
