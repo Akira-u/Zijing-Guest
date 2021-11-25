@@ -17,9 +17,12 @@
         <uni-th>host_student</uni-th>
         <uni-td>{{ user.host_student }}</uni-td>
       </uni-tr>
+      <uni-tr>
+        <uni-th>in_time</uni-th>
+        <uni-td>{{ showTime(user.in_time) }}</uni-td>
+      </uni-tr>
     </uni-table>
-    <button @tap="Pass">通过</button>
-    <button @tap="Deny">禁入</button>
+    <button @tap="Leave">离开</button>
   </view>
 </template>
 
@@ -28,7 +31,9 @@ import requestData from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
 export default {
   data() {
-    return { user: {} };
+    return {
+      user: {},
+    };
   },
   onLoad(options) {
     decodeOption(options);
@@ -44,7 +49,18 @@ export default {
     });
   },
   methods: {
-    Pass() {
+    showTime: function (time) {
+      let hh =
+        new Date(time).getHours() < 10
+          ? "0" + new Date(time).getHours()
+          : new Date(time).getHours();
+      let mm =
+        new Date(time).getMinutes() < 10
+          ? "0" + new Date(time).getMinutes()
+          : new Date(time).getMinutes();
+      return hh + ":" + mm;
+    },
+    Leave() {
       var date = new Date();
       console.log(date);
       console.log(this.user.id);
@@ -52,25 +68,10 @@ export default {
         url: "http://49.232.106.46:8000/log/" + this.user.id + "/",
         method: "PATCH",
         data: {
-          in_time: date,
-          approval: "permit",
+          out_time: date,
         },
       });
       reLaunch("/pages/guard-form/guard-form");
-    },
-    Deny() {
-      var date = new Date();
-      console.log(date);
-      console.log(this.user.id);
-      requestData({
-        url: "http://49.232.106.46:8000/log/" + this.user.id + "/",
-        method: "PATCH",
-        data: {
-          in_time: date,
-          approval: "reject",
-        },
-      });
-      uni.navigateBack();
     },
   },
 };
