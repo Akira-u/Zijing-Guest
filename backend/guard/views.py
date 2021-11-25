@@ -10,7 +10,6 @@ import requests
 from Crypto.Cipher import AES
 from .const import *
 import datetime
-from .consumers import *
 # Create your views here.
 
 
