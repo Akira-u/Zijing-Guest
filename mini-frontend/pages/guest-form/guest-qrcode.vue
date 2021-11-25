@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import navigateTo from '@/api/navigate'
+import {reLaunch} from '@/api/navigate'
 import requestData from '@/api/request'
 export default {
   data() {
@@ -30,16 +30,16 @@ export default {
                 that.dialog_text = '审批通过！'
                 setTimeout(() => {
                   that.dialog_show=false
-                }, 500);
-                navigateTo('/pages/guest-form/in-dorm')
+                }, 1000);
+                reLaunch('/pages/guest-form/in-dorm')
               }
               else if (approve_res.approval === 'reject') {
                 that.dialog_show = true
                 that.dialog_text = '审批未通过！'
                 setTimeout(() => {
                   that.dialog_show=false
-                }, 500);
-                navigateTo('/pages/index/index')
+                }, 1000);
+                reLaunch('/pages/index/index')
               }
               else {
                 that.dialog_show = true
@@ -60,7 +60,7 @@ export default {
     wx.login({
       success: function (login_res) {
         if (login_res.code) {
-          that.qrcode_text = login_res.code
+          that.qrcode_text = login_res.code+'==in'
           that.$refs.guest_qrcode
             .make({
               size: 354,
