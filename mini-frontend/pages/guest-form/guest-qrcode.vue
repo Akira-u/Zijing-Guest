@@ -26,24 +26,24 @@ export default {
           requestData({ url: 'http://49.232.106.46:8000/guest/approve_result', data: { code: login_res.code } })
             .then((approve_res) => {
               if (approve_res.approval === 'permit') {
-                that.dialog_show = true
                 that.dialog_text = '审批通过！'
+                that.dialog_show = true
                 setTimeout(() => {
                   that.dialog_show=false
                 }, 1000);
                 reLaunch('/pages/guest-form/in-dorm')
               }
               else if (approve_res.approval === 'reject') {
-                that.dialog_show = true
                 that.dialog_text = '审批未通过！'
+                that.dialog_show = true
                 setTimeout(() => {
                   that.dialog_show=false
                 }, 1000);
-                reLaunch('/pages/index/index')
+                reLaunch()
               }
               else {
-                that.dialog_show = true
                 that.dialog_text = '尚未审批，请稍等...'
+                that.dialog_show = true
                 setTimeout(() => {
                   that.dialog_show=false
                 }, 1000);
@@ -60,7 +60,7 @@ export default {
     wx.login({
       success: function (login_res) {
         if (login_res.code) {
-          that.qrcode_text = login_res.code+'==in'
+          that.qrcode_text = login_res.code+'i'
           that.$refs.guest_qrcode
             .make({
               size: 354,

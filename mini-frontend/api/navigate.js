@@ -21,7 +21,7 @@ function navigateTo(url, args = {}) {
     return uni.navigateTo({ url: url })
 }
 
-function reLaunch(url='pages/index/index', args = {}) {
+function reLaunch(url='/pages/index/index', args = {}) {
     if (args.constructor !== Object) {
         console.warn("wrong arg type: ", args.constructor)
         return uni.reLaunch({ url: url })
@@ -32,6 +32,7 @@ function reLaunch(url='pages/index/index', args = {}) {
         str_arg += k + '=' + encodeURIComponent(value) + '&'
     }
     url = str_arg === '' ? url : url + "?" + str_arg.substr(0, str_arg.length - 1)
+    console.log(url)
     return uni.reLaunch({ url: url })
 }
 

@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import navigateTo from '@/api/navigate'
 export default {
   data() {
     return {

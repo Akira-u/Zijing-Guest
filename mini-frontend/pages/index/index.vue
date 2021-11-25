@@ -15,11 +15,27 @@
 <script>
 
 import navigateTo from "@/api/navigate";
+import requestData from "@/api/request"
 export default {
   data() {
     return {
       DialogShow: false,
     };
+  },
+  onShow() {
+    wx.login({
+      success:(login_res)=>{
+        requestData({url:"http://49.232.106.46:8000/guest/status",data:{code:login_res.code}})
+          .then((req_res)=>{
+            console.log(req_res.status)
+            if(req_res.status==='still_in'){
+              // if user is in dorm, jump to in-dorm page directly
+              navigateTo('pages/guest-form/in-dorm')
+            }
+          })
+      }
+    })
+    
   },
   methods: {
     studentVerify() {

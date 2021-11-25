@@ -107,7 +107,12 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
+                "enablePullDownRefresh": false,
+				"mp-weixin": {
+					"usingComponents": {
+						"mp-dialog": "weui-miniprogram/dialog/dialog"
+					}
+				}
             }
             
         }
