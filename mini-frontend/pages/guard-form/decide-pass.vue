@@ -48,12 +48,36 @@ export default {
       data: { code: options.code },
     }).then((res) => {
       console.log({ res: res });
-      that.user = res.data;
+      that.user = res;
     });
   },
   methods: {
-    Pass() {}, //TO DO
-    Deny() {},
+    Pass() {
+      var date = new Date();
+      console.log(date);
+      console.log(this.user.id);
+      requestData({
+        url: "http://49.232.106.46:8000/log/" + this.user.id + "/",
+        method: "PATCH",
+        data: {
+          in_time: date,
+          approval: "permit",
+        },
+      });
+    },
+    Deny() {
+      var date = new Date();
+      console.log(date);
+      console.log(this.user.id);
+      requestData({
+        url: "http://49.232.106.46:8000/log/" + this.user.id + "/",
+        method: "PATCH",
+        data: {
+          in_time: date,
+          approval: "reject",
+        },
+      });
+    },
   },
 };
 </script>
