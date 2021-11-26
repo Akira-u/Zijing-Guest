@@ -5,6 +5,9 @@ from .models import Guard
 from .utils import GuardSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
+
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from .wx_api import *
 import requests
 from Crypto.Cipher import AES
@@ -34,6 +37,26 @@ class GuardViewSet(viewsets.ModelViewSet):
     serializer_class = GuardSerializer
     """ POST """
     """ register """
+    @swagger_auto_schema(
+    operation_summary='注册账号',       
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(
+                 type=openapi.TYPE_STRING,
+                 description='User Name'
+            ),
+            'phone': openapi.Schema(
+                 type=openapi.TYPE_STRING,
+                 description='User Phone'
+            ),
+            'code': openapi.Schema(
+                 type=openapi.TYPE_STRING,
+                 description='User Code'
+            ),
+            }
+        )
+    )
     def create(self, request, *args, **kwargs):
         log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=request.data.get("code"))
         open_id = log_info.get("open_id")
@@ -45,7 +68,17 @@ class GuardViewSet(viewsets.ModelViewSet):
         serializer.is_valid()
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+    @swagger_auto_schema(
+    operation_summary='判断当前Guard是否已注册',
+    manual_parameters=[
+        openapi.Parameter(
+            name='code',
+            in_=openapi.IN_QUERY,
+            description='Guard code',
+            type=openapi.TYPE_STRING
+        ),],
+    responses={200:openapi.Response('查询是否已注册，如果已注册则返回Guard,否则为空',GuardSerializer)}
+    )
     @action(detail=False,methods=['GET'])
     def login(self,request):
         code = request.GET.get("code")

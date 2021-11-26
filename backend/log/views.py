@@ -7,7 +7,8 @@ from .utils import LogSerializer
 
 from rest_framework.response import Response
 from rest_framework.decorators import action
-
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from guard.wx_api import *
 from guard.const import *
 
@@ -39,8 +40,20 @@ class LogViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     """ GET """
+
+    @swagger_auto_schema(
+    operation_summary='根据guset的code返回最近的一条log',
+    manual_parameters=[
+        openapi.Parameter(
+            name='code',
+            in_=openapi.IN_QUERY,
+            description='Guest code',
+            type=openapi.TYPE_STRING
+        ),],
+    responses={200:openapi.Response('response guest latest log info',LogSerializer)}
+    )
     @action(detail=False,methods=["GET"])
-    def info(self,request):
+    def info(self,request,*args, **kwargs):
         log_info = code2Session(appId =guest_appId,appSecret=guest_appSecret,code=request.GET.get("code"))
         instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
         serializer = self.get_serializer(data=list(instance.values())[-1])
