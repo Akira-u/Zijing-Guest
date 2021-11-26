@@ -49,3 +49,19 @@ class GuestViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=False)
         return Response(serializer.validated_data)
         # return Response({})
+    @action(detail=False,methods=['GET'])
+    def status(self,request):
+        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
+        open_id = log_info.get("open_id")
+        # open_id = request.GET.get("open_id")
+        guest_object = Guest.objects.get(open_id=open_id)
+        last_log=guest_object.guest_log.last()
+        result={}
+        if last_log.approval=="permit" and last_log.out_time==None:
+            result["status"] = "still in"
+        else:
+            result["status"] = "out"
+        # serializer=LogSerializer(data=list(logs.values())[-1])
+        # serializer.is_valid(raise_exception=False)
+        return Response(result)
+        # return Response({})
