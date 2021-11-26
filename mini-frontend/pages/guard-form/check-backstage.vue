@@ -10,8 +10,8 @@
         :key="index"
         @tap="checkDetails(user)"
       >
-        <uni-td>{{ user.guest }}</uni-td>
-        <uni-td>{{ user.in_time }}</uni-td>
+        <uni-td>{{ user.guest.name }}</uni-td>
+        <uni-td>{{showTime(user.in_time)}}</uni-td>
       </uni-tr>
     </uni-table>
   </view>
@@ -22,18 +22,31 @@ import requestData from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
-    return { users: [] };
+    return {
+      users: {},
+    };
   },
   onLoad() {
     requestData({
       url: "http://49.232.106.46:8000/log/",
       method: "GET",
     }).then((res) => {
-      this.users = res.data.results;
-      console.log(this.users);
+      this.users = res.results;
+	  console.log(this.users);
     });
   },
   methods: {
+	showTime:function(time){
+		let hh =
+		  new Date(time).getHours() < 10
+		    ? "0" + new Date(time).getHours()
+		    : new Date(time).getHours();
+		let mm =
+		  new Date(time).getMinutes() < 10
+		    ? "0" + new Date(time).getMinutes()
+		    : new Date(time).getMinutes();
+		return hh + ":" + mm;
+	},
     checkDetails: function (user) {
       navigateTo("/pages/guard-form/check-details", {
         code: JSON.stringify(user),

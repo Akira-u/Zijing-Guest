@@ -19,6 +19,7 @@ def code2Session(appId, appSecret, code):
     # print(packet)
     openid = packet.get("openid")
     session_key = packet.get("session_key")
+    # print(openid)
     return {"open_id":openid,"session_key":session_key}
         
 def getAccessToken(appId, appSecret):
