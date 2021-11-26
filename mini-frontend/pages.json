@@ -25,7 +25,12 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "申请码",
-                "enablePullDownRefresh": false
+                "enablePullDownRefresh": false,
+				"mp-weixin": {
+					"usingComponents": {
+						"mp-dialog": "weui-miniprogram/dialog/dialog"
+					}
+				}
             }
             
         },
@@ -103,6 +108,20 @@
             {
                 "navigationBarTitleText": "注册表单",
                 "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/guest-form/exit-qrcode",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false,
+				"mp-weixin": {
+					"usingComponents": {
+						"mp-dialog": "weui-miniprogram/dialog/dialog"
+					}
+				}
             }
             
         }
