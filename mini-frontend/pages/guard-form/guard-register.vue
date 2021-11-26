@@ -1,9 +1,7 @@
-<!-- 蓝色简洁登录页面 -->
 <template>
   <view class="t-login">
     <!-- 页面装饰图片 -->
-    <image class="img-a" src="@/static/2.png"></image>
-    <image class="img-b" src="@/static/3.png"></image>
+    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <!-- 标题 -->
     <view class="t-b">{{ title }}</view>
     <form class="cl">
@@ -27,10 +25,11 @@
           v-model="phone"
         />
       </view>
-      <button @tap="register()">注 册</button>
+      <button @tap="register">注 册</button>
     </form>
   </view>
 </template>
+
 <script>
 import requestData from "@/api/request";
 import { decodeOption } from "@/api/navigate";
@@ -86,22 +85,22 @@ export default {
   },
 };
 </script>
+
 <style>
 .img-a {
   position: absolute;
-  width: 100%;
-  top: -280rpx;
-  right: -100rpx;
+  width: 1100rpx;
+  height: 1100rpx;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  opacity: 0.1;
 }
-.img-b {
-  position: absolute;
-  width: 50%;
-  bottom: 0;
-  left: -50rpx;
-  margin-bottom: -200rpx;
-}
+
 .t-login {
-  width: 600rpx;
+  width: 100%;
+  height:100%;
   margin: 0 auto;
   font-size: 28rpx;
   color: #000;
@@ -144,17 +143,15 @@ export default {
 
 .t-login .t-b {
   text-align: left;
-  font-size: 46rpx;
+  font-size: 60rpx;
   color: #000;
-  padding: 300rpx 0 120rpx 0;
+  padding: 0rpx 0 120rpx 0;
   font-weight: bold;
+  margin: 10%
 }
 
 .t-login {
-  position: absolute;
-  right: 22rpx;
-  top: 22rpx;
-  background: #5677fc;
+  right: 20%;
   color: #fff;
   font-size: 24rpx;
   border-radius: 50rpx;
@@ -171,22 +168,8 @@ export default {
 
 .t-login {
   text-align: center;
-  width: 250rpx;
-  margin: 80rpx auto 0;
-}
-
-.t-login {
   float: left;
-  width: 50%;
-}
-
-.t-login image {
-  width: 50rpx;
-  height: 50rpx;
-}
-
-.t-login {
-  text-align: center;
+  width: 100%;
   margin: 200rpx 0 0 0;
   color: #666;
 }
@@ -202,6 +185,11 @@ export default {
 }
 
 .cl {
+  position: absolute;
+  left: 50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  width: 80%;
   zoom: 1;
 }
 

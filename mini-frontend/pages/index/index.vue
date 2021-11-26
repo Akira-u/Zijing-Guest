@@ -3,10 +3,10 @@
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <view class= "button_list">
       <button @tap="studentVerify">学生访客</button>
-      <button>其它访客</button>
+      <button @tap="otherGuest">其它访客</button>
       <button @tap="guardEntry">管理员入口</button>
     </view>
-    <mp-dialog :show="DialogShow" @buttontap="onSubmitDialog" :buttons="buttonArray">
+    <mp-dialog :show="DialogShow" @buttontap="onSubmitDialog">
       <view class="dialog-submit-content">请稍候……</view>
     </mp-dialog>
   </view>
@@ -50,10 +50,40 @@ export default {
         },
       });
     },
-    guardEntry() {
+    otherGuest() {
+      var that = this;
       wx.login({
         success(res1) {
           if (res1.code) {
+            that.DialogShow = true;
+            wx.request({
+              url: "http://49.232.106.46:8000/guest/login",
+              data: {
+                code: res1.code,
+              },
+              method: "GET",
+              success: function (res2) {
+                that.DialogShow = false;
+                console.log(res2.data)
+                if (res2.data.open_id) {
+                  navigateTo("/pages/guest-form/guest-form", res2.data);
+                } else {
+                  navigateTo("/pages/guest-form/guest-register");
+                }
+              },
+            });
+          } else {
+            console.log("登录失败！" + res1.errMsg);
+          }
+        },
+      });
+    },
+    guardEntry() {
+      var that = this
+      wx.login({
+        success(res1) {
+          if (res1.code) {
+            that.DialogShow = true;
             wx.request({
               url: "http://49.232.106.46:8000/guard/login",
               data: {
@@ -61,6 +91,7 @@ export default {
               },
               method: "GET",
               success: function (res2) {
+                that.DialogShow = false;
                 console.log(res2);
                 //this.dialogVisible = false;
                 if (res2.data.open_id) {
@@ -84,9 +115,11 @@ export default {
 
 .img-xiaohui {
   position: absolute;
-  width: 1000rpx;
-  height: 1000rpx;
-  right: 0%;
+  width: 1100rpx;
+  height: 1100rpx;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
   z-index:-1;
   opacity: 0.1;
 }
@@ -98,9 +131,11 @@ export default {
 }
 
 .button_list {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top:50%;
+  transform: translate(-50%,-50%);
   width: 100%;
-  top: 100px;
 }
 
 .container button {
@@ -110,7 +145,7 @@ export default {
   height: 90rpx;
   line-height: 90rpx;
   border-radius: 50rpx;
-  margin: 10px;
+  margin: 40px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 </style>
