@@ -1,4 +1,3 @@
-<!-- 蓝色简洁登录页面 -->
 <template>
   <view class="t-login">
     <!-- 页面装饰图片 -->
@@ -30,6 +29,7 @@
     </form>
   </view>
 </template>
+
 <script>
 import requestData from "@/api/request";
 import { decodeOption } from "@/api/navigate";
@@ -85,19 +85,22 @@ export default {
   },
 };
 </script>
+
 <style>
 .img-a {
   position: absolute;
-  width: 1000rpx;
-  height: 1000rpx;
-  top: -300%;
-  right: 0%;
+  width: 1100rpx;
+  height: 1100rpx;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: -1;
   opacity: 0.1;
 }
 
 .t-login {
-  width: 600rpx;
+  width: 100%;
+  height:100%;
   margin: 0 auto;
   font-size: 28rpx;
   color: #000;
@@ -144,10 +147,10 @@ export default {
   color: #000;
   padding: 0rpx 0 120rpx 0;
   font-weight: bold;
+  margin: 10%
 }
 
 .t-login {
-  position: absolute;
   right: 20%;
   color: #fff;
   font-size: 24rpx;
@@ -166,8 +169,7 @@ export default {
 .t-login {
   text-align: center;
   float: left;
-  width: 80%;
-  right: 7%;
+  width: 100%;
   margin: 200rpx 0 0 0;
   color: #666;
 }
@@ -183,6 +185,11 @@ export default {
 }
 
 .cl {
+  position: absolute;
+  left: 50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  width: 80%;
   zoom: 1;
 }
 

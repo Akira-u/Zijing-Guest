@@ -32,7 +32,6 @@ function reLaunch(url='/pages/index/index', args = {}) {
         str_arg += k + '=' + encodeURIComponent(value) + '&'
     }
     url = str_arg === '' ? url : url + "?" + str_arg.substr(0, str_arg.length - 1)
-    console.log(url)
     return uni.reLaunch({ url: url })
 }
 

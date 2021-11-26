@@ -3,7 +3,7 @@
     <uni-table border stripe emptyText="暂无更多数据">
       <uni-tr>
         <uni-th>guest</uni-th>
-        <uni-td>{{ user.guest }}</uni-td>
+        <uni-td>{{ user.guest.name }}</uni-td>
       </uni-tr>
       <uni-tr>
         <uni-th>purpose</uni-th>
@@ -19,11 +19,7 @@
       </uni-tr>
       <uni-tr>
         <uni-th>in_time</uni-th>
-        <uni-td>{{ user.in_time }}</uni-td>
-      </uni-tr>
-      <uni-tr>
-        <uni-th>out_time</uni-th>
-        <uni-td>{{ user.out_time }}</uni-td>
+        <uni-td>{{ showTime(user.in_time) }}</uni-td>
       </uni-tr>
     </uni-table>
     <button @tap="Remind">提醒</button>
@@ -34,13 +30,26 @@
 import { decodeOption } from "@/api/navigate";
 export default {
   data() {
-    return { user: {} };
+    return {
+      user: {},
+    };
   },
   onLoad(options) {
     decodeOption(options);
     this.user = JSON.parse(options.code);
   },
   methods: {
+    showTime: function (time) {
+      let hh =
+        new Date(time).getHours() < 10
+          ? "0" + new Date(time).getHours()
+          : new Date(time).getHours();
+      let mm =
+        new Date(time).getMinutes() < 10
+          ? "0" + new Date(time).getMinutes()
+          : new Date(time).getMinutes();
+      return hh + ":" + mm;
+    },
     Remind() {
       //TO DO
     },
