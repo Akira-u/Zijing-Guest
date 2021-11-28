@@ -31,8 +31,7 @@
 </template>
 
 <script>
-import { request } from "@/api/request";
-import { decodeOption } from "@/api/navigate";
+import request from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -41,9 +40,6 @@ export default {
       phone: "",
       name: "",
     };
-  },
-  onLoad(options) {
-    decodeOption(options);
   },
   methods: {
     //当前注册按钮操作

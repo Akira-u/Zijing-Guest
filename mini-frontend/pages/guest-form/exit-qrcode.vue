@@ -11,7 +11,7 @@
 
 <script>
 import { reLaunch } from '@/api/navigate'
-import registeredRequest from '@/api/request'
+import { registeredGuestRequest } from '@/api/Guestrequest'
 export default {
   data() {
     return {
@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     exit() {
-      registeredRequest({ url: 'http://49.232.106.46:8000/guest/status'})
+      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/status' })
         .then((status_res) => {
           if (status_res.status === 'out') {
             this.dialog_show = true

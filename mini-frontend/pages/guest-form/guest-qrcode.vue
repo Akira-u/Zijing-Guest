@@ -14,14 +14,14 @@
 
 <script>
 import { reLaunch } from '@/api/navigate'
-import registeredRequest from '@/api/request'
+import { registeredGuestRequest } from '@/api/request'
 export default {
   data() {
     return { qrcode_text: '', dialog_show: false, dialog_text: '尚未审批，请稍等...' };
   },
   methods: {
     checkResult() {
-      registeredRequest({ url: 'http://49.232.106.46:8000/guest/approve_result' })
+      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/approve_result' })
         .then((approve_res) => {
           if (approve_res.approval === 'permit') {
             this.dialog_text = '审批通过！'

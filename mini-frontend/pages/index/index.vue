@@ -14,7 +14,7 @@
 
 <script>
 import navigateTo from "@/api/navigate";
-import { request } from "@/api/request"
+import request from "@/api/request"
 export default {
   data() {
     return {

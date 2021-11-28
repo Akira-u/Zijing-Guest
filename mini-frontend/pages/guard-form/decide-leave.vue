@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import registeredRequest from "@/api/request";
+import {registeredGuardRequest} from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
 export default {
   data() {
@@ -39,7 +39,7 @@ export default {
     decodeOption(options);
     console.log(options.code); //TO DO
     var that = this;
-    registeredRequest({
+    registeredGuardRequest({
       url: "http://49.232.106.46:8000/log/info/",
       method: "GET",
       data: { code: options.code },
@@ -64,7 +64,7 @@ export default {
       var date = new Date();
       console.log(date);
       console.log(this.user.id);
-      registeredRequest({
+      registeredGuardRequest({
         url: "http://49.232.106.46:8000/log/" + this.user.id + "/",
         method: "PATCH",
         data: {

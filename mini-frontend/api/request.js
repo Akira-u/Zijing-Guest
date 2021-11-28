@@ -45,7 +45,7 @@ function request(options = {}) {
  * 参数：与wx.request相同。https://developers.weixin.qq.com/miniprogram/dev/api/network/request/wx.request.html
  * 返回值：Promise, 链式调用
  */
-function registeredRequest(options = {}) {
+function registeredGuardRequest(options = {}) {
     try {
         options.data.open_id = uni.getStorageSync('open_id')
     } catch (e) {
@@ -67,5 +67,27 @@ function registeredRequest(options = {}) {
     }
     return request(options)
 }
-export { request }
-export default registeredRequest
+function registeredGuestRequest(options = {}) {
+    try {
+        options.data.open_id = uni.getStorageSync('open_id')
+    } catch (e) {
+        // local storage can't get open id due to storage loss
+        wx.login({
+            success: function (login_res) {
+                request({ url: "http://c02.whiteffire.cn:8000/guest/login/", data: { code: login_res.code, } })
+                    .then((resp) => {
+                        uni.setStorage({
+                            key: 'open_id',
+                            data: resp.open_id,
+                        })
+                        options.data.open_id = resp.open_id
+                    })
+
+            }
+        })
+
+    }
+    return request(options)
+}
+export { registeredGuardRequest,registeredGuestRequest }
+export default request

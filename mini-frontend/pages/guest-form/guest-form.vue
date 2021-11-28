@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import registeredRequest from "@/api/request"
+import { registeredGuestRequest } from "@/api/Guestrequest"
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -67,7 +67,7 @@ export default {
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-          registeredRequest({ url: "http://c02.whiteffire.cn:8000/log/", method: "POST", data: this.form_data })
+          registeredGuestRequest({ url: "http://c02.whiteffire.cn:8000/log/", method: "POST", data: this.form_data })
             .then((resp_data) => {
               console.log({ resp_data: resp_data })
               navigateTo("/pages/guest-form/guest-qrcode");

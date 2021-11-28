@@ -31,8 +31,7 @@
 </template>
 
 <script>
-import { request } from "@/api/request";
-import { decodeOption } from "@/api/navigate";
+import request from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
