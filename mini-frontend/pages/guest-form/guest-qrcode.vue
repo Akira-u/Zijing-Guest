@@ -2,7 +2,7 @@
   <view class="QRcodePage">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <!-- https://ext.dcloud.net.cn/plugin?id=1287 -->
-    <uqrcode class= "QRcode" ref="guest_qrcode"></uqrcode>
+    <uqrcode class="QRcode" ref="guest_qrcode"></uqrcode>
     <!-- TODO:add a 5min countdown -->
     <view class="tips">二维码有效期为5分钟，请尽快使用！</view>
     <button @tap="checkResult">审批结束，查看结果</button>
@@ -13,45 +13,40 @@
 </template>
 
 <script>
-import {reLaunch} from '@/api/navigate'
-import requestData from '@/api/request'
+import { reLaunch } from '@/api/navigate'
+import { registeredGuestRequest } from '@/api/request'
 export default {
   data() {
     return { qrcode_text: '', dialog_show: false, dialog_text: '尚未审批，请稍等...' };
   },
   methods: {
     checkResult() {
-      var that = this
-      wx.login({
-        success: (login_res) => {
-          requestData({ url: 'http://49.232.106.46:8000/guest/approve_result', data: { code: login_res.code } })
-            .then((approve_res) => {
-              if (approve_res.approval === 'permit') {
-                that.dialog_text = '审批通过！'
-                that.dialog_show = true
-                setTimeout(() => {
-                  that.dialog_show=false
-                }, 1000);
-                reLaunch('/pages/guest-form/in-dorm')
-              }
-              else if (approve_res.approval === 'reject') {
-                that.dialog_text = '审批未通过！'
-                that.dialog_show = true
-                setTimeout(() => {
-                  that.dialog_show=false
-                }, 1000);
-                reLaunch()
-              }
-              else {
-                that.dialog_text = '尚未审批，请稍等...'
-                that.dialog_show = true
-                setTimeout(() => {
-                  that.dialog_show=false
-                }, 1000);
-              }
-            })
-        }
-      })
+      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/approve_result' })
+        .then((approve_res) => {
+          if (approve_res.approval === 'permit') {
+            this.dialog_text = '审批通过！'
+            this.dialog_show = true
+            setTimeout(() => {
+              this.dialog_show = false
+            }, 1000);
+            reLaunch('/pages/guest-form/in-dorm')
+          }
+          else if (approve_res.approval === 'reject') {
+            this.dialog_text = '审批未通过！'
+            this.dialog_show = true
+            setTimeout(() => {
+              this.dialog_show = false
+            }, 1000);
+            reLaunch()
+          }
+          else {
+            this.dialog_text = '尚未审批，请稍等...'
+            this.dialog_show = true
+            setTimeout(() => {
+              this.dialog_show = false
+            }, 1000);
+          }
+        })
 
 
     }
@@ -61,7 +56,7 @@ export default {
     wx.login({
       success: function (login_res) {
         if (login_res.code) {
-          that.qrcode_text = login_res.code+'i'
+          that.qrcode_text = login_res.code + 'i'
           that.$refs.guest_qrcode
             .make({
               size: 300,
@@ -84,7 +79,7 @@ export default {
 </script>
 
 <style>
-.QRcodePage{
+.QRcodePage {
   margin: 10px;
   justify-content: center;
 }
@@ -95,8 +90,8 @@ export default {
   height: 1100rpx;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
-  z-index:-1;
+  transform: translate(-50%, -50%);
+  z-index: -1;
   opacity: 0.1;
 }
 

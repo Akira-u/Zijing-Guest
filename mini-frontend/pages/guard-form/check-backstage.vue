@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import requestData from "@/api/request";
+import {registeredGuardRequest} from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -27,12 +27,11 @@ export default {
     };
   },
   onLoad() {
-    requestData({
+    registeredGuardRequest({
       url: "http://49.232.106.46:8000/log/",
-      method: "GET",
     }).then((res) => {
       this.users = res.results;
-	  console.log(this.users);
+      console.log(this.users);
     });
   },
   methods: {

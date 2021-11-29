@@ -11,7 +11,7 @@
 
 <script>
 import { reLaunch } from '@/api/navigate'
-import requestData from '@/api/request'
+import { registeredGuestRequest } from '@/api/request'
 export default {
   data() {
     return {
@@ -20,29 +20,25 @@ export default {
   },
   methods: {
     exit() {
-      var that = this
-      wx.login({
-        success: (login_res) => {
-          requestData({ url: 'http://49.232.106.46:8000/guest/status', data: { code: login_res.code } })
-            .then((status_res) => {
-              if (status_res.status === 'out') {
-                that.dialog_show = true
-                that.dialog_text = '签离成功！'
-                setTimeout(() => {
-                  that.dialog_show = false
-                }, 1000);
-                reLaunch()
-              }
-              else {
-                that.dialog_show = true
-                that.dialog_text = '请让宿舍管理员扫码！'
-                setTimeout(() => {
-                  that.dialog_show = false
-                }, 1000);
-              }
-            })
-        }
-      })
+      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/status/' })
+        .then((status_res) => {
+          console.log(status_res)
+          if (status_res.status === 'out') {
+            this.dialog_show = true
+            this.dialog_text = '签离成功！'
+            setTimeout(() => {
+              this.dialog_show = false
+            }, 1000);
+            reLaunch()
+          }
+          else {
+            this.dialog_show = true
+            this.dialog_text = '请让宿舍管理员扫码！'
+            setTimeout(() => {
+              this.dialog_show = false
+            }, 1000);
+          }
+        })
 
     }
   },

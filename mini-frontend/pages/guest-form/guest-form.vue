@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import requestData from "@/api/request"
+import { registeredGuestRequest } from "@/api/request"
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -63,26 +63,15 @@ export default {
   },
   methods: {
     submit() {
-      var that = this
       this.$refs.form
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-          wx.login({
-            success: function (res) {
-              if (res.code) {
-                that.form_data.code = res.code // pass a user code to associate guest info and user
-                requestData({ url: "http://c02.whiteffire.cn:8000/log/", method: "POST", data: that.form_data })
-                  .then((resp_data) => {
-                    console.log({ resp_data: resp_data })
-                    navigateTo("/pages/guest-form/guest-qrcode");
-                  })
-              } else {
-                console.log(res.errMsg)
-              }
-            }
-          })
-
+          registeredGuestRequest({ url: "http://c02.whiteffire.cn:8000/log/", method: "POST", data: this.form_data })
+            .then((resp_data) => {
+              console.log({ resp_data: resp_data })
+              navigateTo("/pages/guest-form/guest-qrcode");
+            })
         })
         .catch((err) => {
           console.log("表单错误信息：", err);

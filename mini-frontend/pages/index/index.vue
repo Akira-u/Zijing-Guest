@@ -13,105 +13,88 @@
 </template>
 
 <script>
-import requestData from "@/api/request";
 import navigateTo from "@/api/navigate";
-import requestData from "@/api/request"
+import request from "@/api/request"
 export default {
   data() {
     return {
       DialogShow: false,
     };
   },
-  onShow() {
+  onLoad() {
     wx.login({
-      success:(login_res)=>{
-        requestData({url:"http://49.232.106.46:8000/guest/status",data:{code:login_res.code}})
-          .then((req_res)=>{
-            console.log(req_res.status)
-            if(req_res.status==='still_in'){
+      success: (login_res) => {
+        request({ url: "http://49.232.106.46:8000/guest/status/", data: { code: login_res.code } })
+          .then((req_res) => {
+            console.log('index onshow ', req_res.status)
+            if (req_res.status === 'still in') {
               // if user is in dorm, jump to in-dorm page directly
-              navigateTo('pages/guest-form/in-dorm')
+              uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
             }
           })
       }
     })
-    
+
   },
   methods: {
     studentVerify() {
       var that = this;
       wx.login({
-        success(res1) {
-          if (res1.code) {
-            that.DialogShow = true;
-            requestData({
-              url: "http://49.232.106.46:8000/guest/login",
-              method: "GET",
-              data: { code: res1.code },
-            }).then((res2) => {
+        success(login_res) {
+          that.DialogShow = true;
+          request({
+            url: "http://49.232.106.46:8000/guest/login/",
+            data: { code: login_res.code, }
+          })
+            .then((req_res) => {
               that.DialogShow = false;
-              console.log(res2);
-              if (res2.open_id) {
-                navigateTo("/pages/guest-form/guest-form", res2);
+              console.log(req_res)
+              if (req_res.open_id) {
+                uni.setStorage({
+                  key: 'open_id',
+                  data: req_res.open_id,
+                  fail: (error) => { console.warn(error) }
+                })
+                navigateTo("/pages/guest-form/guest-form", req_res);
               } else {
                 navigateTo("/pages/guest-form/guest-register");
               }
-            });
-          } else {
-            console.log("登录失败！" + res1.errMsg);
-          }
+            })
         },
-      });
-    },
-    otherGuest() {
-      var that = this;
-      wx.login({
-        success(res1) {
-          if (res1.code) {
-            that.DialogShow = true;
-            wx.request({
-              url: "http://49.232.106.46:8000/guest/login",
-              data: {
-                code: res1.code,
-              },
-              method: "GET",
-              success: function (res2) {
-                that.DialogShow = false;
-                console.log(res2.data)
-                if (res2.data.open_id) {
-                  navigateTo("/pages/guest-form/guest-form", res2.data);
-                } else {
-                  navigateTo("/pages/guest-form/guest-register");
-                }
-              },
-            });
-          } else {
-            console.log("登录失败！" + res1.errMsg);
-          }
-        },
+        fail(login_res) {
+          console.log("登录失败！" + login_res.errMsg);
+        }
       });
     },
     guardEntry() {
       var that = this
       wx.login({
-        success(res1) {
-          if (res1.code) {
-            requestData({
-              url: "http://49.232.106.46:8000/guard/login",
-              method: "GET",
-              data: { code: res1.code },
-            }).then((res2) => {
-              console.log(res2);
-              if (res2.open_id) {
-                navigateTo("/pages/guard-form/guard-form");
-              } else {
+        success(login_res) {
+          that.DialogShow = true;
+          request({
+            url: "http://49.232.106.46:8000/guard/login/",
+            data: { code: login_res.code, }
+          })
+            .then((req_res) => {
+              that.DialogShow = false;
+              console.log(req_res)
+              if (req_res.open_id) {
+                uni.setStorage({
+                  key: 'open_id',
+                  data: req_res.open_id,
+                  success: (result) => { },
+                  fail: (error) => { console.warn(error) }
+                })
+                navigateTo("/pages/guard-form/guard-form", req_res);
+              } 
+              else {
                 navigateTo("/pages/guard-form/guard-register");
               }
-            });
-          } else {
-            console.log("登录失败！" + res1.errMsg);
-          }
+            })
         },
+        fail(login_res) {
+          console.log("登录失败！" + login_res.errMsg);
+        }
       });
     },
   },
@@ -125,8 +108,8 @@ export default {
   height: 1100rpx;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
-  z-index:-1;
+  transform: translate(-50%, -50%);
+  z-index: -1;
   opacity: 0.1;
 }
 
@@ -139,8 +122,8 @@ export default {
 .button_list {
   position: absolute;
   left: 50%;
-  top:50%;
-  transform: translate(-50%,-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
 }
 

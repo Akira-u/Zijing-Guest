@@ -31,8 +31,7 @@
 </template>
 
 <script>
-import requestData from "@/api/request";
-import { decodeOption } from "@/api/navigate";
+import request from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -41,9 +40,6 @@ export default {
       phone: "",
       name: "",
     };
-  },
-  onLoad(options) {
-    decodeOption(options);
   },
   methods: {
     //当前注册按钮操作
@@ -65,7 +61,7 @@ export default {
         success(res1) {
           if (res1.code) {
             console.log(that.phone);
-            requestData({
+            request({
               url: "http://49.232.106.46:8000/guest/",
               method: "POST",
               data: {
@@ -100,7 +96,7 @@ export default {
 
 .t-login {
   width: 100%;
-  height:100%;
+  height: 100%;
   margin: 0 auto;
   font-size: 28rpx;
   color: #000;
@@ -147,7 +143,7 @@ export default {
   color: #000;
   padding: 0rpx 0 120rpx 0;
   font-weight: bold;
-  margin: 10%
+  margin: 10%;
 }
 
 .t-login {
@@ -187,8 +183,8 @@ export default {
 .cl {
   position: absolute;
   left: 50%;
-  top:50%;
-  transform: translate(-50%,-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 80%;
   zoom: 1;
 }
