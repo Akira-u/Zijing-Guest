@@ -21,18 +21,15 @@ export default {
       DialogShow: false,
     };
   },
-  onLoad(options) {
-    console.log('index onload')
-  },
-  onShow() {
+  onLoad() {
     wx.login({
       success: (login_res) => {
-        request({ url: "http://49.232.106.46:8000/guest/status", data: { code: login_res.code } })
+        request({ url: "http://49.232.106.46:8000/guest/status/", data: { code: login_res.code } })
           .then((req_res) => {
-            console.log(req_res.status)
-            if (req_res.status === 'still_in') {
+            console.log('index onshow ', req_res.status)
+            if (req_res.status === 'still in') {
               // if user is in dorm, jump to in-dorm page directly
-              navigateTo('pages/guest-form/in-dorm')
+              uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
             }
           })
       }
@@ -88,9 +85,10 @@ export default {
                   success: (result) => { },
                   fail: (error) => { console.warn(error) }
                 })
-                navigateTo("/pages/guest-form/guard-form", req_res);
-              } else {
-                navigateTo("/pages/guest-form/guard-register");
+                navigateTo("/pages/guard-form/guard-form", req_res);
+              } 
+              else {
+                navigateTo("/pages/guard-form/guard-register");
               }
             })
         },

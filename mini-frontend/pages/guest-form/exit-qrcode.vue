@@ -20,8 +20,9 @@ export default {
   },
   methods: {
     exit() {
-      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/status' })
+      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/status/' })
         .then((status_res) => {
+          console.log(status_res)
           if (status_res.status === 'out') {
             this.dialog_show = true
             this.dialog_text = '签离成功！'
@@ -42,18 +43,19 @@ export default {
     }
   },
   onReady() {
+    var that = this
     wx.login({
       success: function (login_res) {
         if (login_res.code) {
-          this.qrcode_text = login_res.code + 'o'
-          this.$refs.guest_qrcode
+          that.qrcode_text = login_res.code + 'o'
+          that.$refs.guest_qrcode
             .make({
               size: 354,
-              text: this.qrcode_text
+              text: that.qrcode_text
             })
             .then((res) => {
               // 返回的res与uni.canvasToTempFilePath返回一致
-              console.log(this.qrcode_text);
+              console.log(that.qrcode_text);
             });
         } else {
           console.log(login_res.errMsg)
