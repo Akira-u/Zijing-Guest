@@ -6,11 +6,14 @@ from .utils import GuestSerializer
 from log.utils import LogSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from Crypto.Cipher import AES
+import base64
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from guard.wx_api import *
 from guard.const import *
+from guard.cipher import *
 
 # Create your views here.
 class GuestViewSet(viewsets.ModelViewSet):
@@ -40,16 +43,26 @@ class GuestViewSet(viewsets.ModelViewSet):
         )
     )
     def create(self, request, *args, **kwargs):
-        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
-        open_id = log_info.get("open_id")
-        session_key = log_info.get("session_key")
-        guest_object = request.data
-        del guest_object["code"]
-        guest_object["open_id"]=open_id
-        serializer = self.get_serializer(data=guest_object)
-        serializer.is_valid()
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
+            open_id = log_info.get("open_id")
+            session_key = log_info.get("session_key")
+        except:
+            return Response({"errmsg":log_info["errmsg"]})
+        try:
+            guest_object = request.data
+            del guest_object["code"]
+            guest_object["open_id"]=open_id
+            serializer = self.get_serializer(data=guest_object)
+            serializer.is_valid()
+            self.perform_create(serializer)
+            resp = serializer.data
+            resp["open_id"] =encrypt(open_id)
+            return Response(resp, status=status.HTTP_201_CREATED)
+        except:
+            return Response(serializer.errors)
+
+        
     @swagger_auto_schema(
     operation_summary='判断当前Guest是否已注册',
     manual_parameters=[
@@ -63,15 +76,20 @@ class GuestViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def login(self,request):
-        code = request.GET.get("code")
-        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
+        try:
+            code = request.GET.get("code")
+            log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
+        except:
+            return Response({"errmsg":log_info["errmsg"]})
         query = Guest.objects.filter(open_id=log_info.get("open_id"))
         if query:
             serializer = GuestSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
-            return Response(serializer.data[0])
+            guest_object=serializer.data[0]
+            guest_object["open_id"]=encrypt(guest_object["open_id"])
+            return Response(guest_object)
         else:
-            return Response({})
+            return Response({"errmsg":"Account Not Found"})
 
     @swagger_auto_schema(
     operation_summary='返回当前Guest对应的Log',
@@ -86,14 +104,20 @@ class GuestViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def approve_result(self,request):
-        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
-        open_id = log_info.get("open_id")
-        guest_object = Guest.objects.get(open_id=open_id)
-        logs=guest_object.guest_log.all()
-        serializer=LogSerializer(data=list(logs.values())[-1])
-        serializer.is_valid(raise_exception=False)
-        return Response(serializer.validated_data)
-        # return Response({})
+        try:
+            open_id = decrypt(request.GET.get("open_id"))
+        except:
+            return Response({"errmsg":"Invalid open_id"})
+        try:
+            guest_object = Guest.objects.get(open_id=open_id)
+            logs=guest_object.guest_log.all()
+            serializer=LogSerializer(data=list(logs.values())[-1])
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.validated_data)
+        except IndexError:
+            return Response({"errmsg":"No Log"})
+        except:
+            return Response(serializer.errors)
 
     @swagger_auto_schema(
     operation_summary='返回当前Guest的访问状态',
@@ -108,17 +132,24 @@ class GuestViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def status(self,request):
-        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
-        open_id = log_info.get("open_id")
-        # open_id = request.GET.get("open_id")
-        guest_object = Guest.objects.get(open_id=open_id)
-        last_log=guest_object.guest_log.last()
-        result={}
-        if last_log.approval=="permit" and last_log.out_time==None:
-            result["status"] = "still in"
-        else:
-            result["status"] = "out"
-        # serializer=LogSerializer(data=list(logs.values())[-1])
-        # serializer.is_valid(raise_exception=False)
-        return Response(result)
-        # return Response({})
+        try:
+            if request.GET.get("code"):
+                log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
+                open_id = log_info["open_id"]
+            else:
+                open_id = decrypt(request.GET.get("open_id"))
+        except KeyError:
+            return Response({"errmsg":log_info["errmsg"]})
+        except:
+            return Response({"errmsg":"Invalid open_id"})
+        try:
+            guest_object=Guest.objects.get(open_id=open_id)
+            last_log=guest_object.guest_log.last()
+            result={}
+            if last_log.approval=="permit" and last_log.out_time==None:
+                result["status"] = "still in"
+            else:
+                result["status"] = "out"
+            return Response(result)
+        except:
+            return Response({"errmsg":"No Log"})

@@ -12,6 +12,8 @@ from .wx_api import *
 import requests
 from Crypto.Cipher import AES
 from .const import *
+from .cipher import *
+
 import datetime
 # Create your views here.
 
@@ -23,13 +25,6 @@ import datetime
 # url: /{application_name}/{model_name}/{action_name(if exist)}
 # 例: POST /guard/log/ 调用Log的create
 #     POST /guard/log/checkin 调用Log的checkin
-
-
-
-
-
-
-
 
 class GuardViewSet(viewsets.ModelViewSet):
     """ 人员信息 viewset """
@@ -58,16 +53,21 @@ class GuardViewSet(viewsets.ModelViewSet):
         )
     )
     def create(self, request, *args, **kwargs):
-        log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=request.data.get("code"))
-        open_id = log_info.get("open_id")
-        session_key = log_info.get("session_key")
-        guard_object = request.data
-        del guard_object["code"]
-        guard_object["open_id"]=open_id
-        serializer = self.get_serializer(data=guard_object)
-        serializer.is_valid()
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=request.data.get("code"))
+            open_id = log_info.get("open_id")
+            session_key = log_info.get("session_key")
+            guard_object = request.data
+            del guard_object["code"]
+            guard_object["open_id"]=open_id
+            serializer = self.get_serializer(data=guard_object)
+            serializer.is_valid()
+            self.perform_create(serializer)
+            resp = serializer.data
+            resp["open_id"] =encrypt(open_id)
+            return Response(resp, status=status.HTTP_201_CREATED)
+        except :
+            return Response({"errmsg":serializer.errors})
     @swagger_auto_schema(
     operation_summary='判断当前Guard是否已注册',
     manual_parameters=[
@@ -81,13 +81,18 @@ class GuardViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def login(self,request):
-        code = request.GET.get("code")
-        log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=code)
+        try:
+            code = request.GET.get("code")
+            log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=code)
+        except:
+            return Response({"errmsg":log_info["errmsg"]})
         query = Guard.objects.filter(open_id=log_info.get("open_id"))
         if query:
             serializer = GuardSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
-            return Response(serializer.data[0])
+            guard_object=serializer.data[0]
+            guard_object["open_id"]=encrypt(guard_object["open_id"])
+            return Response(guard_object)
         else:
-            return Response({})
+            return Response({"errmsg":"Account Not Found"})
 
