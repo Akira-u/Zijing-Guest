@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { registeredGuestRequest } from "@/api/Guestrequest"
+import { registeredGuestRequest } from "@/api/request"
 import navigateTo from "@/api/navigate";
 export default {
   data() {

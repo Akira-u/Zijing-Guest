@@ -46,6 +46,9 @@ function request(options = {}) {
  * 返回值：Promise, 链式调用
  */
 function registeredGuardRequest(options = {}) {
+    if (options.data === undefined) {
+        options.data = {}
+    }
     try {
         options.data.open_id = uni.getStorageSync('open_id')
     } catch (e) {
@@ -68,6 +71,9 @@ function registeredGuardRequest(options = {}) {
     return request(options)
 }
 function registeredGuestRequest(options = {}) {
+    if (options.data === undefined) {
+        options.data = {}
+    }
     try {
         options.data.open_id = uni.getStorageSync('open_id')
     } catch (e) {
@@ -76,9 +82,11 @@ function registeredGuestRequest(options = {}) {
             success: function (login_res) {
                 request({ url: "http://c02.whiteffire.cn:8000/guest/login/", data: { code: login_res.code, } })
                     .then((resp) => {
+                        console.log(resp.open_id)
                         uni.setStorage({
                             key: 'open_id',
                             data: resp.open_id,
+                            fail: function(res){console.log(res)}
                         })
                         options.data.open_id = resp.open_id
                     })

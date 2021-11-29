@@ -11,7 +11,7 @@
 
 <script>
 import { reLaunch } from '@/api/navigate'
-import { registeredGuestRequest } from '@/api/Guestrequest'
+import { registeredGuestRequest } from '@/api/request'
 export default {
   data() {
     return {
