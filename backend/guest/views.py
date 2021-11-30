@@ -44,21 +44,51 @@ class GuestViewSet(viewsets.ModelViewSet):
     )
     def create(self, request, *args, **kwargs):
         try:
+            print(request.data.get("code"))
             log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
+            print(log_info)
             open_id = log_info.get("open_id")
+            print(open_id)
             session_key = log_info.get("session_key")
         except:
             return Response({"errmsg":log_info["errmsg"]})
         try:
-            guest_object = request.data
-            del guest_object["code"]
-            guest_object["open_id"]=open_id
-            serializer = self.get_serializer(data=guest_object)
-            serializer.is_valid()
-            self.perform_create(serializer)
-            resp = serializer.data
-            resp["open_id"] =encrypt(open_id)
-            return Response(resp, status=status.HTTP_201_CREATED)
+            token=request.data.get("token")
+            if not token:
+                guest_object = request.data
+                del guest_object["code"]
+                guest_object["open_id"]=open_id
+                guest_object["is_student"]=False
+                serializer = self.get_serializer(data=guest_object)
+                serializer.is_valid()
+                self.perform_create(serializer)
+                resp = serializer.data
+                resp["open_id"] =encrypt(open_id)
+                return Response(resp, status=status.HTTP_201_CREATED)
+            else:
+                data = {
+                    "token":token
+                }
+                r = requests.post("https://alumni-test.iterator-traits.com/fake-id-tsinghua-proxy/api/user/session/token",data=data)
+                # print(eval(r.text))
+                packet = eval(r.text).get("user")
+                print(packet)
+                guest_object = {
+                    "name":packet.get("name"),
+                    "student_id":packet.get("card"),
+                    "department":packet.get("department"),
+                    "is_student":True,
+                    "open_id":open_id
+                }
+                print(guest_object)
+                serializer = self.get_serializer(data=guest_object)
+                serializer.is_valid(raise_exception=False)
+                self.perform_create(serializer)
+                resp = serializer.data
+                resp["open_id"]= encrypt(open_id)
+                print(serializer.errors)
+                print(resp)
+                return Response(resp, status=status.HTTP_201_CREATED)
         except:
             return Response(serializer.errors)
 
