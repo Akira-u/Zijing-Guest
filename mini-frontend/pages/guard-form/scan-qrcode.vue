@@ -1,6 +1,7 @@
 <template>
   <view class="form-list">
-    <image @tap="scanQrcode" src="/static/scan.jpeg" mode="widthFix"></image>
+    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    <image class="scanCode" @tap="scanQrcode" src="/static/scan.jpeg" mode="widthFix"></image>
     <button @tap="scanQrcode">扫码</button>
   </view>
 </template>
@@ -39,4 +40,40 @@ export default {
 </script>
 
 <style>
+.form-list {
+  padding: 20px;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.form-list button {
+  position: relative;
+  font-size: 28rpx;
+  background: #5677fc;
+  color: #fff;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 50rpx;
+  transform: translate(0%, 900%);
+  margin: 40px;
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
+}
+
+.img-xiaohui {
+  position: absolute;
+  width: 1100rpx;
+  height: 1100rpx;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.scanCode {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -40%);
+}
 </style>
