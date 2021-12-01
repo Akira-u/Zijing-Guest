@@ -83,7 +83,7 @@ export default {
 </script>
 
 <style>
-.img-a {
+.img-xiaohui {
   position: absolute;
   width: 1100rpx;
   height: 1100rpx;

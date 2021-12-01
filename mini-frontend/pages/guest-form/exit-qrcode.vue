@@ -1,7 +1,8 @@
 <template>
-  <view>
+  <view class="exitCode">
+    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <uqrcode ref="guest_qrcode"></uqrcode>
-    请出示二维码给管理员，被扫码后点击结束按钮完成签离。
+    <view class="tips">请出示二维码给管理员，被扫码后点击结束按钮完成签离。</view>
     <button @tap="exit">结束</button>
     <mp-dialog :show="dialog_show" @buttontap="exit">
       <view class="dialog-submit-content">{{ dialog_text }}</view>
@@ -68,4 +69,49 @@ export default {
 </script>
 
 <style>
+.img-xiaohui {
+  position: absolute;
+  width: 1100rpx;
+  height: 1100rpx;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.exitCode {
+  padding: 20px;
+  font-size: 26px;
+  line-height: 24px;
+  margin: 10px;
+  justify-content: center;
+}
+
+.uqrcode {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -90%);
+}
+
+.tips {
+  position: absolute;
+  width: 90%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 150%);
+}
+
+button {
+  font-size: 28rpx;
+  background: #5677fc;
+  color: #fff;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 50rpx;
+  margin: 40px;
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
+  transform: translate(0%, 1000%);
+}
 </style>

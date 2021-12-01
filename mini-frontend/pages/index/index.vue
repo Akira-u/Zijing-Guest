@@ -170,7 +170,7 @@ export default {
   width: 100%;
 }
 
-.container button {
+button {
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;

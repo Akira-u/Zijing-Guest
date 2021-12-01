@@ -1,7 +1,8 @@
 <template>
-  <view>
+  <view class="guestForm">
+    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
-    <uni-forms ref="form" :modelValue="form_data" :rules="rules">
+    <uni-forms class="inputList" ref="form" :modelValue="form_data" :rules="rules">
       <uni-forms-item required label="目的宿舍" name="target_dorm">
         <uni-easyinput
           v-model="form_data.target_dorm"
@@ -82,4 +83,48 @@ export default {
 </script>
 
 <style>
+.guestForm {
+  margin: 10px;
+  justify-content: center;
+}
+
+.img-xiaohui {
+  position: absolute;
+  width: 1100rpx;
+  height: 1100rpx;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.inputList {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -120%);
+}
+
+.uni-easyinput {
+  padding: 0;
+  height: 90rpx;
+  line-height: 90rpx;
+  background: #f8f7fc;
+  border: 1px solid #e9e9e9;
+  font-size: 28rpx;
+  border-radius: 10rpx;
+}
+
+.guestForm button {
+  font-size: 28rpx;
+  background: #5677fc;
+  color: #fff;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 50rpx;
+  margin: 40px;
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
+  transform: translate(0%, 800%);
+}
 </style>
