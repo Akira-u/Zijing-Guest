@@ -4,20 +4,20 @@
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
-          <uni-th>guest</uni-th>
-          <uni-td>{{ user.guest }}</uni-td>
+          <uni-th>guest_name</uni-th>
+          <uni-td>{{ log.guest_name }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>purpose</uni-th>
-          <uni-td>{{ user.purpose }}</uni-td>
+          <uni-td>{{ log.purpose }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>target_dorm</uni-th>
-          <uni-td>{{ user.target_dorm }}</uni-td>
+          <uni-td>{{ log.target_dorm }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>host_student</uni-th>
-          <uni-td>{{ user.host_student }}</uni-td>
+          <uni-td>{{ log.host_student }}</uni-td>
         </uni-tr>
       </uni-table>
     </view>
@@ -33,7 +33,7 @@ import { registeredGuardRequest } from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
 export default {
   data() {
-    return { user: {} };
+    return { log: {} };
   },
   onLoad(options) {
     decodeOption(options);
@@ -45,35 +45,41 @@ export default {
       data: { code: options.code },
     }).then((res) => {
       console.log({ res: res });
-      that.user = res;
+      that.log = res;
     });
   },
   methods: {
     Pass() {
       var date = new Date();
       console.log(date);
-      console.log(this.user.id);
+      console.log(this.log.guest_id);
       registeredGuardRequest({
-        url: "/log/" + this.user.id + "/",
-        method: "PATCH",
+        url: "/log/check/",
+        method: "POST",
         data: {
+          open_id: this.log.guest_id,
           in_time: date,
           approval: "permit",
         },
+      }).then((res) => {
+        console.log(res);
       });
       reLaunch("/pages/guard-form/guard-form");
     },
     Deny() {
       var date = new Date();
       console.log(date);
-      console.log(this.user.id);
+      console.log(this.log.guest_id);
       registeredGuardRequest({
-        url: "/log/" + this.user.id + "/",
-        method: "PATCH",
+        url: "/log/check/",
+        method: "POST",
         data: {
+          open_id: this.log.guest_id,
           in_time: date,
           approval: "reject",
         },
+      }).then((res) => {
+        console.log(res);
       });
       uni.navigateBack();
     },

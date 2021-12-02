@@ -4,24 +4,24 @@
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
-          <uni-th>guest</uni-th>
-          <uni-td>{{ user.guest.name }}</uni-td>
+          <uni-th>guest_name</uni-th>
+          <uni-td>{{ log.guest_name }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>purpose</uni-th>
-          <uni-td>{{ user.purpose }}</uni-td>
+          <uni-td>{{ log.purpose }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>target_dorm</uni-th>
-          <uni-td>{{ user.target_dorm }}</uni-td>
+          <uni-td>{{ log.target_dorm }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>host_student</uni-th>
-          <uni-td>{{ user.host_student }}</uni-td>
+          <uni-td>{{ log.host_student }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>in_time</uni-th>
-          <uni-td>{{ showTime(user.in_time) }}</uni-td>
+          <uni-td>{{ showTime(log.in_time) }}</uni-td>
         </uni-tr>
       </uni-table>
     </view>
@@ -36,12 +36,12 @@ import { decodeOption } from "@/api/navigate";
 export default {
   data() {
     return {
-      user: {},
+      log: {},
     };
   },
   onLoad(options) {
     decodeOption(options);
-    this.user = JSON.parse(options.code);
+    this.log = JSON.parse(options.code);
   },
   methods: {
     showTime: function (time) {
@@ -56,9 +56,8 @@ export default {
       return hh + ":" + mm;
     },
     Remind() {
-	  console.log("remind");
+      console.log("remind");
       //TO DO
-	  
     },
   },
 };
