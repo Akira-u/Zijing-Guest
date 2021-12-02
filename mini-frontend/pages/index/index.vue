@@ -24,7 +24,7 @@ export default {
   onLoad() {
     wx.login({
       success: (login_res) => {
-        request({ url: "http://49.232.106.46:8000/guest/status/", data: { code: login_res.code } })
+        request({ url: "/guest/status/", data: { code: login_res.code } })
           .then((req_res) => {
             console.log('index onshow ', req_res.status)
             if (req_res.status === 'still in') {
@@ -42,7 +42,7 @@ export default {
         success(login_res) {
           that.DialogShow = true;
           request({
-            url: "http://49.232.106.46:8000/guest/login/",
+            url: "/guest/login/",
             data: { code: login_res.code, }
           })
             .then((req_res) => {
@@ -86,7 +86,7 @@ export default {
         success(login_res) {
           that.DialogShow = true;
           request({
-            url: "http://49.232.106.46:8000/guest/login/",
+            url: "/guest/login/",
             data: { code: login_res.code, }
           })
             .then((req_res) => {
@@ -115,7 +115,7 @@ export default {
         success(login_res) {
           that.DialogShow = true;
           request({
-            url: "http://49.232.106.46:8000/guard/login/",
+            url: "/guard/login/",
             data: { code: login_res.code, }
           })
             .then((req_res) => {

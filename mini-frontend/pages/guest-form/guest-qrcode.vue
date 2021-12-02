@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     checkResult() {
-      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/approve_result' })
+      registeredGuestRequest({ url: '/guest/approve_result' })
         .then((approve_res) => {
           if (approve_res.approval === 'permit') {
             this.dialog_text = '审批通过！'

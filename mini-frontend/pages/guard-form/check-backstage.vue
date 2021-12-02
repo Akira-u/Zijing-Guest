@@ -31,7 +31,7 @@ export default {
   },
   onLoad() {
     registeredGuardRequest({
-      url: "http://49.232.106.46:8000/log/",
+      url: "/log/",
     }).then((res) => {
       this.users = res.results;
       console.log(this.users);

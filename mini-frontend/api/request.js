@@ -1,3 +1,4 @@
+var base_url = "http://c02.whiteffire.cn:8000"
 /**
  * 判断请求状态是否成功
  * 参数：http状态码
@@ -19,6 +20,10 @@ function request(options = {}) {
     if (!options.url) {
         console.warn("request empty url!")
     }
+    if (options.url[0] !== '/') {
+        console.log(options.url, ' without \'/\' in the beginning')
+    }
+    options.url=base_url+options.url
     return new Promise((res, rej) => {
         uni.request(Object.assign(
             options,
@@ -55,7 +60,7 @@ function registeredGuardRequest(options = {}) {
         // local storage can't get open id due to storage loss
         wx.login({
             success: function (login_res) {
-                request({ url: "http://c02.whiteffire.cn:8000/guard/login/", data: { code: login_res.code, } })
+                request({ url: "/guard/login/", data: { code: login_res.code, } })
                     .then((resp) => {
                         uni.setStorage({
                             key: 'open_id',
@@ -80,7 +85,7 @@ function registeredGuestRequest(options = {}) {
         // local storage can't get open id due to storage loss
         wx.login({
             success: function (login_res) {
-                request({ url: "http://c02.whiteffire.cn:8000/guest/login/", data: { code: login_res.code, } })
+                request({ url: "/guest/login/", data: { code: login_res.code, } })
                     .then((resp) => {
                         console.log(resp.open_id)
                         uni.setStorage({

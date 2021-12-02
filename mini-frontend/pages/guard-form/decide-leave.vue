@@ -45,7 +45,7 @@ export default {
     console.log(options.code); //TO DO
     var that = this;
     registeredGuardRequest({
-      url: "http://49.232.106.46:8000/log/info/",
+      url: "/log/info/",
       method: "GET",
       data: { code: options.code },
     }).then((res) => {
@@ -70,7 +70,7 @@ export default {
       console.log(date);
       console.log(this.user.id);
       registeredGuardRequest({
-        url: "http://49.232.106.46:8000/log/" + this.user.id + "/",
+        url: "/log/" + this.user.id + "/",
         method: "PATCH",
         data: {
           out_time: date,
