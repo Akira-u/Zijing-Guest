@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     exit() {
-      registeredGuestRequest({ url: 'http://49.232.106.46:8000/guest/status/' })
+      registeredGuestRequest({ url: '/guest/status/' })
         .then((status_res) => {
           console.log(status_res)
           if (status_res.status === 'out') {

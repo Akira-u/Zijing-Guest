@@ -11,7 +11,7 @@ export default {
         wx.login({
           success(login_res) {
             request({
-              url: "http://49.232.106.46:8000/guest/",
+              url: "/guest/",
               method: "POST",
               data: {
                 code: login_res.code,

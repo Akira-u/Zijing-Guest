@@ -62,7 +62,7 @@ export default {
           if (res1.code) {
             console.log(that.phone);
             request({
-              url: "http://49.232.106.46:8000/guard/",
+              url: "/guard/",
               method: "POST",
               data: {
                 code: res1.code,
