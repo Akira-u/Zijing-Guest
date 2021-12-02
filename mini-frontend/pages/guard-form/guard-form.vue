@@ -1,8 +1,13 @@
 <template>
-  <view class= "guardForm">
+  <view class="guardForm">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    <image
+      class="scanCode"
+      @tap="scanQrcode"
+      src="/static/scan.png"
+      mode="widthFix"
+    ></image>
     <view class="buttonList">
-      <button @tap="scanQrcode">扫码</button>
       <button @tap="checkBackstage">查看后台</button>
     </view>
   </view>
@@ -15,8 +20,26 @@ export default {
     return {};
   },
   methods: {
-    scanQrcode() {
-      navigateTo("/pages/guard-form/scan-qrcode");
+    scanQrcode: function () {
+      console.log("scan qrcode");
+      var that = this;
+      wx.scanCode({
+        success(res) {
+          console.log(res.result);
+          var l = res.result.length;
+          var code = res.result.substr(0, l - 1);
+          if (res.result[l - 1] == "i") {
+            navigateTo("/pages/guard-form/decide-pass", { code: code });
+          } else if (res.result[l - 1] == "o") {
+            navigateTo("/pages/guard-form/decide-leave", { code: code });
+          } else {
+            console.log("error code");
+          }
+        },
+        fail(res) {
+          console.log("fail to scan");
+        },
+      });
     },
     checkBackstage() {
       navigateTo("/pages/guard-form/check-backstage");
@@ -48,7 +71,7 @@ button {
   position: absolute;
   width: 90%;
   left: 50%;
-  top: 50%;
+  top: 70%;
   transform: translate(-50%, -50%);
 }
 
@@ -61,5 +84,14 @@ button {
   transform: translate(-50%, -50%);
   z-index: -1;
   opacity: 0.1;
+}
+
+.scanCode {
+  position: absolute;
+  width: 500rpx;
+  height: 500rpx;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -40%);
 }
 </style>
