@@ -38,18 +38,61 @@ class LogViewSet(viewsets.ModelViewSet):
         try:
             open_id = guest_object.open_id
             log_object["guest_id"]=open_id # confusing???? 
+            print(log_object)
             serializer = self.get_serializer(data=log_object)
             serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            resp = serializer.data
-            del resp["guest_id"]
-            del resp["guest"]["open_id"]
-            return Response(resp, status=status.HTTP_201_CREATED)
+            log_object = serializer.data
+            print(log_object)
+            del log_object["guest_id"]            
+            if cache.set(open_id,log_object,timeout=300, nx=True):
+                print(cache.get(open_id))
+                return Response(log_object, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"errmsg":"You have a proceeding log"})
         except:
+            print(serializer.errors)
             return Response(serializer.errors)
-    """ GET """
-
+    
+    @action(detail=False,methods=["POST"])
+    def check(self,request,*args, **kwargs):
+        kwargs['partial'] = True
+        print("patch")
+        try:
+            # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+            open_id = decrypt(request.data.get("open_id")) 
+            # print(open_id)
+            ex_log = cache.get(open_id)
+            print(ex_log)
+            print(request.data)
+            if ex_log:
+                if request.data.get("in_time"):
+                    ex_log["in_time"]=request.data.get("in_time")
+                    ex_log["approval"]=request.data.get("approval")
+                    if ex_log["approval"]=="reject":
+                        cache.delete_pattern(open_id)
+                        return Response({"msg":"Reject"})
+                    else:
+                        print("1")
+                        cache.delete_pattern(open_id)
+                        print("2")
+                        cache.set(open_id,ex_log)
+                        print("3")
+                        return Response({"msg":"Permit"})
+                elif request.data.get("out_time"):
+                    ex_log["out_time"]=request.data.get("out_time")
+                    cache.delete_pattern(open_id)
+                    ex_log["guest_id"]=open_id
+                    serializer=self.get_serializer(data=ex_log)
+                    serializer.is_valid(raise_exception=False)
+                    if not serializer.errors:
+                        self.perform_create(serializer)
+                        return Response(serializer.data,status=status.HTTP_201_CREATED)
+                    else:
+                        return Response({"errmsg":serializer.errors})
+            else:
+                raise Exception
+        except:
+            return Response({"errmsg":"proceeding log not found, maybe timeout."})
     @swagger_auto_schema(
     operation_summary='根据guset的code返回最近的一条log',
     manual_parameters=[
@@ -69,13 +112,16 @@ class LogViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":log_info["errmsg"]})
         try:    
-            instance = Log.objects.filter(guest__open_id=log_info.get("open_id"))
-            serializer = self.get_serializer(data=list(instance.values())[-1])
-            serializer.is_valid(raise_exception=False)
-            resp = serializer.validated_data
-            resp["guest"] = (Guest.objects.filter(open_id=resp.get("guest_id")).values())[0].get("name")
-            resp["id"]=instance.last().id
-            return Response(resp)
+            open_id = log_info.get("open_id")
+            log_object = cache.get(open_id)
+            # print(log_object)
+            if not log_object:
+                raise Exception
+            guest_object = Guest.objects.filter(open_id=open_id).last().__dict__
+            # print(guest_object)
+            log_object["guest_name"] = guest_object["name"]
+            log_object["guest_id"]= encrypt(open_id)
+            return Response(log_object)
         except:
             return Response({"errmsg":"Log Not Found"})
 

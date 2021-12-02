@@ -14,4 +14,3 @@ PyMySQL==1.0.2
 django-sslserver==0.22
 django-redis==5.0.0
 drf-yasg==1.20.0
-pycryptodome==3.11.0
