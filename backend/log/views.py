@@ -53,11 +53,17 @@ class LogViewSet(viewsets.ModelViewSet):
             print(serializer.errors)
             return Response(serializer.errors)
     
-    def partial_update(self,request,*args, **kwargs):
+    @action(detail=False,methods=["POST"])
+    def check(self,request,*args, **kwargs):
         kwargs['partial'] = True
+        print("patch")
         try:
+            # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
             open_id = decrypt(request.data.get("open_id")) 
+            # print(open_id)
             ex_log = cache.get(open_id)
+            print(ex_log)
+            print(request.data)
             if ex_log:
                 if request.data.get("in_time"):
                     ex_log["in_time"]=request.data.get("in_time")
@@ -66,11 +72,16 @@ class LogViewSet(viewsets.ModelViewSet):
                         cache.delete_pattern(open_id)
                         return Response({"msg":"Reject"})
                     else:
-                        cache.set(open_id,ex_log,ex=True)
+                        print("1")
+                        cache.delete_pattern(open_id)
+                        print("2")
+                        cache.set(open_id,ex_log)
+                        print("3")
                         return Response({"msg":"Permit"})
                 elif request.data.get("out_time"):
                     ex_log["out_time"]=request.data.get("out_time")
                     cache.delete_pattern(open_id)
+                    ex_log["guest_id"]=open_id
                     serializer=self.get_serializer(data=ex_log)
                     serializer.is_valid(raise_exception=False)
                     if not serializer.errors:
@@ -80,7 +91,6 @@ class LogViewSet(viewsets.ModelViewSet):
                         return Response({"errmsg":serializer.errors})
             else:
                 raise Exception
-            return self.update(request, *args, **kwargs)
         except:
             return Response({"errmsg":"proceeding log not found, maybe timeout."})
     @swagger_auto_schema(
@@ -104,9 +114,11 @@ class LogViewSet(viewsets.ModelViewSet):
         try:    
             open_id = log_info.get("open_id")
             log_object = cache.get(open_id)
+            # print(log_object)
             if not log_object:
                 raise Exception
-            guest_object = Guest.objects.filter(open_id=open_id).last().values()
+            guest_object = Guest.objects.filter(open_id=open_id).last().__dict__
+            # print(guest_object)
             log_object["guest_name"] = guest_object["name"]
             log_object["guest_id"]= encrypt(open_id)
             return Response(log_object)

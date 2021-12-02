@@ -141,6 +141,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response({"errmsg":"Invalid open_id"})
         try:
             log_exist=cache.get(open_id)
+            print(log_exist)
             # print(log_exist)
             if log_exist:
                 return Response(log_exist)
