@@ -3,7 +3,7 @@
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <view class="button_list">
       <button @tap="studentVerify">学生访客</button>
-      <button @tap="otherGuest">其它访客</button>
+      <button @tap="otherGuestEntry">其它访客</button>
       <button @tap="guardEntry">管理员入口</button>
     </view>
     <mp-dialog :show="DialogShow" @buttontap="onSubmitDialog">
@@ -34,10 +34,53 @@ export default {
           })
       }
     })
-
   },
   methods: {
     studentVerify() {
+      var that = this;
+      wx.login({
+        success(login_res) {
+          that.DialogShow = true;
+          request({
+            url: "http://49.232.106.46:8000/guest/login/",
+            data: { code: login_res.code, }
+          })
+            .then((req_res) => {
+              that.DialogShow = false;
+              console.log(req_res)
+              if (req_res.open_id) {
+                uni.setStorage({
+                  key: 'open_id',
+                  data: req_res.open_id,
+                  fail: (error) => { console.warn(error) }
+                })
+                navigateTo("/pages/guest-form/guest-form", req_res);
+              } else {
+                uni.navigateToMiniProgram({
+                  "appId": "wx31f880501d44724a",
+                  "path": "pages/index/index",
+                  "envVersion": "trial",
+                  "extraData": {
+                    "origin": "miniapp",
+                    "type": "id.tsinghua"
+                  },
+                  success: (res) => {
+                    console.log("打开成功", res);
+                  },
+                  fail: (err) => {
+                    console.log(err);
+                  },
+                })
+              }
+            }       
+          )
+        },
+        fail(login_res) {
+          console.log("登录失败！" + login_res.errMsg);
+        }
+      });
+    },
+    otherGuestEntry() {
       var that = this;
       wx.login({
         success(login_res) {

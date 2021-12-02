@@ -1,17 +1,43 @@
 <script>
-	export default {
-		onLaunch: function() {
-			console.log('App Launch')
-		},
-		onShow: function() {
-			console.log('App Show')
-		},
-		onHide: function() {
-			console.log('App Hide')
-		}
-	}
+import request from "@/api/request";
+import navigateTo from "@/api/navigate";
+export default {
+  onLaunch: function () {
+    console.log("App Launch");
+  },
+  onShow: function (options) {
+    if (options.path == "pages/index/index") {
+      if (options.referrerInfo.extraData) {
+        wx.login({
+          success(login_res) {
+            request({
+              url: "http://49.232.106.46:8000/guest/",
+              method: "POST",
+              data: {
+                code: login_res.code,
+                token: options.referrerInfo.extraData.token,
+              },
+            })
+            .then((req_res) => {
+              console.log(req_res);
+              if (req_res.open_id){
+                navigateTo("/pages/guest-form/guest-form", req_res);
+              } else{
+                navigateTo("/pages/guest-form/guest-register", req_res);
+              }
+            })
+          }
+        })
+      }
+    }
+    console.log("App Show");
+  },
+  onHide: function () {
+    console.log("App Hide");
+  },
+};
 </script>
 
 <style>
-	/*每个页面公共css */
+/*每个页面公共css */
 </style>
