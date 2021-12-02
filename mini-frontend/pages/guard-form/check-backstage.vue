@@ -4,17 +4,17 @@
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
-          <uni-th>guest</uni-th>
+          <uni-th>guest_name</uni-th>
           <uni-th>in_time</uni-th>
         </uni-tr>
         <uni-tr
-          v-for="(user, index) in users"
+          v-for="(log, index) in logs"
           :key="index"
-		  v-if="user.out_time==null"
-          @tap="checkDetails(user)"
+          v-if="log.out_time == null"
+          @tap="checkDetails(log)"
         >
-          <uni-td>{{ user.guest.name }}</uni-td>
-          <uni-td>{{showTime(user.in_time)}}</uni-td>
+          <uni-td>{{ log.guest.name }}</uni-td>
+          <uni-td>{{ showTime(log.in_time) }}</uni-td>
         </uni-tr>
       </uni-table>
     </view>
@@ -22,37 +22,37 @@
 </template>
 
 <script>
-import {registeredGuardRequest} from "@/api/request";
+import { registeredGuardRequest } from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
     return {
-      users: {},
+      logs: {},
     };
   },
   onLoad() {
     registeredGuardRequest({
       url: "/log/",
     }).then((res) => {
-      this.users = res.results;
-      console.log(this.users);
+      this.logs = res.results;
+      console.log(this.logs);
     });
   },
   methods: {
-	showTime:function(time){
-		let hh =
-		  new Date(time).getHours() < 10
-		    ? "0" + new Date(time).getHours()
-		    : new Date(time).getHours();
-		let mm =
-		  new Date(time).getMinutes() < 10
-		    ? "0" + new Date(time).getMinutes()
-		    : new Date(time).getMinutes();
-		return hh + ":" + mm;
-	},
-    checkDetails: function (user) {
+    showTime: function (time) {
+      let hh =
+        new Date(time).getHours() < 10
+          ? "0" + new Date(time).getHours()
+          : new Date(time).getHours();
+      let mm =
+        new Date(time).getMinutes() < 10
+          ? "0" + new Date(time).getMinutes()
+          : new Date(time).getMinutes();
+      return hh + ":" + mm;
+    },
+    checkDetails: function (log) {
       navigateTo("/pages/guard-form/check-details", {
-        code: JSON.stringify(user),
+        code: JSON.stringify(log),
       });
     },
   },
