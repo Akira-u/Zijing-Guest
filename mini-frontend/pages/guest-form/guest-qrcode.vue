@@ -2,15 +2,20 @@
   <view class="QRcodePage">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <!-- https://ext.dcloud.net.cn/plugin?id=1287 -->
-    <uqrcode class="QRcode" ref="guest_qrcode"></uqrcode>
-    <!-- TODO:add a 5min countdown -->
-    <view class="tips">二维码有效期为5分钟，请尽快使用！</view>
-    <button @tap="checkResult">审批结束，查看结果</button>
+    <view class="QRcode">
+      <uqrcode ref="guest_qrcode"></uqrcode>
+      <!-- TODO:add a 5min countdown -->
+      <view class="tips">二维码有效期为5分钟，请尽快使用！</view>
+    </view>
+    <view class="buttonList">
+      <button @tap="checkResult">审批结束，查看结果</button>
+    </view>
     <mp-dialog :show="dialog_show" @buttontap="checkResult">
       <view class="dialog-submit-content">{{ dialog_text }}</view>
     </mp-dialog>
   </view>
 </template>
+
 
 <script>
 import { reLaunch } from '@/api/navigate'
@@ -79,11 +84,6 @@ export default {
 </script>
 
 <style>
-.QRcodePage {
-  margin: 10px;
-  justify-content: center;
-}
-
 .img-xiaohui {
   position: absolute;
   width: 1100rpx;
@@ -95,7 +95,28 @@ export default {
   opacity: 0.1;
 }
 
-.QRcodePage button {
+.QRcodePage {
+  padding: 20px;
+  font-size: 20px;
+  line-height: 24px;
+  margin: 10px;
+  justify-content: center;
+}
+
+.QRcode {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 20%);
+  justify-content: center;
+}
+
+.tips {
+  position: relative;
+  transform: translate(0%, 150%);
+  font-size: 18px;
+}
+
+button {
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
@@ -105,4 +126,13 @@ export default {
   margin: 40px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
+
+.buttonList {
+  position: relative;
+  width: 120%;
+  left: 50%;
+  transform: translate(-50%, 1000%);
+}
+
 </style>
+

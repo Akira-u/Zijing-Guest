@@ -1,9 +1,13 @@
 <template>
   <view class="exitCode">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
-    <uqrcode ref="guest_qrcode"></uqrcode>
-    <view class="tips">请出示二维码给管理员，被扫码后点击结束按钮完成签离。</view>
-    <button @tap="exit">结束</button>
+    <view class="QRcode">
+      <uqrcode ref="exit_qrcode"></uqrcode>
+      <view class="tips">请出示二维码给管理员，被扫码后点击结束按钮完成签离。</view>
+    </view>
+    <view class="buttonList">
+      <button @tap="exit">结束</button>
+    </view>
     <mp-dialog :show="dialog_show" @buttontap="exit">
       <view class="dialog-submit-content">{{ dialog_text }}</view>
     </mp-dialog>
@@ -49,9 +53,9 @@ export default {
       success: function (login_res) {
         if (login_res.code) {
           that.qrcode_text = login_res.code + 'o'
-          that.$refs.guest_qrcode
+          that.$refs.exit_qrcode
             .make({
-              size: 354,
+              size: 300,
               text: that.qrcode_text
             })
             .then((res) => {
@@ -82,25 +86,23 @@ export default {
 
 .exitCode {
   padding: 20px;
-  font-size: 26px;
+  font-size: 20px;
   line-height: 24px;
   margin: 10px;
   justify-content: center;
 }
 
-.uqrcode {
+.QRcode {
   position: absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -90%);
+  transform: translate(-50%, 20%);
+  justify-content: center;
 }
 
 .tips {
-  position: absolute;
-  width: 90%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, 150%);
+  position: relative;
+  transform: translate(0%, 70%);
+  font-size: 18px;
 }
 
 button {
@@ -112,6 +114,13 @@ button {
   border-radius: 50rpx;
   margin: 40px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
-  transform: translate(0%, 1000%);
 }
+
+.buttonList {
+  position: relative;
+  width: 120%;
+  left: 50%;
+  transform: translate(-50%, 1000%);
+}
+
 </style>
