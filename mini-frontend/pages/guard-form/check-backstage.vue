@@ -10,6 +10,7 @@
         <uni-tr
           v-for="(user, index) in users"
           :key="index"
+		  v-if="user.out_time==null"
           @tap="checkDetails(user)"
         >
           <uni-td>{{ user.guest.name }}</uni-td>

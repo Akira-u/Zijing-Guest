@@ -56,7 +56,9 @@ export default {
       return hh + ":" + mm;
     },
     Remind() {
+	  console.log("remind");
       //TO DO
+	  
     },
   },
 };
