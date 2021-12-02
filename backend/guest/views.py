@@ -14,6 +14,7 @@ from drf_yasg.utils import swagger_auto_schema
 from guard.wx_api import *
 from guard.const import *
 from guard.cipher import *
+from django.core.cache import cache
 
 # Create your views here.
 class GuestViewSet(viewsets.ModelViewSet):
@@ -139,16 +140,21 @@ class GuestViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":"Invalid open_id"})
         try:
-            guest_object = Guest.objects.get(open_id=open_id)
-            logs=guest_object.guest_log.all()
-            serializer=LogSerializer(data=list(logs.values())[-1])
-            serializer.is_valid(raise_exception=True)
-            return Response(serializer.validated_data)
-        except IndexError:
-            return Response({"errmsg":"No Log"})
+            log_exist=cache.get(open_id)
+            print(log_exist)
+            # print(log_exist)
+            if log_exist:
+                return Response(log_exist)
+            else:
+                raise Exception
+                
+            # guest_object = Guest.objects.get(open_id=open_id)
+            # logs=guest_object.guest_log.all()
+            # serializer=LogSerializer(data=list(logs.values())[-1])
+            # serializer.is_valid(raise_exception=True)
+            # return Response(serializer.validated_data)
         except:
-            return Response(serializer.errors)
-
+            return Response({"errmsg":"Log Not Found"})
     @swagger_auto_schema(
     operation_summary='返回当前Guest的访问状态',
     manual_parameters=[
