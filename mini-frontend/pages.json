@@ -58,15 +58,6 @@
 		    
 		},
 		{
-		    "path" : "pages/guard-form/scan-qrcode",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "扫码页面",
-		        "enablePullDownRefresh": false
-		    }
-		    
-		},
-		{
 		    "path" : "pages/guard-form/decide-pass",
 		    "style" :                                                                                    
 		    {
