@@ -45,7 +45,7 @@ class LogViewSet(viewsets.ModelViewSet):
             print(log_object)
             del log_object["guest_id"]
             log_object["guest_name"]=guest_object.name
-            if cache.set(open_id,log_object, nx=True):
+            if cache.set(open_id,log_object, timeout=None,nx=True):
                 print(cache.get(open_id))
                 return Response(log_object, status=status.HTTP_201_CREATED)
             else:
@@ -76,7 +76,7 @@ class LogViewSet(viewsets.ModelViewSet):
                         print("1")
                         cache.delete_pattern(open_id)
                         print("2")
-                        cache.set(open_id,ex_log)
+                        cache.set(open_id,ex_log,timeout=None)
                         print("3")
                         return Response({"msg":"Permit"})
                 elif request.data.get("out_time"):

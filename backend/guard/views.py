@@ -15,6 +15,7 @@ from Crypto.Cipher import AES
 from .const import *
 from .cipher import *
 from django.core.cache import cache
+from django.core.paginator import Paginator
 
 import datetime
 # Create your views here.
@@ -101,15 +102,24 @@ class GuardViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def backstage(self,request):
         try:
-            open_id = decrypt(request.GET.get("open_id"))
-            # open_id=request.GET.get("open_id")
+            # open_id = decrypt(request.GET.get("open_id"))
+            open_id=request.GET.get("open_id")
         except:
             return Response({"errmsg":"invalid open_id"})
         keys=cache.keys("*")
         logs = []
         for key in keys:
             logs.append(cache.get(key))
-        # serializer=LogSerializer(data=logs,many=True)
-        # serializer.is_valid()
-        # print(serializer.errors)
-        return Response(logs)
+        p = Paginator(logs,10)
+        try:
+            page = int(request.GET.get("page"))
+        except:
+            page=1
+        if page>p.num_pages:page=p.num_pages
+        elif page<1:page=1
+        return Response({"data":p.page(page).object_list,"total":p.count})
+
+    @action(detail=False,methods=['POST'])
+    def remind(self,request):
+        #TODO
+        pass

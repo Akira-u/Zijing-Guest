@@ -15,6 +15,7 @@ from guard.wx_api import *
 from guard.const import *
 from guard.cipher import *
 from django.core.cache import cache
+from django.core.paginator import Paginator
 
 # Create your views here.
 class GuestViewSet(viewsets.ModelViewSet):
@@ -141,8 +142,6 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response({"errmsg":"Invalid open_id"})
         try:
             log_exist=cache.get(open_id)
-            print(log_exist)
-            # print(log_exist)
             if log_exist:
                 return Response(log_exist)
             else:
@@ -193,15 +192,11 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def history(self,request):
         try:
-            open_id = decrypt(request.GET.get("open_id"))
-            # open_id = request.GET.get("open_id")
+            open_id = request.GET.get("open_id")
         except:
             return Response({"errmsg":"invalid open_id"})
         guest_object=Guest.objects.get(open_id=open_id)
         log_history=list(guest_object.guest_log.all().values())
-        # print(log_history)
-        # for log in log_history:
-        #     del log["guest_id"]
         serializer=LogSerializer(data=log_history,many=True)
         serializer.is_valid()
         print(serializer.errors)
@@ -209,9 +204,14 @@ class GuestViewSet(viewsets.ModelViewSet):
         result = serializer.validated_data
         result.append(log_cache)
         print(result)
-        return Response({"data":result})
-            
-            # log_history.append(log_cache)
+        p = Paginator(result,10)
+        try:
+            page = int(request.GET.get("page"))
+        except:
+            page=0
+        if page>p.num_pages:page=p.num_pages
+        elif page<0:page=0
+        return Response({"data":p.page(page).object_list,"total":p.count})
             
             
                 
