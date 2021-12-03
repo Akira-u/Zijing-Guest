@@ -3,6 +3,7 @@ from rest_framework import viewsets, status
 from django_filters import rest_framework as filters
 from .models import Guard
 from .utils import GuardSerializer
+from log.utils import LogSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -13,6 +14,7 @@ import requests
 from Crypto.Cipher import AES
 from .const import *
 from .cipher import *
+from django.core.cache import cache
 
 import datetime
 # Create your views here.
@@ -96,3 +98,18 @@ class GuardViewSet(viewsets.ModelViewSet):
         else:
             return Response({"errmsg":"Account Not Found"})
 
+    @action(detail=False,methods=['GET'])
+    def backstage(self,request):
+        try:
+            open_id = decrypt(request.GET.get("open_id"))
+            # open_id=request.GET.get("open_id")
+        except:
+            return Response({"errmsg":"invalid open_id"})
+        keys=cache.keys("*")
+        logs = []
+        for key in keys:
+            logs.append(cache.get(key))
+        # serializer=LogSerializer(data=logs,many=True)
+        # serializer.is_valid()
+        # print(serializer.errors)
+        return Response(logs)

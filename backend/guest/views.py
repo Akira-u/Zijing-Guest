@@ -189,3 +189,31 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response(result)
         except:
             return Response({"errmsg":"No Log"})
+    
+    @action(detail=False,methods=['GET'])
+    def history(self,request):
+        try:
+            open_id = decrypt(request.GET.get("open_id"))
+            # open_id = request.GET.get("open_id")
+        except:
+            return Response({"errmsg":"invalid open_id"})
+        guest_object=Guest.objects.get(open_id=open_id)
+        log_history=list(guest_object.guest_log.all().values())
+        # print(log_history)
+        # for log in log_history:
+        #     del log["guest_id"]
+        serializer=LogSerializer(data=log_history,many=True)
+        serializer.is_valid()
+        print(serializer.errors)
+        log_cache=cache.get(open_id)
+        result = serializer.validated_data
+        result.append(log_cache)
+        print(result)
+        return Response({"data":result})
+            
+            # log_history.append(log_cache)
+            
+            
+                
+
+

@@ -43,8 +43,9 @@ class LogViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             log_object = serializer.data
             print(log_object)
-            del log_object["guest_id"]            
-            if cache.set(open_id,log_object,timeout=300, nx=True):
+            del log_object["guest_id"]
+            log_object["guest_name"]=guest_object.name
+            if cache.set(open_id,log_object, nx=True):
                 print(cache.get(open_id))
                 return Response(log_object, status=status.HTTP_201_CREATED)
             else:
@@ -117,9 +118,7 @@ class LogViewSet(viewsets.ModelViewSet):
             # print(log_object)
             if not log_object:
                 raise Exception
-            guest_object = Guest.objects.filter(open_id=open_id).last().__dict__
-            # print(guest_object)
-            log_object["guest_name"] = guest_object["name"]
+            
             log_object["guest_id"]= encrypt(open_id)
             return Response(log_object)
         except:
