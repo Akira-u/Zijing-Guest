@@ -13,7 +13,7 @@
           v-if="log.out_time == null"
           @tap="checkDetails(log)"
         >
-          <uni-td>{{ log.guest.name }}</uni-td>
+          <uni-td>{{ log.guest_name }}</uni-td>
           <uni-td>{{ showTime(log.in_time) }}</uni-td>
         </uni-tr>
       </uni-table>
@@ -32,14 +32,15 @@ export default {
   },
   onLoad() {
     registeredGuardRequest({
-      url: "/log/",
+      url: "/guard/backstage/",
     }).then((res) => {
-      this.logs = res.results;
+      this.logs = res;
       console.log(this.logs);
     });
   },
   methods: {
     showTime: function (time) {
+	  if (time==null) return "null";
       let hh =
         new Date(time).getHours() < 10
           ? "0" + new Date(time).getHours()

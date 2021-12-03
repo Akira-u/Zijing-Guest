@@ -45,6 +45,7 @@ export default {
   },
   methods: {
     showTime: function (time) {
+	  if (time==null) return "null";
       let hh =
         new Date(time).getHours() < 10
           ? "0" + new Date(time).getHours()
