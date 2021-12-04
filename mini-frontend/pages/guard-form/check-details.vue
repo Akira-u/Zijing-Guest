@@ -36,7 +36,7 @@
         class="remindDialog"
         mode="input"
         title="提醒"
-        value="同学您好，宿舍来访时间即将结束，请尽快签离。"
+        value="同学您好，请尽快签离。"
         placeholder="请输入提醒信息"
         before-close="true"
         @close="dialogClose"
@@ -89,7 +89,7 @@ export default {
       }
       else {
         if (this.remindMsg.length == 0) {
-          this.remindMsg = "同学您好，宿舍来访时间即将结束，请尽快签离。"
+          this.remindMsg = "同学您好，请尽快签离。"
         }
 
         console.log(this.remindMsg)
