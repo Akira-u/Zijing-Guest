@@ -77,8 +77,29 @@ export default {
         .catch((err) => {
           console.log("表单错误信息：", err);
         });
+      wx.requestSubscribeMessage({
+        tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
+        success(res) {
+          console.log("success", res)
+        },
+        fail(res) {
+          console.log("fail", res)
+        }
+      })
     },
   },
+  // onReady() {
+  //   console.log("onReady")
+  //   wx.requestSubscribeMessage({
+  //     tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
+  //     success(res) {
+  //       console.log("success", res)
+  //     },
+  //     fail(res) {
+  //       console.log("fail", res)
+  //     }
+  //   })
+  // }
 };
 </script>
 
