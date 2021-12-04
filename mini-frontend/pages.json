@@ -116,6 +116,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/guest-form/my-history",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
