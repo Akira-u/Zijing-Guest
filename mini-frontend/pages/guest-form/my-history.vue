@@ -22,6 +22,7 @@
         :show-icon="true"
         :total="total_guest"
         @change="changePage"
+        pageSize=2
       ></uni-pagination>
     </view>
     <uni-popup ref="detail" type="center">
@@ -41,11 +42,15 @@
           </uni-tr>
           <uni-tr>
             <uni-th>进入时间</uni-th>
-              <uni-td><uni-dateformat :date="current_log.in_time"></uni-dateformat></uni-td>
+            <uni-td
+              ><uni-dateformat :date="current_log.in_time"></uni-dateformat
+            ></uni-td>
           </uni-tr>
           <uni-tr>
             <uni-th>离开时间</uni-th>
-            <uni-td><uni-dateformat :date="current_log.out_time"></uni-dateformat></uni-td>
+            <uni-td
+              ><uni-dateformat :date="current_log.out_time"></uni-dateformat
+            ></uni-td>
           </uni-tr>
         </uni-table>
       </view>
@@ -71,6 +76,7 @@ export default {
         // filter invalid logs
         return value.in_time && value.out_time
       });
+      this.total_guest = res.total;
       console.log('my history: ', this.logs);
     });
   },
@@ -85,7 +91,10 @@ export default {
         data: { page: e.current },
       }).then((res) => {
         console.log(res);
-        this.logs = res.data;
+        this.logs = res.data.filter((value) => {
+          // filter invalid logs
+          return value.in_time && value.out_time
+        });
       });
     },
   },
