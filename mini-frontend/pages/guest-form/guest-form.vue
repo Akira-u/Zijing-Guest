@@ -23,6 +23,7 @@
       </uni-forms-item>
     </uni-forms>
     <button @tap="submit">提交</button>
+    <button @tap="viewHistory">查看申请记录</button>
   </view>
 </template>
 
@@ -78,6 +79,9 @@ export default {
           console.log("表单错误信息：", err);
         });
     },
+    viewHistory(){
+      navigateTo("/pages/guest-form/my-history")
+    }
   },
 };
 </script>
