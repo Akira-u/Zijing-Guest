@@ -1,6 +1,6 @@
 <template>
   <view class="inDorm">
-    <image class="img-a" src="@/static/xiaohui.jpg"></image>
+    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     成功进入宿舍！
     <button @tap="checkOut">离开宿舍</button>
   </view>

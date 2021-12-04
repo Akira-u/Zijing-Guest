@@ -5,8 +5,8 @@
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
-          <uni-th>guest_name</uni-th>
-          <uni-th>in_time</uni-th>
+          <uni-th>访客姓名</uni-th>
+          <uni-th>进入时间</uni-th>
         </uni-tr>
         <uni-tr
           v-for="(log, index) in logs"
@@ -15,7 +15,12 @@
           @tap="checkDetails(log)"
         >
           <uni-td>{{ log.guest_name }}</uni-td>
-          <uni-td>{{ showTime(log.in_time) }}</uni-td>
+          <uni-td
+            ><uni-dateformat
+              :date="log.in_time"
+              format="hh:mm:ss"
+            ></uni-dateformat
+          ></uni-td>
         </uni-tr>
       </uni-table>
       <uni-pagination
@@ -48,18 +53,6 @@ export default {
     });
   },
   methods: {
-    showTime: function (time) {
-      if (time == null) return "null";
-      let hh =
-        new Date(time).getHours() < 10
-          ? "0" + new Date(time).getHours()
-          : new Date(time).getHours();
-      let mm =
-        new Date(time).getMinutes() < 10
-          ? "0" + new Date(time).getMinutes()
-          : new Date(time).getMinutes();
-      return hh + ":" + mm;
-    },
     checkDetails: function (log) {
       console.log(log);
       navigateTo("/pages/guard-form/check-details", {

@@ -4,24 +4,29 @@
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
-          <uni-th>guest_name</uni-th>
+          <uni-th>访客姓名</uni-th>
           <uni-td>{{ log.guest_name }}</uni-td>
         </uni-tr>
         <uni-tr>
-          <uni-th>purpose</uni-th>
+          <uni-th>来访事由</uni-th>
           <uni-td>{{ log.purpose }}</uni-td>
         </uni-tr>
         <uni-tr>
-          <uni-th>target_dorm</uni-th>
+          <uni-th>目的宿舍</uni-th>
           <uni-td>{{ log.target_dorm }}</uni-td>
         </uni-tr>
         <uni-tr>
-          <uni-th>host_student</uni-th>
+          <uni-th>接待人</uni-th>
           <uni-td>{{ log.host_student }}</uni-td>
         </uni-tr>
         <uni-tr>
-          <uni-th>in_time</uni-th>
-          <uni-td>{{ showTime(log.in_time) }}</uni-td>
+          <uni-th>进入时间</uni-th>
+          <uni-td
+            ><uni-dateformat
+              :date="log.in_time"
+              format="hh:mm:ss"
+            ></uni-dateformat
+          ></uni-td>
         </uni-tr>
       </uni-table>
     </view>
@@ -53,8 +58,8 @@ export default {
   data() {
     return {
       log: {},
-      remindMsg: '',
-      errMsg: 'error message',
+      remindMsg: "",
+      errMsg: "error message",
     };
   },
   onLoad(options) {
@@ -63,37 +68,24 @@ export default {
     console.log(this.log);
   },
   methods: {
-    showTime: function (time) {
-      if (time == null) return "null";
-      let hh =
-        new Date(time).getHours() < 10
-          ? "0" + new Date(time).getHours()
-          : new Date(time).getHours();
-      let mm =
-        new Date(time).getMinutes() < 10
-          ? "0" + new Date(time).getMinutes()
-          : new Date(time).getMinutes();
-      return hh + ":" + mm;
-    },
     Remind() {
       console.log("remind");
-      this.$refs.remindInput.open()
+      this.$refs.remindInput.open();
       //TO DO
     },
     dialogInput(remindMessage) {
       this.remindMsg = remindMessage;
 
       if (this.remindMsg.length > 25) {
-        this.errMsg = "提醒信息长度应不多于25个字符"
+        this.errMsg = "提醒信息长度应不多于25个字符";
         this.$refs.popupMessage.open();
-      }
-      else {
+      } else {
         if (this.remindMsg.length == 0) {
-          this.remindMsg = "同学您好，请尽快签离。"
+          this.remindMsg = "同学您好，请尽快签离。";
         }
 
-        console.log(this.remindMsg)
-        this.$refs.remindInput.close()
+        console.log(this.remindMsg);
+        this.$refs.remindInput.close();
         console.log(this.log.guest_id);
         registeredGuardRequest({
           url: "/guard/remind/",
@@ -102,15 +94,15 @@ export default {
             open_id: this.log.guest_id,
             msg: {
               thing6: {
-                value: this.log.guest_name
+                value: this.log.guest_name,
               },
               thing1: {
-                value: this.log.target_dorm
+                value: this.log.target_dorm,
               },
               thing5: {
-                value: this.remindMsg
-              }
-            }
+                value: this.remindMsg,
+              },
+            },
           },
         }).then((res) => {
           console.log({ res: res });
@@ -118,8 +110,8 @@ export default {
       }
     },
     dialogClose() {
-      this.$refs.remindInput.close()
-    }
+      this.$refs.remindInput.close();
+    },
   },
 };
 </script>

@@ -4,19 +4,19 @@
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
-          <uni-th>guest_name</uni-th>
+          <uni-th>访客姓名</uni-th>
           <uni-td>{{ log.guest_name }}</uni-td>
         </uni-tr>
         <uni-tr>
-          <uni-th>purpose</uni-th>
+          <uni-th>来访事由</uni-th>
           <uni-td>{{ log.purpose }}</uni-td>
         </uni-tr>
         <uni-tr>
-          <uni-th>target_dorm</uni-th>
+          <uni-th>目的宿舍</uni-th>
           <uni-td>{{ log.target_dorm }}</uni-td>
         </uni-tr>
         <uni-tr>
-          <uni-th>host_student</uni-th>
+          <uni-th>接待人</uni-th>
           <uni-td>{{ log.host_student }}</uni-td>
         </uni-tr>
       </uni-table>
