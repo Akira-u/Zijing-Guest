@@ -27,7 +27,7 @@ import navigateTo from "@/api/navigate";
 export default {
   data() {
     return {
-      logs: {},
+      logs: [],
     };
   },
   onLoad() {
@@ -52,8 +52,9 @@ export default {
       return hh + ":" + mm;
     },
     checkDetails: function (log) {
+      console.log(log[0]);
       navigateTo("/pages/guard-form/check-details", {
-        code: JSON.stringify(log),
+        code: JSON.stringify(log[0]),
       });
     },
   },

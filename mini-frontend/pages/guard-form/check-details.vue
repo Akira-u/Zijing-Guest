@@ -60,6 +60,7 @@ export default {
   onLoad(options) {
     decodeOption(options);
     this.log = JSON.parse(options.code);
+    console.log(this.log);
   },
   methods: {
     showTime: function (time) {
@@ -93,6 +94,7 @@ export default {
 
         console.log(this.remindMsg)
         this.$refs.remindInput.close()
+        console.log(this.log.guest_id);
         registeredGuardRequest({
           url: "/guard/remind/",
           method: "POST",
