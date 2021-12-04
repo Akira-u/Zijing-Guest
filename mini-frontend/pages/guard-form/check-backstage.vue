@@ -1,6 +1,7 @@
 <template>
   <view class="checkBackstage">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    <text>当前楼内有{{ total_guest }}名访客</text>
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
@@ -17,6 +18,11 @@
           <uni-td>{{ showTime(log.in_time) }}</uni-td>
         </uni-tr>
       </uni-table>
+      <uni-pagination
+        :show-icon="true"
+        :total="total_guest"
+        @change="changePage"
+      ></uni-pagination>
     </view>
   </view>
 </template>
@@ -28,19 +34,22 @@ export default {
   data() {
     return {
       logs: {},
+      total_guest: 0,
     };
   },
   onLoad() {
     registeredGuardRequest({
       url: "/guard/backstage/",
+      data: { page: 1 },
     }).then((res) => {
-      this.logs = res;
-      console.log(this.logs);
+      console.log(res);
+      this.logs = res.data;
+      this.total_guest = res.total;
     });
   },
   methods: {
     showTime: function (time) {
-	  if (time==null) return "null";
+      if (time == null) return "null";
       let hh =
         new Date(time).getHours() < 10
           ? "0" + new Date(time).getHours()
@@ -52,8 +61,18 @@ export default {
       return hh + ":" + mm;
     },
     checkDetails: function (log) {
+      console.log(log);
       navigateTo("/pages/guard-form/check-details", {
         code: JSON.stringify(log),
+      });
+    },
+    changePage: function (e) {
+      registeredGuardRequest({
+        url: "/guard/backstage/",
+        data: { page: e.current },
+      }).then((res) => {
+        console.log(res);
+        this.logs = res.data;
       });
     },
   },
