@@ -52,8 +52,6 @@ export default {
             }, 1000);
           }
         })
-
-
     }
   },
   onReady() {
