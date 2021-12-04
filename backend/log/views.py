@@ -43,7 +43,7 @@ class LogViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             log_object = serializer.data
             print(log_object)
-            del log_object["guest_id"]
+            log_object["guest_id"]=encrypt(log_object["guest_id"])
             log_object["guest_name"]=guest_object.name
             if cache.set(open_id,log_object, timeout=None,nx=True):
                 print(cache.get(open_id))

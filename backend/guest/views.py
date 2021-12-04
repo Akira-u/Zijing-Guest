@@ -189,28 +189,44 @@ class GuestViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":"No Log"})
     
+
+    @swagger_auto_schema(
+    operation_summary='返回当前Guest的访问历史',
+    manual_parameters=[
+        openapi.Parameter(
+            name='open_id',
+            in_=openapi.IN_QUERY,
+            description='Guest open_id',
+            type=openapi.TYPE_STRING
+        ),],
+    )
     @action(detail=False,methods=['GET'])
     def history(self,request):
         try:
-            open_id = request.GET.get("open_id")
+            open_id = decrypt(request.GET.get("open_id"))
+            # open_id = request.GET.get("open_id")
         except:
             return Response({"errmsg":"invalid open_id"})
         guest_object=Guest.objects.get(open_id=open_id)
+        print(guest_object)
         log_history=list(guest_object.guest_log.all().values())
         serializer=LogSerializer(data=log_history,many=True)
         serializer.is_valid()
         print(serializer.errors)
         log_cache=cache.get(open_id)
         result = serializer.validated_data
-        result.append(log_cache)
+        if log_cache:
+            result.append(log_cache)
         print(result)
+        for log in result:
+            del log["guest_id"]
         p = Paginator(result,10)
         try:
             page = int(request.GET.get("page"))
         except:
-            page=0
+            page=1
         if page>p.num_pages:page=p.num_pages
-        elif page<0:page=0
+        elif page<1:page=1
         return Response({"data":p.page(page).object_list,"total":p.count})
             
             
