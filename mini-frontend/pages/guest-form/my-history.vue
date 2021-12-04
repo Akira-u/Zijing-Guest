@@ -18,6 +18,11 @@
           <uni-td>{{ log.target_dorm }}</uni-td>
         </uni-tr>
       </uni-table>
+      <uni-pagination
+        :show-icon="true"
+        :total="total_guest"
+        @change="changePage"
+      ></uni-pagination>
     </view>
     <uni-popup ref="detail" type="center">
       <view>
@@ -49,7 +54,7 @@
 </template>
 
 <script>
-import { registeredGuardRequest } from "@/api/request";
+import { registeredGuestRequest } from "@/api/request";
 export default {
   data() {
     return {
@@ -58,7 +63,7 @@ export default {
     };
   },
   onLoad() {
-    registeredGuardRequest({
+    registeredGuestRequest({
       url: "/guest/history/",
       data: { page: 1 }
     }).then((res) => {
@@ -73,6 +78,15 @@ export default {
     checkDetails: function (log) {
       this.current_log = log
       this.$refs.detail.open()
+    },
+    changePage: function (e) {
+      registeredGuestRequest({
+        url: "/guest/history/",
+        data: { page: e.current },
+      }).then((res) => {
+        console.log(res);
+        this.logs = res.data;
+      });
     },
   },
 
