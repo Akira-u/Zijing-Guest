@@ -30,15 +30,24 @@
     </view>
     <uni-popup class="remindPopup" ref="remindInput" type="dialog">
       <uni-popup ref="popupMessage" type="message">
-			  <uni-popup-message :type="msgType" :message="errMsg" :duration="1500" />
-		  </uni-popup>
-      <uni-popup-dialog class="remindDialog" mode="input" title="提醒" value="同学您好，您的预计访问时间即将到达，请尽快签离。" placeholder="请输入提醒信息" before-close=true @close="dialogClose" @confirm="dialogInput"/>
+        <uni-popup-message :type="msgType" :message="errMsg" :duration="1500" />
+      </uni-popup>
+      <uni-popup-dialog
+        class="remindDialog"
+        mode="input"
+        title="提醒"
+        value="同学您好，宿舍来访时间即将结束，请尽快签离。"
+        placeholder="请输入提醒信息"
+        before-close="true"
+        @close="dialogClose"
+        @confirm="dialogInput"
+      />
     </uni-popup>
   </view>
 </template>
 
 <script>
-import {registeredGuardRequest} from "@/api/request";
+import { registeredGuardRequest } from "@/api/request";
 import { decodeOption } from "@/api/navigate";
 export default {
   data() {
@@ -54,7 +63,7 @@ export default {
   },
   methods: {
     showTime: function (time) {
-	  if (time==null) return "null";
+      if (time == null) return "null";
       let hh =
         new Date(time).getHours() < 10
           ? "0" + new Date(time).getHours()
@@ -67,28 +76,28 @@ export default {
     },
     Remind() {
       console.log("remind");
-      this.$refs["remindInput"].open()
+      this.$refs.remindInput.open()
       //TO DO
     },
     dialogInput(remindMessage) {
       this.remindMsg = remindMessage;
-			
+
       if (this.remindMsg.length > 25) {
         this.errMsg = "提醒信息长度应不多于25个字符"
         this.$refs.popupMessage.open();
       }
-      else if (this.remindMsg.length == 0) {
-        this.errMsg = "提醒信息不能为空"
-        this.$refs.popupMessage.open();
-      }
-      else{
+      else {
+        if (this.remindMsg.length == 0) {
+          this.remindMsg = "同学您好，宿舍来访时间即将结束，请尽快签离。"
+        }
+
         console.log(this.remindMsg)
-        this.$refs["remindInput"].close()
+        this.$refs.remindInput.close()
         registeredGuardRequest({
           url: "/guard/remind/",
           method: "POST",
           data: {
-		        open_id: this.log.guest_id,
+            open_id: this.log.guest_id,
             msg: {
               thing6: {
                 value: this.log.guest_name
@@ -107,7 +116,7 @@ export default {
       }
     },
     dialogClose() {
-      this.$refs["remindInput"].close()
+      this.$refs.remindInput.close()
     }
   },
 };
@@ -160,5 +169,4 @@ button {
 input {
   height: 200px;
 }
-
 </style>

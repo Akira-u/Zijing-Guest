@@ -79,6 +79,11 @@ export default {
         });
     },
   },
+  onReady() {
+    wx.requestSubscribeMessage({
+      tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
+    }).catch((res)=>{console.log(res.errMsg)})
+  }
 };
 </script>
 
