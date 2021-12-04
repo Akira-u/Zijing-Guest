@@ -61,6 +61,7 @@ export default {
       return hh + ":" + mm;
     },
     checkDetails: function (log) {
+      console.log(log);
       navigateTo("/pages/guard-form/check-details", {
         code: JSON.stringify(log),
       });
