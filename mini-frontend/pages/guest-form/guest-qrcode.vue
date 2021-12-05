@@ -39,8 +39,8 @@ export default {
             this.$refs.popupMessage.open()
             setTimeout(() => {
               this.$refs.popupMessage.close()
-            }, 2000);
-            reLaunch('/pages/guest-form/in-dorm')
+              reLaunch('/pages/guest-form/in-dorm')
+            }, 1000);
           }
           else if (approve_res.approval === 'reject') {
             this.msg_text = '审批未通过！'
@@ -48,8 +48,8 @@ export default {
             this.$refs.popupMessage.open()
             setTimeout(() => {
               this.$refs.popupMessage.close()
-            }, 2000);
-            reLaunch()
+              reLaunch()
+            }, 1000);
           }
           else {
             this.msg_text = '尚未审批，请稍等...'
@@ -57,7 +57,7 @@ export default {
             this.$refs.popupMessage.open()
             setTimeout(() => {
              this.$refs.popupMessage.close()
-            }, 2000);
+            }, 1500);
           }
         })
     }
