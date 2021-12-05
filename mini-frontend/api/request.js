@@ -21,9 +21,9 @@ function request(options = {}) {
         console.warn("request empty url!")
     }
     if (options.url[0] !== '/') {
-        console.log(options.url, ' without \'/\' in the beginning')
+        console.log(options.url, ' without \'/\' at the beginning')
     }
-    options.url=base_url+options.url
+    options.url = base_url + options.url
     return new Promise((res, rej) => {
         uni.request(Object.assign(
             options,
@@ -55,7 +55,7 @@ function registeredGuardRequest(options = {}) {
         options.data = {}
     }
     try {
-        options.data.open_id = uni.getStorageSync('open_id')
+        options.data.my_open_id = uni.getStorageSync('my_open_id')
     } catch (e) {
         // local storage can't get open id due to storage loss
         wx.login({
@@ -63,10 +63,10 @@ function registeredGuardRequest(options = {}) {
                 request({ url: "/guard/login/", data: { code: login_res.code, } })
                     .then((resp) => {
                         uni.setStorage({
-                            key: 'open_id',
+                            key: 'my_open_id',
                             data: resp.open_id,
                         })
-                        options.data.open_id = resp.open_id
+                        options.data.my_open_id = resp.open_id
                     })
 
             }
@@ -80,7 +80,7 @@ function registeredGuestRequest(options = {}) {
         options.data = {}
     }
     try {
-        options.data.open_id = uni.getStorageSync('open_id')
+        options.data.my_open_id = uni.getStorageSync('my_open_id')
     } catch (e) {
         // local storage can't get open id due to storage loss
         wx.login({
@@ -89,11 +89,11 @@ function registeredGuestRequest(options = {}) {
                     .then((resp) => {
                         console.log(resp.open_id)
                         uni.setStorage({
-                            key: 'open_id',
+                            key: 'my_open_id',
                             data: resp.open_id,
-                            fail: function(res){console.log(res)}
+                            fail: function (res) { console.log(res) }
                         })
-                        options.data.open_id = resp.open_id
+                        options.data.my_open_id = resp.open_id
                     })
 
             }
@@ -102,5 +102,5 @@ function registeredGuestRequest(options = {}) {
     }
     return request(options)
 }
-export { registeredGuardRequest,registeredGuestRequest }
+export { registeredGuardRequest, registeredGuestRequest }
 export default request
