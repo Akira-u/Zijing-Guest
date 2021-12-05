@@ -50,7 +50,7 @@ export default {
               console.log(req_res)
               if (req_res.open_id) {
                 uni.setStorage({
-                  key: 'open_id',
+                  key: 'my_open_id',
                   data: req_res.open_id,
                   fail: (error) => { console.warn(error) }
                 })
@@ -94,7 +94,7 @@ export default {
               console.log(req_res)
               if (req_res.open_id) {
                 uni.setStorage({
-                  key: 'open_id',
+                  key: 'my_open_id',
                   data: req_res.open_id,
                   fail: (error) => { console.warn(error) }
                 })
@@ -123,7 +123,7 @@ export default {
               console.log(req_res)
               if (req_res.open_id) {
                 uni.setStorage({
-                  key: 'open_id',
+                  key: 'my_open_id',
                   data: req_res.open_id,
                   success: (result) => { },
                   fail: (error) => { console.warn(error) }
