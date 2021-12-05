@@ -10,9 +10,10 @@
     <view class="buttonList">
       <button @tap="checkResult">审批结束，查看结果</button>
     </view>
-    <mp-dialog :show="dialog_show" @buttontap="checkResult">
-      <view class="dialog-submit-content">{{ dialog_text }}</view>
-    </mp-dialog>
+    <uni-popup ref="popupMessage" type="message">
+      <!-- <uni-popup-dialog :content="dialog_text"/> -->
+      <uni-popup-message :type="msg_type" :message="msg_text" :duration="2000" />
+    </uni-popup>
   </view>
 </template>
 
@@ -22,34 +23,41 @@ import { reLaunch } from '@/api/navigate'
 import { registeredGuestRequest } from '@/api/request'
 export default {
   data() {
-    return { qrcode_text: '', dialog_show: false, dialog_text: '尚未审批，请稍等...' };
+    return { 
+      qrcode_text: '', 
+      msg_type: "warn",
+      msg_text: '尚未审批，请稍等...' 
+    };
   },
   methods: {
     checkResult() {
       registeredGuestRequest({ url: '/guest/approve_result' })
         .then((approve_res) => {
           if (approve_res.approval === 'permit') {
-            this.dialog_text = '审批通过！'
-            this.dialog_show = true
+            this.msg_text = '审批通过！'
+            this.msg_type = 'success'
+            this.$refs.popupMessage.open()
             setTimeout(() => {
-              this.dialog_show = false
-            }, 1000);
+              this.$refs.popupMessage.close()
+            }, 2000);
             reLaunch('/pages/guest-form/in-dorm')
           }
           else if (approve_res.approval === 'reject') {
-            this.dialog_text = '审批未通过！'
-            this.dialog_show = true
+            this.msg_text = '审批未通过！'
+            this.msg_type = 'error'
+            this.$refs.popupMessage.open()
             setTimeout(() => {
-              this.dialog_show = false
-            }, 1000);
+              this.$refs.popupMessage.close()
+            }, 2000);
             reLaunch()
           }
           else {
-            this.dialog_text = '尚未审批，请稍等...'
-            this.dialog_show = true
+            this.msg_text = '尚未审批，请稍等...'
+            this.msg_type = 'warn'
+            this.$refs.popupMessage.open()
             setTimeout(() => {
-              this.dialog_show = false
-            }, 1000);
+             this.$refs.popupMessage.close()
+            }, 2000);
           }
         })
     }
@@ -106,6 +114,7 @@ export default {
   left: 50%;
   transform: translate(-50%, 20%);
   justify-content: center;
+  z-index: 0;
 }
 
 .tips {
@@ -131,6 +140,5 @@ button {
   left: 50%;
   transform: translate(-50%, 1000%);
 }
-
 </style>
 
