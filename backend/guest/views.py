@@ -137,7 +137,7 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def approve_result(self,request):
         try:
-            open_id = decrypt(request.GET.get("open_id"))
+            open_id = decrypt(request.GET.get("my_open_id"))
         except:
             return Response({"errmsg":"Invalid open_id"})
         try:
@@ -172,7 +172,7 @@ class GuestViewSet(viewsets.ModelViewSet):
                 log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
                 open_id = log_info["open_id"]
             else:
-                open_id = decrypt(request.GET.get("open_id"))
+                open_id = decrypt(request.GET.get("my_open_id"))
         except KeyError:
             return Response({"errmsg":log_info["errmsg"]})
         except:
@@ -203,7 +203,7 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def history(self,request):
         try:
-            open_id = decrypt(request.GET.get("open_id"))
+            open_id = decrypt(request.GET.get("my_open_id"))
             # open_id = request.GET.get("open_id")
         except:
             return Response({"errmsg":"invalid open_id"})

@@ -115,7 +115,7 @@ class GuardViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def backstage(self,request):
         try:
-            open_id = decrypt(request.GET.get("open_id"))
+            open_id = decrypt(request.GET.get("my_open_id"))
             # open_id=request.GET.get("open_id")
         except:
             return Response({"errmsg":"invalid open_id"})
@@ -123,6 +123,7 @@ class GuardViewSet(viewsets.ModelViewSet):
         logs = []
         for key in keys:
             logs.append(cache.get(key))
+        # print(logs)
         p = Paginator(logs,10)
         try:
             page = int(request.GET.get("page"))
@@ -172,7 +173,7 @@ class GuardViewSet(viewsets.ModelViewSet):
         }
         # print(data)
         r = requests.post("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token="+access_token,data=json.dumps(data))
-        # print(r.url)
+        print(r.url)
         packet = eval(r.text)
-        # print(packet)
+        print(packet)
         return Response({"msg":"success"})

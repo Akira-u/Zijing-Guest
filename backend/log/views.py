@@ -26,8 +26,10 @@ class LogViewSet(viewsets.ModelViewSet):
     """ POST """
     def create(self, request, *args, **kwargs):
         log_object = request.data
+        # print(log_object)
+        print(request.data.get("my_open_id"))
         try:
-            qopen_id = decrypt(request.data.get("open_id"))
+            qopen_id = decrypt(request.data.get("my_open_id"))
         except:
             return Response({"errmsg":"Invalid open_id"})
         try:
@@ -57,10 +59,12 @@ class LogViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["POST"])
     def check(self,request,*args, **kwargs):
         kwargs['partial'] = True
+        print(request.data)
         print("patch")
         try:
             # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-            open_id = decrypt(request.data.get("open_id")) 
+            print(request.data.get("open_id"))
+            open_id = decrypt(request.data.get("open_id"))
             # print(open_id)
             ex_log = cache.get(open_id)
             print(ex_log)
