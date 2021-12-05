@@ -142,6 +142,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response({"errmsg":"Invalid open_id"})
         try:
             log_exist=cache.get(open_id)
+            print(log_exist)
             if log_exist:
                 return Response(log_exist)
             else:
@@ -153,7 +154,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             # serializer.is_valid(raise_exception=True)
             # return Response(serializer.validated_data)
         except:
-            return Response({"errmsg":"Log Not Found"})
+            return Response({"approval":"reject"})
     @swagger_auto_schema(
     operation_summary='返回当前Guest的访问状态',
     manual_parameters=[
@@ -178,16 +179,16 @@ class GuestViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":"Invalid open_id"})
         try:
-            guest_object=Guest.objects.get(open_id=open_id)
-            last_log=guest_object.guest_log.last()
+            last_log=cache.get(open_id)
+            print(last_log)
             result={}
-            if last_log.approval=="permit" and last_log.out_time==None:
+            if last_log["approval"]=="permit" and last_log["out_time"]==None:
                 result["status"] = "still in"
             else:
                 result["status"] = "out"
             return Response(result)
         except:
-            return Response({"errmsg":"No Log"})
+            return Response({"status":"out"})
     
 
     @swagger_auto_schema(
