@@ -1,7 +1,7 @@
 <template>
   <view class="inDorm">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
-    <image class="img-indorm" src="@/static/indorm.jpg"></image>
+    <image class="img-indorm" src="@/static/indorm.png"></image>
     <view class="tips">成功进入宿舍！</view>
     <view class="buttonList">
       <button @tap="checkOut">离开宿舍</button>
@@ -40,9 +40,9 @@ export default {
 .img-indorm {
   position: absolute;
   width: 500rpx;
-  height: 500rpx;
+  height: 400rpx;
   left: 50%;
-  transform: translate(-50%, 40%);
+  transform: translate(-50%, 70%);
 }
 
 .inDorm {
