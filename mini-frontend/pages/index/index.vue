@@ -31,6 +31,15 @@ export default {
               // if user is in dorm, jump to in-dorm page directly
               uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
             }
+            else if(req_res.status === 'out'){
+              // a student or other guest who has registered and not in dorm now
+              // jump to guest-form in case that they may tap wrong entrance
+              uni.redirectTo({ url: '/pages/guest-form/guest-form' })
+            }
+            else if(req_res.status==='guard'){
+              uni.redirectTo({ url: '/pages/guard-form/guard-form' })
+            }
+            // else: a new user
           })
       }
     })

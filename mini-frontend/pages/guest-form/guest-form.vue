@@ -2,7 +2,12 @@
   <view class="guestForm">
     <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
-    <uni-forms class="inputList" ref="form" :modelValue="form_data" :rules="rules">
+    <uni-forms
+      class="inputList"
+      ref="form"
+      :modelValue="form_data"
+      :rules="rules"
+    >
       <uni-forms-item required label="目的宿舍" name="target_dorm">
         <uni-easyinput
           v-model="form_data.target_dorm"
@@ -65,45 +70,36 @@ export default {
   },
   methods: {
     submit() {
-      this.$refs.form
-        .validate()
-        .then((res) => {
-          console.log("表单内容：", res);
-          registeredGuestRequest({ url: "/log/", method: "POST", data: this.form_data })
-            .then((resp_data) => {
-              console.log({ resp_data: resp_data })
-              navigateTo("/pages/guest-form/guest-qrcode");
-            })
-        })
-        .catch((err) => {
-          console.log("表单错误信息：", err);
-        });
+
       wx.requestSubscribeMessage({
         tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
         success(res) {
-          console.log("success", res)
+          console.log("subscribe success", res)
         },
         fail(res) {
           console.log("fail", res)
+        },
+        complete: function() {
+          this.$refs.form
+            .validate()
+            .then((res) => {
+              console.log("表单内容：", res);
+              registeredGuestRequest({ url: "/log/", method: "POST", data: this.form_data })
+                .then((resp_data) => {
+                  console.log({ resp_data: resp_data })
+                  navigateTo("/pages/guest-form/guest-qrcode");
+                })
+            })
+            .catch((err) => {
+              console.log("表单错误信息：", err);
+            });
         }
       })
     },
-    viewHistory(){
+    viewHistory() {
       navigateTo("/pages/guest-form/my-history")
     }
   },
-  // onReady() {
-  //   console.log("onReady")
-  //   wx.requestSubscribeMessage({
-  //     tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
-  //     success(res) {
-  //       console.log("success", res)
-  //     },
-  //     fail(res) {
-  //       console.log("fail", res)
-  //     }
-  //   })
-  // }
 };
 </script>
 
