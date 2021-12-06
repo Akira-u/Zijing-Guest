@@ -5,7 +5,21 @@
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
           <uni-th>访客姓名</uni-th>
-          <uni-td>{{ log.guest_name }}</uni-td>
+          <uni-td>{{ log.guest.guest_name }}</uni-td>
+        </uni-tr>
+        <template v-if="log.guest.is_student">
+          <uni-tr>
+            <uni-th>学号</uni-th>
+            <uni-td>{{ log.guest.student_id }}</uni-td>
+          </uni-tr>
+          <uni-tr>
+            <uni-th>院系</uni-th>
+            <uni-td>{{ log.guest.department }}</uni-td>
+          </uni-tr>
+        </template>
+        <uni-tr>
+          <uni-th>电话</uni-th>
+          <uni-td>{{ log.guest.phone }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>来访事由</uni-th>
@@ -37,15 +51,13 @@ export default {
   },
   onLoad(options) {
     decodeOption(options);
-    console.log(options.code); //TO DO
-    var that = this;
     registeredGuardRequest({
       url: "/log/info/",
       method: "GET",
       data: { code: options.code },
     }).then((res) => {
       console.log({ res: res });
-      that.log = res;
+      this.log = res;
     });
   },
   methods: {
