@@ -1,6 +1,8 @@
 <template>
   <view class="container">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <view class="button_list">
       <button @tap="studentVerify">学生访客</button>
       <button @tap="otherGuestEntry">其它访客</button>
@@ -145,21 +147,30 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
+.container {
+  height:100%;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.imgbox {
   position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
+  max-width: 100%;
+  max-height: 100%;
+  width:100%;
+	padding-bottom: 150%;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
+  overflow: hidden;
 }
 
-.container {
-  padding: 20px;
-  font-size: 14px;
-  line-height: 24px;
+.img-xiaohui {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.1;
 }
 
 .button_list {

@@ -1,6 +1,8 @@
 <template>
-  <view class="inDorm">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <image class="img-indorm" src="@/static/indorm.png"></image>
     <view class="tips">成功进入宿舍！</view>
     <view class="buttonList">
@@ -26,29 +28,12 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
 .img-indorm {
   position: absolute;
   width: 500rpx;
   height: 400rpx;
   left: 50%;
   transform: translate(-50%, 70%);
-}
-
-.inDorm {
-  padding: 20px;
-  font-size: 14px;
-  line-height: 24px;
 }
 
 .tips {
@@ -72,7 +57,7 @@ button {
 
 .buttonList {
   position: relative;
-  width: 120%;
+  width: 100%;
   left: 50%;
   transform: translate(-50%, 1000%);
 }
