@@ -4,11 +4,15 @@ from log.models import Log
 from guest.utils import GuestSerializer
 
 # TODO
-# class LogFilter(filters.FilterSet):
-#     sort = filters.OrderingFilter(fields=("id",""))
-#     class Meta:
-#         model = Log
-#         fields = '__all__'
+class LogFilter(filters.FilterSet):
+    sort = filters.OrderingFilter(fields=("id",""))
+    Guest__student_id = filters.CharFilter(lookup_expr='icontains')
+    Guest__student_name = filters.CharFilter(lookup_expr='icontains')
+    in_time = filters.DateTimeFromToRangeFilter()
+    out_time = filters.DateTimeFromToRangeFilter()
+    class Meta:
+        model = Log
+        fields = '__all__'
 
 
 class LogSerializer(serializers.ModelSerializer):

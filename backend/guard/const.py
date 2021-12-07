@@ -26,3 +26,5 @@ remind_template="7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM"
 # key = get_random_bytes(16)
 key = b'0123456789abcdef'
 cipher = AES.new(key,AES.MODE_ECB)
+
+guard_password="123456"

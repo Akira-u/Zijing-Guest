@@ -14,6 +14,7 @@ from drf_yasg.utils import swagger_auto_schema
 from guard.wx_api import *
 from guard.const import *
 from guard.cipher import *
+from guard.models import Guard
 from django.core.cache import cache
 from django.core.paginator import Paginator
 
@@ -147,12 +148,6 @@ class GuestViewSet(viewsets.ModelViewSet):
                 return Response(log_exist)
             else:
                 raise Exception
-                
-            # guest_object = Guest.objects.get(open_id=open_id)
-            # logs=guest_object.guest_log.all()
-            # serializer=LogSerializer(data=list(logs.values())[-1])
-            # serializer.is_valid(raise_exception=True)
-            # return Response(serializer.validated_data)
         except:
             return Response({"approval":"reject"})
     @swagger_auto_schema(
@@ -164,7 +159,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             description='Guest code',
             type=openapi.TYPE_STRING
         ),],
-    responses={200:openapi.Response('返回当前Guest的访问状态',openapi.Schema("status",type=openapi.TYPE_STRING,enum=["still in","out"]))}
+    responses={200:openapi.Response('返回当前Guest的访问状态',openapi.Schema("status",type=openapi.TYPE_STRING,enum=["still in","out","guard","no account"]))}
     )
     @action(detail=False,methods=['GET'])
     def status(self,request):
@@ -178,19 +173,22 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response({"errmsg":log_info["errmsg"]})
         except:
             return Response({"errmsg":"Invalid open_id"})
-        try:
-            last_log=cache.get(open_id)
-            print(last_log)
-            result={}
-            if last_log["approval"]=="permit" and last_log["out_time"]==None:
-                result["status"] = "still in"
-            else:
-                result["status"] = "out"
-            return Response(result)
-        except:
-            return Response({"status":"out"})
     
-
+        guard_object = Guard.objects.filter(open_id=open_id)
+        guest_object = Guest.objects.filter(open_id=open_id)
+        if (not guard_object) and (not guest_object):
+            return Response({"status":"no account"})
+        if guard_object:
+            return Response({"status":"guard"})
+        last_log=cache.get(open_id)
+        print(last_log)
+        try:
+            if last_log["approval"]=="permit" and last_log["out_time"]==None:
+                return Response({"status":"still in"})
+            else:
+                return Response({"status":"out"})    
+        except:
+            return Response({"status":"out"})  
     @swagger_auto_schema(
     operation_summary='返回当前Guest的访问历史',
     manual_parameters=[
@@ -210,17 +208,19 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response({"errmsg":"invalid open_id"})
         guest_object=Guest.objects.get(open_id=open_id)
         print(guest_object)
-        log_history=list(guest_object.guest_log.all().values())
-        serializer=LogSerializer(data=log_history,many=True)
-        serializer.is_valid()
-        print(serializer.errors)
+        log_history=guest_object.guest_log.all()
+        print(log_history)
+        serializer=LogSerializer(log_history,many=True)
+        # serializer.is_valid()
+        # print(serializer.errors)
         log_cache=cache.get(open_id)
-        result = serializer.validated_data
+        result = serializer.data
+        # result["guest"] = guest_object.__dict__
         if log_cache:
             result.append(log_cache)
         print(result)
-        for log in result:
-            del log["guest_id"]
+        # for log in result:
+        #     del log["guest_id"]
         p = Paginator(result,10)
         try:
             page = int(request.GET.get("page"))

@@ -54,6 +54,10 @@ class GuardViewSet(viewsets.ModelViewSet):
                  type=openapi.TYPE_STRING,
                  description='User Code'
             ),
+            'password': openapi.Schema(
+                 type=openapi.TYPE_STRING,
+                 description='Password'
+            ),
             }
         )
     )
@@ -61,16 +65,18 @@ class GuardViewSet(viewsets.ModelViewSet):
         try:
             log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=request.data.get("code"))
             open_id = log_info.get("open_id")
-            session_key = log_info.get("session_key")
             guard_object = request.data
-            del guard_object["code"]
-            guard_object["open_id"]=open_id
-            serializer = self.get_serializer(data=guard_object)
-            serializer.is_valid()
-            self.perform_create(serializer)
-            resp = serializer.data
-            resp["open_id"] =encrypt(open_id)
-            return Response(resp, status=status.HTTP_201_CREATED)
+            if request.data.get("password") == guard_password:
+                del guard_object["code"]
+                guard_object["open_id"]=open_id
+                serializer = self.get_serializer(data=guard_object)
+                serializer.is_valid()
+                self.perform_create(serializer)
+                resp = serializer.data
+                resp["open_id"] =encrypt(open_id)
+                return Response(resp, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"errmsg":"password incorrect"})
         except :
             return Response({"errmsg":serializer.errors})
     
@@ -114,16 +120,17 @@ class GuardViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def backstage(self,request):
-        try:
-            open_id = decrypt(request.GET.get("my_open_id"))
-            # open_id=request.GET.get("open_id")
-        except:
-            return Response({"errmsg":"invalid open_id"})
+        # try:
+        #     open_id = decrypt(request.GET.get("my_open_id"))
+        #     # open_id=request.GET.get("open_id")
+        # except:
+        #     return Response({"errmsg":"invalid open_id"})
         keys=cache.keys("*")
         logs = []
         for key in keys:
-            logs.append(cache.get(key))
-        # print(logs)
+            log = cache.get(key)
+            if log.get("in_time"):
+                logs.append(cache.get(key))
         p = Paginator(logs,10)
         try:
             page = int(request.GET.get("page"))
