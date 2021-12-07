@@ -104,6 +104,9 @@ export default {
       navigateTo("/pages/guest-form/my-history")
     }
   },
+  onShow() {
+    //TODO
+  }
 };
 </script>
 

@@ -4,7 +4,7 @@
       <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     </view>
     <scroll-view class="dataTable" :scroll-top="scrollTop" scroll-y="true" @scrolltolower="lower" scroll-with-animation="true" >
-      <view class="totalLogs">共查询到{{ total_logs }}条访问记录</view>
+      <view class="totalLogs">共查询到{{ total_logs_num }}条访问记录</view>
       <uni-collapse type="line" :accordion="true">
         <uni-collapse-item v-for="(log, index) in logs"
         :open="checkNum(index)"
@@ -37,7 +37,7 @@ export default {
     return {
       logs: [],
       current_log: {},
-	    total_logs: 0,
+	    total_logs_num: 0,
       status: 'more',
 			contentText: {
 				contentdown: '点击查看更多记录',
@@ -75,7 +75,15 @@ export default {
       });
     },
     askTitle: function(index) {
-      return this.logs[index].in_time.toLocaleString()+'  '+this.logs[index].approve_result;
+      let approval_text='错误的访问'
+      if(this.logs[index].approval==='permit'){
+        approval_text='审批通过'
+      }
+      else if(this.logs[index].approval==='reject'){
+        approval_text='审批未通过'
+      }
+      let in_time=new Date(this.logs[index].in_time)
+      return in_time.toLocaleString()+'  '+approval_text;
     },
     checkNum: function(index) {
       if (index == 0){
