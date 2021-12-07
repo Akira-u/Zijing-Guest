@@ -1,5 +1,21 @@
 <template>
   <div class="app-container">
+    <div class="filter-container">
+      <el-input v-if="fuzzySearch==false" v-model="listQuery.guest__name" placeholder="访客姓名" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-if="fuzzySearch==true" v-model="listQuery.guest__name__icontains" placeholder="访客姓名（模糊）" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.guest__student_id" placeholder="学号" style="width: 110px" class="filter-item" @keyup.enter.native="handleFilter" />
+
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        查找
+      </el-button>
+        <el-checkbox v-model="fuzzySearch" class="filter-item" style="margin-left:15px;">
+        姓名模糊查找
+      </el-checkbox>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="clearFilter">
+        清除当前查找条件
+      </el-button>
+    </div>
+
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -70,13 +86,18 @@
         </template>
       </el-table-column> -->
     </el-table>
+
+    <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
+
   </div>
 </template>
 
 <script>
 import { getList } from '@/api/table'
+import waves from '@/directive/waves'
 
 export default {
+  directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -90,7 +111,26 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        guest__student_id: undefined,
+        guest__student_id__icontains: undefined,
+        guest__name: undefined,
+        guest__name__icontains: undefined,
+        guest__is_student: undefined,
+        approval: undefined,
+        in_time_after: undefined,
+        in_time_before: undefined,
+        out_time_after: undefined,
+        out_time_before: undefined,
+        host_student: undefined,
+        purpose: undefined,
+        target_building: undefined,
+        target_dorm: undefined,
+        ordering: 'id'
+      },
+      fuzzySearch: false,
     }
   },
   created() {
@@ -100,12 +140,39 @@ export default {
     fetchData() {
       this.listLoading = true
       console.log('fetchData')
-      getList().then(response => {
+      getList(this.listQuery).then(response => {
         console.log(response)
         this.list = response.results
-        this.listLoading = false
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
       })
-    }
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.fetchData()
+    },
+    clearFilter() {
+      this.listQuery= {
+        page: 1,
+        guest__student_id: undefined,
+        guest__student_id__icontains: undefined,
+        guest__name: undefined,
+        guest__name__icontains: undefined,
+        guest__is_student: undefined,
+        approval: undefined,
+        in_time_after: undefined,
+        in_time_before: undefined,
+        out_time_after: undefined,
+        out_time_before: undefined,
+        host_student: undefined,
+        purpose: undefined,
+        target_building: undefined,
+        target_dorm: undefined,
+        ordering: 'id'
+      },
+      this.fetchData()
+    },
   }
 }
 </script>
