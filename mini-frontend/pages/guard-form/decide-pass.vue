@@ -1,6 +1,8 @@
 <template>
-  <view class="decidePass">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
@@ -100,23 +102,6 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.decidePass {
-  padding: 20px;
-  font-size: 14px;
-  line-height: 24px;
-}
-
 .dataTable {
   position: absolute;
   width: 80%;
@@ -127,7 +112,7 @@ export default {
 
 .buttonList {
   position: absolute;
-  width: 90%;
+  width: 100%;
   left: 50%;
   transform: translate(-50%, 250%);
 }

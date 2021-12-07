@@ -1,6 +1,8 @@
 <template>
-  <view class="checkBackstage">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>    
     <text>当前楼内有{{ total_guest }}名访客</text>
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
@@ -14,7 +16,7 @@
           v-if="log.out_time == null"
           @tap="checkDetails(log)"
         >
-          <uni-td>{{ log.guest_name }}</uni-td>
+          <uni-td>{{ log.guest.name }}</uni-td>
           <uni-td
             ><uni-dateformat
               :date="log.in_time"
@@ -73,23 +75,6 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.checkBackstage {
-  padding: 20px;
-  font-size: 14px;
-  line-height: 24px;
-}
-
 .dataTable {
   position: absolute;
   width: 80%;

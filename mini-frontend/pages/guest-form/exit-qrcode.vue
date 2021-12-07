@@ -1,6 +1,8 @@
 <template>
-  <view class="exitCode">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <view class="QRcode">
       <uqrcode ref="exit_qrcode"></uqrcode>
       <view class="tips">请出示二维码给管理员，被扫码后点击结束按钮完成签离。</view>
@@ -73,25 +75,6 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.exitCode {
-  padding: 20px;
-  font-size: 20px;
-  line-height: 24px;
-  margin: 10px;
-  justify-content: center;
-}
-
 .QRcode {
   position: absolute;
   left: 50%;
@@ -118,7 +101,7 @@ button {
 
 .buttonList {
   position: relative;
-  width: 120%;
+  width: 100%;
   left: 50%;
   transform: translate(-50%, 1000%);
 }

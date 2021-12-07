@@ -1,6 +1,8 @@
 <template>
-  <view class="guestForm">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
     <uni-forms
       class="inputList"
@@ -27,8 +29,10 @@
         />
       </uni-forms-item>
     </uni-forms>
-    <button @tap="submit">提交</button>
-    <button @tap="viewHistory">查看申请记录</button>
+    <view class="buttonList">
+      <button @tap="submit">提交</button>
+      <button @tap="viewHistory">查看申请记录</button>
+    </view>
   </view>
 </template>
 
@@ -104,22 +108,6 @@ export default {
 </script>
 
 <style>
-.guestForm {
-  margin: 10px;
-  justify-content: center;
-}
-
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
 .inputList {
   position: absolute;
   left: 50%;
@@ -137,7 +125,7 @@ export default {
   border-radius: 10rpx;
 }
 
-.guestForm button {
+button {
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
@@ -146,6 +134,12 @@ export default {
   border-radius: 50rpx;
   margin: 40px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
-  transform: translate(0%, 800%);
+}
+
+.buttonList {
+  position: relative;
+  width: 100%;
+  left: 50%;
+  transform: translate(-50%, 300%);
 }
 </style>
