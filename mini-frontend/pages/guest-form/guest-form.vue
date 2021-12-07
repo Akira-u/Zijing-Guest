@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     submit() {
-
+      var that=this
       wx.requestSubscribeMessage({
         tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
         success(res) {
@@ -80,11 +80,11 @@ export default {
           console.log("fail", res)
         },
         complete: function() {
-          this.$refs.form
+          that.$refs.form
             .validate()
             .then((res) => {
               console.log("表单内容：", res);
-              registeredGuestRequest({ url: "/log/", method: "POST", data: this.form_data })
+              registeredGuestRequest({ url: "/log/", method: "POST", data: that.form_data })
                 .then((resp_data) => {
                   console.log({ resp_data: resp_data })
                   navigateTo("/pages/guest-form/guest-qrcode");

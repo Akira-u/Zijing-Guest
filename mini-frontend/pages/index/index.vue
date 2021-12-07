@@ -98,7 +98,7 @@ export default {
               }
             })
             .catch((err) => {
-              showFailPopup()
+              that.showFailPopup()
             })
         },
         fail(login_res) {
@@ -130,7 +130,7 @@ export default {
               }
             })
             .catch((err) => {
-              showFailPopup()
+              that.showFailPopup()
             })
         },
         fail(login_res) {
@@ -164,7 +164,7 @@ export default {
               }
             })
             .catch((err) => {
-              showFailPopup()
+              that.showFailPopup()
             })
         },
         fail(login_res) {

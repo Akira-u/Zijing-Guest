@@ -11,8 +11,7 @@
       <button @tap="checkResult">审批结束，查看结果</button>
     </view>
     <uni-popup ref="popupMessage" type="message">
-      <!-- <uni-popup-dialog :content="dialog_text"/> -->
-      <uni-popup-message :type="msg_type" :message="msg_text" :duration="2000" />
+      <uni-popup-message :type="msg_type" :message="msg_text" :duration="1500"/>
     </uni-popup>
   </view>
 </template>
@@ -55,9 +54,6 @@ export default {
             this.msg_text = '尚未审批，请稍等...'
             this.msg_type = 'warn'
             this.$refs.popupMessage.open()
-            setTimeout(() => {
-             this.$refs.popupMessage.close()
-            }, 1500);
           }
         })
     }

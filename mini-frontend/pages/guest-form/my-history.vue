@@ -20,7 +20,7 @@
       </uni-table>
       <uni-pagination
         :show-icon="true"
-        :total="total_logs"
+        :total="total_logs_num"
         @change="changePage"
       ></uni-pagination>
     </view>
@@ -40,15 +40,23 @@
             <uni-td>{{ current_log.host_student }}</uni-td>
           </uni-tr>
           <uni-tr>
-            <uni-th>进入时间</uni-th>
-            <uni-td
-              ><uni-dateformat :date="current_log.in_time"></uni-dateformat
-            ></uni-td>
+            <uni-th>审批结果</uni-th>
+            <uni-td>{{ current_log.approve_result }}</uni-td>
           </uni-tr>
-          <uni-tr>
-            <uni-th>离开时间</uni-th>
-            <uni-td><uni-dateformat :date="current_log.out_time"></uni-dateformat></uni-td>
-          </uni-tr>
+          <template v-if="current_log.approve_result === 'permit'">
+            <uni-tr>
+              <uni-th>进入时间</uni-th>
+              <uni-td
+                ><uni-dateformat :date="current_log.in_time"></uni-dateformat
+              ></uni-td>
+            </uni-tr>
+            <uni-tr>
+              <uni-th>离开时间</uni-th>
+              <uni-td
+                ><uni-dateformat :date="current_log.out_time"></uni-dateformat
+              ></uni-td>
+            </uni-tr>
+          </template>
         </uni-table>
       </view>
     </uni-popup>
@@ -62,7 +70,7 @@ export default {
     return {
       logs: {},
       current_log: {},
-	    total_logs: 0,
+      total_logs_num: 0,
     };
   },
   onLoad() {
@@ -70,11 +78,8 @@ export default {
       url: "/guest/history/",
       data: { page: 1 }
     }).then((res) => {
-      this.logs = res.data.filter((value) => {
-        // filter invalid logs
-        return value.in_time && value.out_time
-      });
-      this.total_logs = res.total;
+      this.logs = res.data
+      this.total_logs_num = res.total;
     });
   },
   methods: {
@@ -87,10 +92,7 @@ export default {
         url: "/guest/history/",
         data: { page: e.current },
       }).then((res) => {
-        this.logs = res.data.filter((value) => {
-          // filter invalid logs
-          return value.in_time && value.out_time
-        });
+        this.logs = res.data
       });
     },
   },
