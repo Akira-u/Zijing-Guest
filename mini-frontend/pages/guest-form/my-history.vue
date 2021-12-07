@@ -80,8 +80,8 @@ export default {
       url: "/guest/history/",
       data: { page: 1 }
     }).then((res) => {
+      console.log('res',res)
       this.logs = res.data
-      console.log("history:",res)
       this.total_logs_num = res.total;
     });
   },
