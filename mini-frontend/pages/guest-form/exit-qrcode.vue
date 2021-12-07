@@ -81,8 +81,12 @@ export default {
 }
 
 .tips {
-  position: relative;
-  transform: translate(0%, 70%);
+  position: absolute;
+  padding: 40rpx 0 20rpx 0;
+  width:120%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  text-align:center;
   font-size: 18px;
 }
 
