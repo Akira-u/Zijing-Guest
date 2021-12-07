@@ -22,10 +22,6 @@
         content="网络错误，请稍后重试！"
       ></uni-popup-dialog>
     </uni-popup>
-
-    <!-- <mp-dialog :show="DialogShow"> -->
-    <!-- <view class="dialog-submit-content">请稍候……</view> -->
-    <!-- </mp-dialog> -->
   </view>
 </template>
 
@@ -38,12 +34,12 @@ export default {
 
     };
   },
-  onLoad() {
+  onShow() {
     wx.login({
       success: (login_res) => {
         request({ url: "/guest/status/", data: { code: login_res.code } })
           .then((req_res) => {
-            console.log('index onshow ', req_res.status)
+            console.log('index onShow ', req_res.status)
             if (req_res.status === 'still in') {
               // if user is in dorm, jump to in-dorm page directly
               uni.redirectTo({ url: '/pages/guest-form/in-dorm' })

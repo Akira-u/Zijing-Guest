@@ -21,12 +21,7 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "申请码",
-                "enablePullDownRefresh": false,
-				"mp-weixin": {
-					"usingComponents": {
-						"mp-dialog": "weui-miniprogram/dialog/dialog"
-					}
-				}
+                "enablePullDownRefresh": false
             }
             
         },
@@ -103,12 +98,7 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
-                "enablePullDownRefresh": false,
-				"mp-weixin": {
-					"usingComponents": {
-						"mp-dialog": "weui-miniprogram/dialog/dialog"
-					}
-				}
+                "enablePullDownRefresh": false
             }
             
         }

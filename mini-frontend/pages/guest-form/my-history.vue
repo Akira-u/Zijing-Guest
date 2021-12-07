@@ -81,6 +81,7 @@ export default {
       data: { page: 1 }
     }).then((res) => {
       this.logs = res.data
+      console.log("history:",res)
       this.total_logs_num = res.total;
     });
   },

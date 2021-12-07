@@ -10,9 +10,9 @@
     <view class="buttonList">
       <button @tap="exit">结束</button>
     </view>
-    <mp-dialog :show="dialog_show" @buttontap="exit">
-      <view class="dialog-submit-content">{{ dialog_text }}</view>
-    </mp-dialog>
+     <uni-popup ref="exit_popup" type="message">
+      <uni-popup-message :type="msg_type" :message="msg_text" :duration="1500"/>
+    </uni-popup>
   </view>
 </template>
 
@@ -22,7 +22,8 @@ import { registeredGuestRequest } from '@/api/request'
 export default {
   data() {
     return {
-      qrcode_text: ''
+      qrcode_text: '',
+      msg_text: '请让宿舍管理员扫码！'
     }
   },
   methods: {
@@ -31,19 +32,16 @@ export default {
         .then((status_res) => {
           console.log(status_res)
           if (status_res.status === 'out') {
-            this.dialog_show = true
-            this.dialog_text = '签离成功！'
+            this.$refs.exit_popup.open()
+            this.msg_text = '签离成功！'
             setTimeout(() => {
               this.dialog_show = false
+              reLaunch()
             }, 1000);
-            reLaunch()
           }
           else {
-            this.dialog_show = true
-            this.dialog_text = '请让宿舍管理员扫码！'
-            setTimeout(() => {
-              this.dialog_show = false
-            }, 1000);
+            this.$refs.exit_popup.open()
+            this.msg_text = '请让宿舍管理员扫码！'
           }
         })
 
