@@ -7,7 +7,7 @@
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
           <uni-th>访客姓名</uni-th>
-          <uni-td>{{ log.guest_name }}</uni-td>
+          <uni-td>{{ log.guest.name }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>来访事由</uni-th>

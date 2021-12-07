@@ -7,7 +7,7 @@
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
           <uni-th>访客姓名</uni-th>
-          <uni-td>{{ log.guest_name }}</uni-td>
+          <uni-td>{{ log.guest.name }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>来访事由</uni-th>
@@ -96,7 +96,7 @@ export default {
             open_id: this.log.guest_id,
             msg: {
               thing6: {
-                value: this.log.guest_name,
+                value: this.log.guest.name,
               },
               thing1: {
                 value: this.log.target_dorm,

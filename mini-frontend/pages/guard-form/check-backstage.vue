@@ -16,7 +16,7 @@
           v-if="log.out_time == null"
           @tap="checkDetails(log)"
         >
-          <uni-td>{{ log.guest_name }}</uni-td>
+          <uni-td>{{ log.guest.name }}</uni-td>
           <uni-td
             ><uni-dateformat
               :date="log.in_time"
