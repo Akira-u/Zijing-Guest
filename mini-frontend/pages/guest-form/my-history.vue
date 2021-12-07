@@ -3,57 +3,30 @@
     <view class="imgbox">
       <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     </view>
-    <view class="dataTable">
-      <uni-table border stripe emptyText="暂无更多数据">
-        <uni-tr>
-          <uni-th>开始时间</uni-th>
-          <uni-th>目的宿舍</uni-th>
-        </uni-tr>
-        <uni-tr
-          v-for="(log, index) in logs"
-          :key="index"
-          @tap="checkDetails(log)"
-        >
-          <uni-td
-            ><uni-dateformat :date="log.out_time"></uni-dateformat
-          ></uni-td>
-          <uni-td>{{ log.target_dorm }}</uni-td>
-        </uni-tr>
-      </uni-table>
-      <uni-pagination
-        :show-icon="true"
-        :total="total_logs"
-        @change="changePage"
-      ></uni-pagination>
-    </view>
-    <uni-popup ref="detail" type="center">
-      <view>
-        <uni-table border stripe emptyText="暂无更多数据">
-          <uni-tr>
-            <uni-th>来访事由</uni-th>
-            <uni-td>{{ current_log.purpose }}</uni-td>
-          </uni-tr>
-          <uni-tr>
-            <uni-th>目的宿舍</uni-th>
-            <uni-td>{{ current_log.target_dorm }}</uni-td>
-          </uni-tr>
-          <uni-tr>
-            <uni-th>接待人</uni-th>
-            <uni-td>{{ current_log.host_student }}</uni-td>
-          </uni-tr>
-          <uni-tr>
-            <uni-th>进入时间</uni-th>
-            <uni-td
-              ><uni-dateformat :date="current_log.in_time"></uni-dateformat
-            ></uni-td>
-          </uni-tr>
-          <uni-tr>
-            <uni-th>离开时间</uni-th>
-            <uni-td><uni-dateformat :date="current_log.out_time"></uni-dateformat></uni-td>
-          </uni-tr>
-        </uni-table>
-      </view>
-    </uni-popup>
+    <scroll-view class="dataTable" :scroll-top="scrollTop" scroll-y="true" @scrolltolower="lower" scroll-with-animation="true" >
+      <view class="totalLogs">共查询到{{ total_logs }}条访问记录</view>
+      <uni-collapse type="line" :accordion="true">
+        <uni-collapse-item v-for="(log, index) in logs"
+        :open="checkNum(index)"
+        :key="index"
+        :title="askTitle(index)">
+          <view class="details">
+            <view>来访事由：{{ logs[index].purpose }}</view>
+            <view>目的宿舍：{{ logs[index].target_dorm }}</view>
+            <view>接待人：{{ logs[index].host_student }}</view>
+            <view>进入时间：<uni-dateformat
+                :date="logs[index].in_time"
+                format="yyyy-MM-dd hh:mm:ss"></uni-dateformat></view>
+            <view>离开时间：<uni-dateformat
+                :date="logs[index].out_time"
+                format="yyyy-MM-dd hh:mm:ss"></uni-dateformat></view>
+          </view>
+        </uni-collapse-item>
+        <view class="example-body">
+					<uni-load-more :status="status" :content-text="contentText"  @clickLoadMore="clickLoadMore"/>
+				</view>
+      </uni-collapse>
+    </scroll-view>
   </view>
 </template>
 
@@ -62,9 +35,16 @@ import { registeredGuestRequest } from "@/api/request";
 export default {
   data() {
     return {
-      logs: {},
+      logs: [],
       current_log: {},
 	    total_logs: 0,
+      status: 'more',
+			contentText: {
+				contentdown: '点击查看更多记录',
+	  		contentrefresh: '加载中',
+				contentnomore: '没有更多记录'
+			},
+      pageNum: 1,
     };
   },
   onLoad() {
@@ -80,19 +60,53 @@ export default {
     });
   },
   methods: {
-    checkDetails: function (log) {
-      this.current_log = log
-      this.$refs.detail.open()
-    },
-    changePage: function (e) {
+    clickLoadMore() {
+      this.status = 'loading';
       registeredGuestRequest({
         url: "/guest/history/",
-        data: { page: e.current },
+        data: { page: this.pageNum+1 },
       }).then((res) => {
-        this.logs = res.data.filter((value) => {
+        if (res.total > this.pageNum * 10){
+          this.pageNum++;
+          this.status = 'more';
+          this.logs.push(res.data.filter((value) => {
           // filter invalid logs
           return value.in_time && value.out_time
-        });
+        }));
+        }
+        else if(res.total <= this.pageNum * 10){
+          this.status = 'noMore';
+        }
+      });
+    },
+    askTitle: function(index) {
+      return "访问记录" + (index + 1);
+    },
+    checkNum: function(index) {
+      if (index == 0){
+        return true;
+      }
+      else{
+        return false;
+      }
+    },
+    lower() {
+      this.status = 'loading';
+      registeredGuestRequest({
+        url: "/guest/history/",
+        data: { page: this.pageNum+1 },
+      }).then((res) => {
+        if (res.total > this.pageNum * 10){
+          this.pageNum++;
+          this.status = 'more';
+          this.logs.push(res.data.filter((value) => {
+          // filter invalid logs
+          return value.in_time && value.out_time
+        }));
+       }
+        else if(res.total <= this.pageNum * 10){
+          this.status = 'noMore';
+        }
       });
     },
   },
@@ -104,8 +118,25 @@ export default {
 .dataTable {
   position: absolute;
   width: 80%;
+  height: 80%;
   left: 50%;
-  top: 50px;
-  transform: translate(-50%, 0%);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 100rpx;
+}
+
+.uni-collapse-item{
+  padding:10px;
+  border-radius: 50rpx;
+  box-shadow: 0 5px 5px 0 rgba(86, 119, 252, 0.2);
+  font-size:20px;
+}
+.totalLogs{
+  text-align: center;
+  font-size: 20px;
+}
+
+.details{
+  padding:10px 10px 10px 50px;
 }
 </style>
