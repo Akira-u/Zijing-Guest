@@ -10,6 +10,12 @@
       :modelValue="form_data"
       :rules="rules"
     >
+      <uni-forms-item required label="电话" name="phone">
+        <uni-easyinput
+          v-model="form_data.phone"
+          placeholder="您的电话号码"
+        />
+      </uni-forms-item>
       <uni-forms-item required label="目的宿舍" name="target_dorm">
         <uni-easyinput
           v-model="form_data.target_dorm"
@@ -50,6 +56,19 @@ export default {
 
       rules: {
         // 对name字段进行必填验证
+        phone: {
+          rules: [
+            {
+              required: true,
+              errorMessage: "请输入电话号码",
+            },
+            {
+              minLength: 11,
+              maxLength: 11,
+              errorMessage: "电话号码长度应为 11 个字符",
+            },
+          ],
+        },
         name: {
           rules: [
             {

@@ -4,38 +4,18 @@
       <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     </view>
     <view class="dataTable">
-      <uni-table border stripe emptyText="暂无更多数据">
-        <uni-tr>
-          <uni-th>访客姓名</uni-th>
-          <uni-td>{{ log.guest.name }}</uni-td>
-        </uni-tr>
-        <template v-if="log.guest.is_student">
-          <uni-tr>
-            <uni-th>学号</uni-th>
-            <uni-td>{{ log.guest.student_id }}</uni-td>
-          </uni-tr>
-          <uni-tr>
-            <uni-th>院系</uni-th>
-            <uni-td>{{ log.guest.department }}</uni-td>
-          </uni-tr>
-        </template>
-        <uni-tr>
-          <uni-th>电话</uni-th>
-          <uni-td>{{ log.guest.phone }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>来访事由</uni-th>
-          <uni-td>{{ log.purpose }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>目的宿舍</uni-th>
-          <uni-td>{{ log.target_dorm }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>接待人</uni-th>
-          <uni-td>{{ log.host_student }}</uni-td>
-        </uni-tr>
-      </uni-table>
+      <uni-section title="访客信息" type="line"></uni-section>
+      <view class="dataList">
+      <uni-list>
+        <uni-list-item title="访客姓名" :rightText="log.guest.name"></uni-list-item>
+        <uni-list-item title="学号" v-if="log.guest.is_student" :rightText="log.guest.student_id"></uni-list-item>
+        <uni-list-item title="院系" v-if="log.guest.is_student" :rightText="log.guest.department"></uni-list-item>
+        <uni-list-item title="电话" :rightText="log.guest.phone"></uni-list-item>
+        <uni-list-item title="来访事由" :rightText="log.purpose"></uni-list-item>
+        <uni-list-item title="目的宿舍" :rightText="log.target_dorm"></uni-list-item>
+        <uni-list-item title="接待人" :rightText="log.host_student"></uni-list-item>
+      </uni-list>
+      </view>
     </view>
     <view class="buttonList">
       <button @tap="Pass">通过</button>
@@ -106,8 +86,12 @@ export default {
   position: absolute;
   width: 80%;
   left: 50%;
-  top: 20%;
-  transform: translate(-50%, 0%);
+  top: 10%;
+  transform: translate(-50%, 10%);
+}
+
+.dataList {
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 
 .buttonList {
@@ -118,13 +102,14 @@ export default {
 }
 
 button {
+  position: relative;
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
   height: 90rpx;
   line-height: 90rpx;
   border-radius: 50rpx;
-  margin: 20px;
+  margin: 30px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 </style>
