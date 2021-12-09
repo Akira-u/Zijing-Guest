@@ -1,19 +1,69 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-if="fuzzySearch==false" v-model="listQuery.guest__name" placeholder="访客姓名" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-if="fuzzySearch==true" v-model="listQuery.guest__name__icontains" placeholder="访客姓名（模糊）" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.guest__student_id" placeholder="学号" style="width: 110px" class="filter-item" @keyup.enter.native="handleFilter" />
-
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        查找
-      </el-button>
-        <el-checkbox v-model="fuzzySearch" class="filter-item" style="margin-left:15px;">
-        姓名模糊查找
-      </el-checkbox>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="clearFilter">
-        清除当前查找条件
-      </el-button>
+      <el-row>
+        <el-col :span="20">
+          <el-input v-model="guest_name" placeholder="访客姓名" style="width: 25%;" class="filter-item" @keyup.enter.native="handleFilter" />
+          <!-- <el-input v-if="fuzzySearch==true" v-model="listQuery.guest__name__icontains" placeholder="访客姓名（模糊）" style="width: 25%;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
+          <el-input v-model="listQuery.guest__student_id__icontains" placeholder="学号" style="width: 25%" class="filter-item" @keyup.enter.native="handleFilter" />
+          <el-select v-model="listQuery.guest__is_student" placeholder="选择身份" style="width: 10%" class="filter-item" @change="handleFilter">
+            <el-option v-for="item in statusOptions" :key="item.key" :label="item.label" :value="item.key" />
+          </el-select>
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+            查找
+          </el-button>
+          <el-checkbox v-model="fuzzySearch" class="filter-item" style="margin-left:15px;align-self:center;">
+            姓名模糊查找
+          </el-checkbox>
+        </el-col>
+        <el-col :span="4">
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-refresh" @click="clearFilter">
+            清除当前查找条件
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <div class="block">
+            <span class="demonstration">进入时间：</span>
+            <el-date-picker
+              v-model="listQuery.in_time_after"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              :picker-options="pickerOptions"
+            />
+            <span class="demonstration"> -- </span>
+            <el-date-picker
+              v-model="listQuery.in_time_before"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              :picker-options="pickerOptions"
+            />
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="block">
+            <span class="demonstration">离开时间：</span>
+            <el-date-picker
+              v-model="listQuery.out_time_after"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              :picker-options="pickerOptions"
+            />
+            <span class="demonstration"> -- </span>
+            <el-date-picker
+              v-model="listQuery.out_time_before"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              :picker-options="pickerOptions"
+            />
+          </div>
+        </el-col>
+      </el-row>
     </div>
 
     <el-table
@@ -112,6 +162,7 @@ export default {
     return {
       list: null,
       listLoading: true,
+      guest_name: undefined,
       listQuery: {
         page: 1,
         guest__student_id: undefined,
@@ -130,7 +181,8 @@ export default {
         target_dorm: undefined,
         ordering: 'id'
       },
-      fuzzySearch: false,
+      statusOptions: [{ label: '学生', key: 'true' }, { label: '其他访客', key: 'false' }],
+      fuzzySearch: false
     }
   },
   created() {
@@ -150,10 +202,17 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      if (this.fuzzySearch) {
+        this.listQuery.guest__name__icontains = this.guest_name
+        this.listQuery.guest__name = undefined
+      } else {
+        this.listQuery.guest__name__icontains = undefined
+        this.listQuery.guest__name = this.guest_name
+      }
       this.fetchData()
     },
     clearFilter() {
-      this.listQuery= {
+      this.listQuery = {
         page: 1,
         guest__student_id: undefined,
         guest__student_id__icontains: undefined,
@@ -170,9 +229,9 @@ export default {
         target_building: undefined,
         target_dorm: undefined,
         ordering: 'id'
-      },
+      }
       this.fetchData()
-    },
+    }
   }
 }
 </script>
