@@ -26,6 +26,7 @@
         />
       </uni-forms-item>
       <uni-forms-item required label="目的宿舍" name="target_dorm">
+        <!-- TODO: combobox -->
         <uni-easyinput
           v-model="form_data.target_dorm"
           placeholder="您要拜访的宿舍号"
@@ -66,8 +67,8 @@ export default {
       form_data: {
         phone: "13919198100",
         dorm_id: "1号楼",
-        target_dorm: '403',
-        host_student: '创世洐炎',
+        target_dorm: '403A',
+        host_student: '李端',
         purpose: '拿杯'
       },
       msg_text:"您好，欢迎。",

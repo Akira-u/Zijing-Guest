@@ -76,7 +76,7 @@ export default {
               data: {
                 code: res1.code,
                 phone: that.phone,
-                name: that.name,
+                name: that.name,  
                 password: that.password,
               },
             }).then((res) => {

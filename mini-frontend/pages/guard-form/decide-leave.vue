@@ -15,7 +15,7 @@
         </uni-tr>
         <uni-tr>
           <uni-th>目的宿舍</uni-th>
-          <uni-td>{{ log.target_dorm }}</uni-td>
+          <uni-td>{{ log.dorm.id }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>接待人</uni-th>
