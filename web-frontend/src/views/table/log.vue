@@ -4,7 +4,6 @@
       <el-row>
         <el-col :span="20">
           <el-input v-model="guest_name" placeholder="访客姓名" style="width: 25%;" class="filter-item" @keyup.enter.native="handleFilter" />
-          <!-- <el-input v-if="fuzzySearch==true" v-model="listQuery.guest__name__icontains" placeholder="访客姓名（模糊）" style="width: 25%;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
           <el-input v-model="listQuery.guest__student_id__icontains" placeholder="学号" style="width: 25%" class="filter-item" @keyup.enter.native="handleFilter" />
           <el-select v-model="listQuery.guest__is_student" placeholder="选择身份" style="width: 10%" class="filter-item" @change="handleFilter">
             <el-option v-for="item in statusOptions" :key="item.key" :label="item.label" :value="item.key" />
