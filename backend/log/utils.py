@@ -5,14 +5,16 @@ from guest.utils import GuestSerializer
 
 # TODO
 class LogFilter(filters.FilterSet):
-    sort = filters.OrderingFilter(fields=("id",""))
-    Guest__student_id = filters.CharFilter(lookup_expr='icontains')
-    Guest__student_name = filters.CharFilter(lookup_expr='icontains')
     in_time = filters.DateTimeFromToRangeFilter()
     out_time = filters.DateTimeFromToRangeFilter()
     class Meta:
         model = Log
-        fields = '__all__'
+        fields = {
+            "guest__student_id":["exact","icontains"],
+            "guest__name":["exact","icontains"],
+            "guest__is_student":["exact"],
+            "approval":["exact","in"],
+        }
 
 
 class LogSerializer(serializers.ModelSerializer):

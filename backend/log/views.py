@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from django_filters import rest_framework as filters
+from rest_framework.serializers import Serializer
 from .models import Log
 from guest.models import Guest
 from .utils import LogSerializer,LogFilter
 from Crypto.Cipher import AES
+from rest_framework.filters import OrderingFilter  # 导入排序
 
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -21,8 +23,9 @@ class LogViewSet(viewsets.ModelViewSet):
     """ 来访日志 viewset """
     queryset = Log.objects.all()
     serializer_class = LogSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend,OrderingFilter)
     filter_class = LogFilter
+    ordering_fields = ('id',)
     """ POST """
     def create(self, request, *args, **kwargs):
         print(self.get_queryset())
@@ -144,4 +147,5 @@ class LogViewSet(viewsets.ModelViewSet):
             return Response(log_object)
         except:
             return Response({"errmsg":"Log Not Found"})
+
 

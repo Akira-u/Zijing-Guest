@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from django_filters import rest_framework as filters
 from .models import Guest
-from .utils import GuestSerializer
+from .utils import GuestSerializer, GuestFilter
 from log.utils import LogSerializer
+from rest_framework.filters import OrderingFilter  # 导入排序
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from Crypto.Cipher import AES
@@ -23,6 +24,8 @@ class GuestViewSet(viewsets.ModelViewSet):
     """ 人员信息 viewset """
     queryset = Guest.objects.all()
     serializer_class = GuestSerializer
+    filter_backends = (filters.DjangoFilterBackend,OrderingFilter)
+    filter_class = GuestFilter
     """ POST """
     """ register """
     @swagger_auto_schema(
@@ -115,6 +118,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":log_info["errmsg"]})
         query = Guest.objects.filter(open_id=log_info.get("open_id"))
+        print(query)
         if query:
             serializer = GuestSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
@@ -229,8 +233,31 @@ class GuestViewSet(viewsets.ModelViewSet):
         if page>p.num_pages:page=p.num_pages
         elif page<1:page=1
         return Response({"data":p.page(page).object_list,"total":p.count})
-            
+    
+
+    @action(detail=False,methods=["POST"])
+    def to_black(self,request,*args, **kwargs):
+        try:
+            print(request.data)
+            query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
+            print(query)
+            for guest in query:
+                guest.credit=False
+            Guest.objects.bulk_update(query,fields=["credit",])
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
                 
-
-
+    @action(detail=False,methods=["POST"])
+    def to_white(self,request,*args, **kwargs):
+        try:
+            print(request.data)
+            query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
+            print(query)
+            for guest in query:
+                guest.credit=True
+            Guest.objects.bulk_update(query,fields=["credit",])
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
