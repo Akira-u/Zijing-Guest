@@ -26,6 +26,7 @@
         />
       </uni-forms-item>
       <uni-forms-item required label="目的宿舍" name="target_dorm">
+        <!-- TODO: combobox -->
         <uni-easyinput
           v-model="form_data.target_dorm"
           placeholder="您要拜访的宿舍号"
@@ -64,10 +65,10 @@ export default {
   data() {
     return {
       form_data: {
-        phone: "13900000000",
-        target_building: "紫荆1号楼",
-        target_dorm: '403',
-        host_student: '创世洐炎',
+        phone: "13919198100",
+        dorm_id: "1号楼",
+        target_dorm: '403A',
+        host_student: '李端',
         purpose: '拿杯'
       },
       msg_text:"您好，欢迎。",
@@ -75,7 +76,7 @@ export default {
         "紫荆1号楼","紫荆2号楼"
       ],
       rules: {
-        // 对name字段进行必填验证
+        // 表单验证
         phone: {
           rules: [
             {
@@ -138,6 +139,13 @@ export default {
         console.log("登录失败！" + login_res.errMsg);
       }
     });
+    registeredGuestRequest({url:"/guest/status/"})
+      .then((res)=>{
+        if (res.status === 'still in') {
+          // if user is in dorm, jump to in-dorm page directly
+          uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
+        }
+      })
   },
   methods: {
     submit() {

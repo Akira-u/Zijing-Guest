@@ -18,7 +18,7 @@
               <view>院系：{{ logs[index].guest.department }}</view>
             </template>
             <view>来访事由：{{ logs[index].purpose }}</view>
-            <view>目的宿舍：{{ logs[index].target_dorm }}</view>
+            <view>目的宿舍：{{ logs[index].dorm.id }}</view>
             <view>接待人：{{ logs[index].host_student }}</view>
             <view>进入时间：<uni-dateformat
                 :date="logs[index].in_time"

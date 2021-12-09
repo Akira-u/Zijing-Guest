@@ -6,7 +6,7 @@
     <view class="t-b">{{ title }}</view>
     <form class="cl">
       <view class="t-a">
-        <image src="@/static/yz.png"></image>
+        <image src="@/static/ba.png"></image>
         <input
           type="text"
           name="name"
@@ -25,6 +25,15 @@
           v-model="phone"
         />
       </view>
+      <view class="t-a">
+        <image src="@/static/yz.png"></image>
+        <input
+          type="password"
+          name="password"
+          placeholder="请输入管理员注册码"
+          v-model="password"
+        />
+      </view>
       <button @tap="register">注 册</button>
     </form>
   </view>
@@ -39,6 +48,7 @@ export default {
       title: "注册",
       phone: "",
       name: "",
+      password: "",
     };
   },
   methods: {
@@ -60,20 +70,30 @@ export default {
       wx.login({
         success(res1) {
           if (res1.code) {
-            console.log(that.phone);
             request({
               url: "/guard/",
               method: "POST",
               data: {
                 code: res1.code,
                 phone: that.phone,
-                name: that.name,
+                name: that.name,  
+                password: that.password,
               },
             }).then((res) => {
-              navigateTo("/pages/guard-form/guard-form");
+              console.log(res)
+              if (res.errmsg === 'password incorrect') {
+                uni.showToast({
+                  title: '注册码错误！',
+                  icon: 'error',
+                  mask: true
+                })
+              }
+              else { 
+                navigateTo("/pages/guard-form/guard-form"); 
+              }
             });
           } else {
-            console.log("登陆失败！" + res1.errMsg);
+            console.log("登录失败！" + res1.errMsg);
           }
         },
       });
@@ -83,25 +103,6 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.container {
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  font-size: 28rpx;
-  color: #000;
-}
-
 .container button {
   font-size: 28rpx;
   background: #5677fc;

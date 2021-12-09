@@ -15,7 +15,7 @@
         </uni-tr>
         <uni-tr>
           <uni-th>目的宿舍</uni-th>
-          <uni-td>{{ log.target_dorm }}</uni-td>
+          <uni-td>{{ log.dorm.name }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>接待人</uni-th>
@@ -99,7 +99,7 @@ export default {
                 value: this.log.guest.name,
               },
               thing1: {
-                value: this.log.target_dorm,
+                value: this.log.dorm.name,
               },
               thing5: {
                 value: this.remindMsg,
