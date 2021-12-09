@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       form_data: {
-        phone: "13900000000",
+        phone: "13919198100",
         dorm_id: "1号楼",
         target_dorm: '403',
         host_student: '创世洐炎',
@@ -75,7 +75,7 @@ export default {
         "1号楼","2号楼","3号楼","4号楼","5号楼","6号楼","7号楼"
       ],
       rules: {
-        // 对name字段进行必填验证
+        // 表单验证
         phone: {
           rules: [
             {
@@ -138,6 +138,13 @@ export default {
         console.log("登录失败！" + login_res.errMsg);
       }
     });
+    registeredGuestRequest({url:"/guest/status/"})
+      .then((res)=>{
+        if (req_res.status === 'still in') {
+          // if user is in dorm, jump to in-dorm page directly
+          uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
+        }
+      })
   },
   methods: {
     submit() {
