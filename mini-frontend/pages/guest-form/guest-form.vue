@@ -18,10 +18,10 @@
           placeholder="您的电话号码"
         />
       </uni-forms-item>
-      <uni-forms-item required label="目的楼号" name="dorm_id">
+      <uni-forms-item required label="目的楼号" name="target_building">
         <uni-combox 
           :candidates="candidates" 
-          v-model="form_data.dorm_id" 
+          v-model="form_data.target_building" 
           placeholder="请选择到访宿舍楼号"
         />
       </uni-forms-item>
@@ -73,7 +73,7 @@ export default {
       },
       msg_text:"您好，欢迎。",
       candidates:[
-        "1号楼","2号楼","3号楼","4号楼","5号楼","6号楼","7号楼"
+        "紫荆1号楼","紫荆2号楼"
       ],
       rules: {
         // 表单验证
@@ -150,30 +150,30 @@ export default {
   methods: {
     submit() {
       var that=this
-      wx.requestSubscribeMessage({
-        tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
-        success(res) {
-          console.log("subscribe success", res)
-        },
-        fail(res) {
-          console.log("fail", res)
-        },
-        complete: function() {
-          that.$refs.form
-            .validate()
-            .then((res) => {
-              console.log("表单内容：", res);
-              registeredGuestRequest({ url: "/log/", method: "POST", data: that.form_data })
-                .then((resp_data) => {
-                  console.log({ resp_data: resp_data })
+      that.$refs.form
+        .validate()
+        .then((res) => {
+          console.log("表单内容：", res);
+          registeredGuestRequest({ url: "/log/", method: "POST", data: that.form_data })
+            .then((resp_data) => {
+              console.log({ resp_data: resp_data })
+              wx.requestSubscribeMessage({
+                tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
+                success(res) {
+                console.log("subscribe success", res)
+                },
+                fail(res) {
+                  console.log("fail", res)
+                },
+                complete: function() {
                   navigateTo("/pages/guest-form/guest-qrcode");
-                })
+                }
+              })
             })
-            .catch((err) => {
-              console.log("表单错误信息：", err);
-            });
-        }
-      })
+        })
+        .catch((err) => {
+          console.log("表单错误信息：", err);
+        });
     },
     viewHistory() {
       navigateTo("/pages/guest-form/my-history")
