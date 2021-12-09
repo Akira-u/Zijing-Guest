@@ -115,6 +115,18 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/dorm',
+    component: Layout,
+    children: [
+      {
+        path: 'dorm',
+        name: 'dorm',
+        component: () => import('@/views/table/dorm'),
+        meta: { title: 'Dorm', icon: 'el-icon-notebook-2' }
+      }
+    ]
+  },
 
   // {
   //   path: '/form',
