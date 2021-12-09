@@ -140,7 +140,7 @@ export default {
     });
     registeredGuestRequest({url:"/guest/status/"})
       .then((res)=>{
-        if (req_res.status === 'still in') {
+        if (res.status === 'still in') {
           // if user is in dorm, jump to in-dorm page directly
           uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
         }
