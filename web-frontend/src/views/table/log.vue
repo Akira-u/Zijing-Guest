@@ -30,7 +30,6 @@
               type="datetime"
               placeholder="选择日期时间"
               align="right"
-              :picker-options="pickerOptions"
             />
             <span class="demonstration"> -- </span>
             <el-date-picker
@@ -38,7 +37,6 @@
               type="datetime"
               placeholder="选择日期时间"
               align="right"
-              :picker-options="pickerOptions"
             />
           </div>
         </el-col>
@@ -50,7 +48,6 @@
               type="datetime"
               placeholder="选择日期时间"
               align="right"
-              :picker-options="pickerOptions"
             />
             <span class="demonstration"> -- </span>
             <el-date-picker
@@ -58,7 +55,6 @@
               type="datetime"
               placeholder="选择日期时间"
               align="right"
-              :picker-options="pickerOptions"
             />
           </div>
         </el-col>
@@ -81,26 +77,32 @@
       <el-table-column label="访客姓名">
         <template slot-scope="scope">
           {{ scope.row.guest.name }}
+          <el-tag :type="scope.row.guest.is_student | tagFilter">{{ scope.row.guest.is_student | typeFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="学号" width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.guest.student_id }}</span>
+          <span>{{ scope.row.guest.student_id | stuidFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="手机号" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.guest.phone }}
+          {{ scope.row.guest.phone | phoneFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column label="信用状态" width="110" align="center">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.guest.credit | tagFilter">{{ scope.row.guest.credit | creditFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="到访宿舍楼" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.target_building }}
+          {{ scope.row.dormbuilding.name }}
         </template>
       </el-table-column>
-      <el-table-column label="目的宿舍" width="110" align="center">
+      <el-table-column label="到访宿舍" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.target_dorm }}
+          {{ scope.row.dorm.name }}
         </template>
       </el-table-column>
       <el-table-column label="来访事由" width="110" align="center">
@@ -136,7 +138,7 @@
       </el-table-column> -->
     </el-table>
 
-    <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
+    <pagination v-if="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="limit" @pagination="fetchData" />
 
   </div>
 </template>
@@ -144,8 +146,10 @@
 <script>
 import { getList } from '@/api/table'
 import waves from '@/directive/waves'
+import Pagination from '@/components/Pagination'
 
 export default {
+  components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -155,6 +159,26 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
+    },
+    typeFilter(type) {
+      if (type) return '学生'
+      else return '其他访客'
+    },
+    tagFilter(type) {
+      if (type) return 'success'
+      else return 'danger'
+    },
+    creditFilter(credit) {
+      if (credit) return '白名单'
+      else return '黑名单'
+    },
+    stuidFilter(student_id) {
+      if (student_id === null) return '其他访客无学号'
+      else return student_id
+    },
+    phoneFilter(phone) {
+      if (phone === null) return '该访客还未录入手机号'
+      else return phone
     }
   },
   data() {
@@ -181,7 +205,9 @@ export default {
         ordering: 'id'
       },
       statusOptions: [{ label: '学生', key: 'true' }, { label: '其他访客', key: 'false' }],
-      fuzzySearch: false
+      fuzzySearch: false,
+      total: 0,
+      limit: 10
     }
   },
   created() {
@@ -194,6 +220,7 @@ export default {
       getList(this.listQuery).then(response => {
         console.log(response)
         this.list = response.results
+        this.total = response.count
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)

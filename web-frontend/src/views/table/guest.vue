@@ -1,26 +1,32 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="guest_name" placeholder="访客姓名" style="width: 25%;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.student_id__icontains" placeholder="学号" style="width: 25%" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.is_student" placeholder="选择身份" style="width: 10%" class="filter-item" @change="handleFilter">
+      <el-row>
+        <el-col :span="16">
+          <el-input v-model="guest_name" placeholder="访客姓名" style="width: 24%;" class="filter-item" @keyup.enter.native="handleFilter" />
+          <el-input v-model="listQuery.student_id__icontains" placeholder="学号" style="width: 24%" class="filter-item" @keyup.enter.native="handleFilter" />
+          <el-select v-model="listQuery.is_student" placeholder="选择身份" style="width: 12%" class="filter-item" @change="handleFilter">
             <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        查找
-      </el-button>
-        <el-checkbox v-model="fuzzySearch" class="filter-item" style="margin-left:15px;">
-        姓名模糊查找
-      </el-checkbox>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="clearFilter">
-        清除当前查找条件
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleBlackList">
-        加入黑名单
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleWhiteList">
-        加入白名单
-      </el-button>
+          </el-select>
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+            查找
+          </el-button>
+          <el-checkbox v-model="fuzzySearch" class="filter-item" style="margin-left:15px;">
+            姓名模糊查找
+          </el-checkbox>
+        </el-col>
+        <el-col :span="8">
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-refresh" @click="clearFilter">
+            清除当前查找条件
+          </el-button>
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="handleBlackList">
+            加入黑名单
+          </el-button>
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-circle-plus" @click="handleWhiteList">
+            加入白名单
+          </el-button>
+        </el-col>
+      </el-row>
     </div>
 
     <el-table
@@ -38,15 +44,15 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="姓名">
+      <el-table-column label="访客姓名">
         <template slot-scope="scope">
           {{ scope.row.name }}
-          <el-tag :type="scope.row.is_student | tagFilter">{{scope.row.is_student | typeFilter}}</el-tag>
+          <el-tag :type="scope.row.is_student | tagFilter">{{ scope.row.is_student | typeFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="信用状态" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.credit | tagFilter">{{scope.row.credit | creditFilter}}</el-tag>
+          <el-tag :type="scope.row.credit | tagFilter">{{ scope.row.credit | creditFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="学号" width="110" align="center">
@@ -56,7 +62,7 @@
       </el-table-column>
       <el-table-column label="手机号" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.phone | phoneFilter}}
+          {{ scope.row.phone | phoneFilter }}
         </template>
       </el-table-column>
       <!-- <el-table-column class-name="status-col" label="Status" width="110" align="center">
@@ -71,7 +77,7 @@
         </template>
       </el-table-column> -->
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync=limit @pagination="fetchData" />
+    <pagination v-if="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="limit" @pagination="fetchData" />
 
   </div>
 </template>
@@ -82,7 +88,7 @@ import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 export default {
-  components :{ Pagination },
+  components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -94,25 +100,25 @@ export default {
       return statusMap[status]
     },
     typeFilter(type) {
-        if (type)return "学生"
-        else return "其他访客"
+      if (type) return '学生'
+      else return '其他访客'
     },
     tagFilter(type) {
-        if (type)return "success"
-        else return  "danger"
+      if (type) return 'success'
+      else return 'danger'
     },
-    creditFilter(credit){
-        if (credit)return "白名单"
-        else return "黑名单"
+    creditFilter(credit) {
+      if (credit) return '白名单'
+      else return '黑名单'
     },
-    stuidFilter(student_id){
-        // console.log(student_id)
-        if(student_id===null)return "其他访客无学号"
-        else return student_id
+    stuidFilter(student_id) {
+      // console.log(student_id)
+      if (student_id === null) return '其他访客无学号'
+      else return student_id
     },
-    phoneFilter(phone){
-        if(phone===null)return "该访客还未录入手机号"
-        else return phone
+    phoneFilter(phone) {
+      if (phone === null) return '该访客还未录入手机号'
+      else return phone
     }
   },
   data() {
@@ -125,15 +131,15 @@ export default {
         student_id__icontains: undefined,
         name: undefined,
         icontains: undefined,
-        is_student: undefined,
+        is_student: undefined
         // ordering: 'id'
       },
       guest_name: undefined,
       fuzzySearch: false,
-      multipleSelection:[],
-      total:0,
-      limit:0,
-      typeOptions: [{ label: '学生', key: 'true' }, { label: '其他访客', key: 'false' }],
+      multipleSelection: [],
+      total: 0,
+      limit: 10,
+      typeOptions: [{ label: '学生', key: 'true' }, { label: '其他访客', key: 'false' }]
     }
   },
   created() {
@@ -164,31 +170,31 @@ export default {
       this.fetchData()
     },
     clearFilter() {
-      this.listQuery= {
+      this.listQuery = {
         page: 1,
         student_id: undefined,
         student_id__icontains: undefined,
         name: undefined,
         icontains: undefined,
-        is_student: undefined,
-      },
+        is_student: undefined
+      }
       this.fetchData()
     },
-    handleSelectionChange(val){
-        // console.log(val)
-        this.multipleSelection =val
+    handleSelectionChange(val) {
+      // console.log(val)
+      this.multipleSelection = val
     },
-    handleBlackList(){
+    handleBlackList() {
       console.log(this.multipleSelection)
-      toBlackList(this.multipleSelection).then(()=>{
+      toBlackList(this.multipleSelection).then(() => {
         this.fetchData()
       })
     },
-    handleWhiteList(){
-      toWhiteList(this.multipleSelection).then(()=>{
+    handleWhiteList() {
+      toWhiteList(this.multipleSelection).then(() => {
         this.fetchData()
       })
-    },
+    }
   }
 }
 </script>
