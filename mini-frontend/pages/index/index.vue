@@ -8,9 +8,20 @@
       <button @tap="otherGuestEntry">其它访客</button>
       <button @tap="guardEntry">管理员入口</button>
     </view>
-    <mp-dialog :show="DialogShow" @buttontap="onSubmitDialog">
-      <view class="dialog-submit-content">请稍候……</view>
-    </mp-dialog>
+    <uni-popup ref="waiting_popup" type="message" mask-click="false">
+      <uni-popup-message
+        type="info"
+        message="请稍候..."
+        :duration="0"
+      ></uni-popup-message>
+    </uni-popup>
+    <uni-popup ref="fail_popup" type="dialog">
+      <uni-popup-dialog
+        type="error"
+        mode="base"
+        content="网络错误，请稍后重试！"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -20,19 +31,28 @@ import request from "@/api/request"
 export default {
   data() {
     return {
-      DialogShow: false,
+
     };
   },
-  onLoad() {
+  onShow() {
     wx.login({
       success: (login_res) => {
         request({ url: "/guest/status/", data: { code: login_res.code } })
           .then((req_res) => {
-            console.log('index onshow ', req_res.status)
+            console.log('index onShow ', req_res.status)
             if (req_res.status === 'still in') {
               // if user is in dorm, jump to in-dorm page directly
               uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
             }
+            else if (req_res.status === 'out') {
+              // a student or other guest who has registered and not in dorm now
+              // jump to guest-form in case that they may tap wrong entrance
+              uni.redirectTo({ url: '/pages/guest-form/guest-form' })
+            }
+            else if (req_res.status === 'guard') {
+              uni.redirectTo({ url: '/pages/guard-form/guard-form' })
+            }
+            // else: a new user
           })
       }
     })
@@ -42,13 +62,13 @@ export default {
       var that = this;
       wx.login({
         success(login_res) {
-          that.DialogShow = true;
+          that.$refs.waiting_popup.open()
           request({
             url: "/guest/login/",
             data: { code: login_res.code, }
           })
             .then((req_res) => {
-              that.DialogShow = false;
+              that.$refs.waiting_popup.close()
               console.log(req_res)
               if (req_res.open_id) {
                 uni.setStorage({
@@ -74,8 +94,10 @@ export default {
                   },
                 })
               }
-            }       
-          )
+            })
+            .catch((err) => {
+              that.showFailPopup()
+            })
         },
         fail(login_res) {
           console.log("登录失败！" + login_res.errMsg);
@@ -86,13 +108,13 @@ export default {
       var that = this;
       wx.login({
         success(login_res) {
-          that.DialogShow = true;
+          that.$refs.waiting_popup.open()
           request({
             url: "/guest/login/",
             data: { code: login_res.code, }
           })
             .then((req_res) => {
-              that.DialogShow = false;
+              that.$refs.waiting_popup.close()
               console.log(req_res)
               if (req_res.open_id) {
                 uni.setStorage({
@@ -105,6 +127,9 @@ export default {
                 navigateTo("/pages/guest-form/guest-register");
               }
             })
+            .catch((err) => {
+              that.showFailPopup()
+            })
         },
         fail(login_res) {
           console.log("登录失败！" + login_res.errMsg);
@@ -115,13 +140,13 @@ export default {
       var that = this
       wx.login({
         success(login_res) {
-          that.DialogShow = true;
+          that.$refs.waiting_popup.open()
           request({
             url: "/guard/login/",
             data: { code: login_res.code, }
           })
             .then((req_res) => {
-              that.DialogShow = false;
+              that.$refs.waiting_popup.close()
               console.log(req_res)
               if (req_res.open_id) {
                 uni.setStorage({
@@ -131,10 +156,13 @@ export default {
                   fail: (error) => { console.warn(error) }
                 })
                 navigateTo("/pages/guard-form/guard-form", req_res);
-              } 
+              }
               else {
                 navigateTo("/pages/guard-form/guard-register");
               }
+            })
+            .catch((err) => {
+              that.showFailPopup()
             })
         },
         fail(login_res) {
@@ -142,6 +170,10 @@ export default {
         }
       });
     },
+    showFailPopup(){
+      this.$refs.waiting_popup.close()
+      this.$refs.fail_popup.open()
+    }
   },
 };
 </script>
