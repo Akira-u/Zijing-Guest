@@ -8,18 +8,19 @@ export function getBuildingList(query) {
   })
 }
 export function getDormList(query) {
-  console.log(query)
-  return request({
-    url: 'http://49.232.106.46:8000/dorm',
-    method: 'get',
-    params: query
-  })
-}
+    console.log(query)
+    return request({
+      url: 'http://49.232.106.46:8000/dorm',
+      method: 'get',
+      params: query
+    })
+  }
+export function importList(data) {
+    console.log(data)
+    return request({
+      url: 'http://49.232.106.46:8000/dorm/bulk_create/',
+      method: 'post',
+      data
+    })
+  }
 
-// export function toWhiteList(data) {
-//     return request({
-//       url: 'http://49.232.106.46:8000/guest/to_white/',
-//       method: 'post',
-//       data
-//     })
-//   }
