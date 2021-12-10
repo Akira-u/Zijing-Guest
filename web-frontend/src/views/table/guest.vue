@@ -16,9 +16,6 @@
           </el-checkbox>
         </el-col>
         <el-col :span="8">
-          <el-button v-waves class="filter-item" type="primary" icon="el-icon-refresh" @click="clearFilter">
-            清除当前查找条件
-          </el-button>
           <el-button v-waves class="filter-item" type="primary" icon="el-icon-circle-plus-outline" @click="handleBlackList">
             加入黑名单
           </el-button>
@@ -33,13 +30,14 @@
       v-loading="listLoading"
       :data="list"
       element-loading-text="Loading"
+      stripe
       border
       fit
       highlight-current-row
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" align="center" />
-      <el-table-column align="center" label="ID" width="95">
+      <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">
           {{ scope.$index }}
         </template>
@@ -65,25 +63,74 @@
           {{ scope.row.phone | phoneFilter }}
         </template>
       </el-table-column>
-      <!-- <el-table-column class-name="status-col" label="Status" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
+      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
+          <el-button type="primary" icon="el-icon-notebook-2" size="mini" @click="checkLog(row)">
+            查看近期访问记录
+          </el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
-        </template>
-      </el-table-column> -->
     </el-table>
     <pagination v-if="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="limit" @pagination="fetchData" />
+
+    <el-dialog title="查看近期访问记录" :visible.sync="dialogFormVisible" width="65%">
+      <el-table
+        v-loading="listLoading"
+        :data="logList"
+        element-loading-text="Loading"
+        stripe
+        border
+        fit
+        highlight-current-row
+      >
+        <el-table-column align="center" label="序号" min-width="5%">
+          <template slot-scope="scope">
+            {{ scope.$index }}
+          </template>
+        </el-table-column>
+        <el-table-column label="到访宿舍楼" min-width="15%" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.dormbuilding.name }}
+          </template>
+        </el-table-column>
+        <el-table-column label="到访宿舍" min-width="10%" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.dorm.name }}
+          </template>
+        </el-table-column>
+        <el-table-column label="来访事由" min-width="20%" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.purpose }}
+          </template>
+        </el-table-column>
+        <el-table-column label="接待人" min-width="10%" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.host_student }}
+          </template>
+        </el-table-column>
+        <el-table-column label="进入时间" min-width="20%" align="center">
+          <template slot-scope="scope">
+            {{ moment(scope.row.in_time).format("YYYY-MM-DD HH:mm:ss") }}
+          </template>
+        </el-table-column>
+        <el-table-column label="离开时间" min-width="20%" align="center">
+          <template slot-scope="scope">
+            {{ moment(scope.row.out_time).format("YYYY-MM-DD HH:mm:ss") }}
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          关闭
+        </el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { getList, toBlackList, toWhiteList } from '@/api/guest'
+import { getList, getLog, toBlackList, toWhiteList } from '@/api/guest'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
@@ -91,14 +138,6 @@ export default {
   components: { Pagination },
   directives: { waves },
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    },
     typeFilter(type) {
       if (type) return '学生'
       else return '其他访客'
@@ -139,7 +178,13 @@ export default {
       multipleSelection: [],
       total: 0,
       limit: 10,
-      typeOptions: [{ label: '学生', key: 'true' }, { label: '其他访客', key: 'false' }]
+      typeOptions: [{ label: '学生', key: 'true' }, { label: '其他访客', key: 'false' }],
+      dialogFormVisible: false,
+      logQuery: {
+        page: 1,
+        guest__open_id: undefined
+      },
+      logList: null
     }
   },
   created() {
@@ -169,17 +214,6 @@ export default {
       }
       this.fetchData()
     },
-    clearFilter() {
-      this.listQuery = {
-        page: 1,
-        student_id: undefined,
-        student_id__icontains: undefined,
-        name: undefined,
-        icontains: undefined,
-        is_student: undefined
-      }
-      this.fetchData()
-    },
     handleSelectionChange(val) {
       // console.log(val)
       this.multipleSelection = val
@@ -194,6 +228,20 @@ export default {
       toWhiteList(this.multipleSelection).then(() => {
         this.fetchData()
       })
+    },
+    checkLog(row) {
+      this.logQuery.guest__open_id = row.guest__open_id
+      this.listLoading = true
+      getLog(this.logQuery).then(response => {
+        this.logList = response.results
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+      this.dialogFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
     }
   }
 }

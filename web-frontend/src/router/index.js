@@ -97,7 +97,7 @@ export const constantRoutes = [
       {
         path: 'guard',
         name: 'Guard',
-        component: () => import('@/views/table/guest'),
+        component: () => import('@/views/table/guard'),
         meta: { title: 'Guard', icon: 'el-icon-user-solid' }
       }
     ]
@@ -123,7 +123,7 @@ export const constantRoutes = [
         path: 'dorm',
         name: 'dorm',
         component: () => import('@/views/table/dorm'),
-        meta: { title: 'Dorm', icon: 'el-icon-notebook-2' }
+        meta: { title: 'Dorm', icon: 'el-icon-office-building' }
       }
     ]
   },
