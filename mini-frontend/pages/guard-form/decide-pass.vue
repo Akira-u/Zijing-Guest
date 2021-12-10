@@ -70,6 +70,7 @@
 
 <script>
 import { registeredGuardRequest } from "@/api/request";
+import request from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
 export default {
   data() {
@@ -93,18 +94,14 @@ export default {
       if (!res.guest.is_student) {
         this.detail_title = '访客申请（其它访客）'
       }
-      if (!res.credit) {
+      if (!res.guest.credit) {
         this.$refs.credit_popup.open()
       }
-      uni.getStorage({
-        key: 'my_open_id',
-      }).then((res)=>{
-        url='/dorm/'+res
-        request({
-          url: url,
-        })
+      registeredGuardRequest({
+          url: '/guard/',
       }).then((resp)=>{
-        if(resp.dormbuilding.id!==this.log.dormbuilding.id){
+        console.log(resp)
+        if(resp.results[0].dormbuilding.id!==this.log.dormbuilding.id){
           this.building_unmatch_text='注意：访客目的宿舍楼为'+this.log.dormbuilding.name+'，与您当前管理宿舍楼不同！'
           this.$refs.building_unmatch_popup.open()
         }
@@ -123,7 +120,7 @@ export default {
             let student_list=Array()
             for(var k in item){
               if(k.startsWith('student')){
-                student_list.push(item.k)
+                student_list.push(item[k])
               }
             }
             if (student_list.indexOf(this.log.host_student)===-1){
