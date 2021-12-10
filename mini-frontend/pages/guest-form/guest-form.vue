@@ -19,13 +19,13 @@
         />
       </uni-forms-item>
       <uni-forms-item required label="到访楼号" name="target_building">
-        <view class="targetBuilding">
         <uni-combox 
+          class="targetBuilding"
           :candidates="building_list" 
           v-model="form_data.target_building" 
           placeholder="请选择到访宿舍楼号"
           @input="changeInfo"
-        /></view>
+        />
       </uni-forms-item>
       <uni-forms-item required label="到访宿舍" name="target_dorm">
         <uni-combox 
@@ -66,6 +66,7 @@ import request from "@/api/request"
 import navigateTo from "@/api/navigate";
 export default {
   data() {
+    var that = this;
     return {
       form_data: {
         phone: "13919198100",
@@ -106,11 +107,50 @@ export default {
             },
           ],
         },
+        target_building: {
+          rules: [
+            {
+              required: true,
+              errorMessage: "请选择到访宿舍楼",
+            },
+            {
+              maxLength: 10,
+              errorMessage: "宿舍楼号长度最大为{maxLength}",
+            },
+            {
+              validateFunction: function(rule, value, data, callback){
+                console.log("validate1",that.building_list)
+                var index = that.building_list.findIndex(i => i == value)
+                if(index === -1){
+                  callback("不存在该宿舍楼")
+                }
+              }
+            },
+          ]
+        },
         target_dorm: {
-          rules: [{
-            maxLength: 4,
-            errorMessage: "宿舍号长度最大为{maxLength}",
-          }]
+          rules: [
+            {
+              required: true,
+              errorMessage: "请选择到访宿舍门牌号",
+            },
+            {
+              maxLength: 4,
+              errorMessage: "宿舍门牌号长度最大为{maxLength}",
+            },
+            {
+              validateFunction: function(rule, value, data, callback){
+                console.log("validate2",that.dorm_list)
+                if(that.dorm_list.length === 0){
+                  callback("请检查到访宿舍楼是否正确")
+                }
+                var index = that.dorm_list.findIndex(i => i == value)
+                if(index === -1){
+                  callback("不存在该宿舍号")
+                }
+              }
+            },
+          ]
         }
       },
     };
@@ -158,10 +198,13 @@ export default {
         }
       })
   },
+  onReady() {
+    this.$refs.form.setRules(this.rules)
+  },
   methods: {
     submit() {
       var that=this
-      that.$refs.form
+      this.$refs.form
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
@@ -204,6 +247,7 @@ export default {
             for(var j = 0; j < len; j++) {
               that.dorm_list.push(res.results[j].name)
             }
+            that.$refs.form.setRules(that.rules)
           })
       } 
     }
@@ -237,6 +281,7 @@ export default {
   background: #f8f7fc;
   font-size: 30rpx;
   border-radius: 10rpx;
+  width:100%;
 }
 
 .targetBuilding {
