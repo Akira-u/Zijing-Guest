@@ -62,7 +62,7 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
     },
-    setOptions({ student, other,total } = {}) {
+    setOptions({ student, other, total } = {}) {
       this.chart.setOption({
         xAxis: {
           data: ['12.4', '12.5', '12.6', '12.7', '12.8', '12.9', '12.10'],
@@ -91,7 +91,7 @@ export default {
           }
         },
         legend: {
-          data: ['student', 'other','total']
+          data: ['student', 'other', 'total']
         },
         series: [{
           name: 'student',

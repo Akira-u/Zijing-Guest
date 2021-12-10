@@ -62,7 +62,7 @@ export default {
   components: {
     CountTo
   },
-  props: ["logCount","guestCount","guardCount","dormCount"],
+  props: ['logCount', 'guestCount', 'guardCount', 'dormCount'],
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)

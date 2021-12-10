@@ -23,7 +23,7 @@ export default {
       default: '300px'
     },
     logs_hour: {
-      type: Object,
+      type: Object
     }
   },
   data() {

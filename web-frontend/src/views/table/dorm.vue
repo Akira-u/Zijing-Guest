@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div>
-      <el-select v-model="listQuery.dormbuilding_id" placeholder="选择宿舍楼" style="width: 12%" class="filter-item" @change="fetchData">
+    <div style="margin-top: 20px">
+      <el-select v-model="listQuery.dormbuilding_id" placeholder="选择宿舍楼" style="margin-left: 20px; width: 12%" class="filter-item" @change="fetchData">
         <el-option v-for="item in buildinglist" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
-      <el-button class="upload-item" style="margin-left: 10px; width: 15%" type="primary" icon="el-icon-edit" @click="dialogImportVisible=true">
-            导入
+      <el-button class="upload-item" style="margin-left: 10px; width: 15%" type="primary" icon="el-icon-upload2" @click="dialogImportVisible=true">
+        导入
       </el-button>
     </div>
-    <div v-if="dormtotal>0" class="components-container board">
-      <Kanban v-for="(dorm, index) in dormlist" :key="index" :list="[{name:dorm.student1,id:1},{name:dorm.student2,id:2},{name:dorm.student3,id:3},{name:dorm.student4,id:4}]" class="kanban working" :header-text="dormlist[index].name" />
+    <div v-if="dormtotal>0" class="board">
+      <Kanban v-for="(dorm, index) in dormlist" :key="index" :list="[{name:dorm.student1,id:1},{name:dorm.student2,id:2},{name:dorm.student3,id:3},{name:dorm.student4,id:4}]" class="kanban todo" :header-text="dormlist[index].name" />
     </div>
     <el-dialog :visible.sync="dialogImportVisible" title="批量导入">
-      <upload-excel-component :on-success="handleUploadSuccess" :before-upload="beforeUpload"/>
+      <upload-excel-component :on-success="handleUploadSuccess" :before-upload="beforeUpload" />
       <el-table :data="uploadData" border highlight-current-row style="width: 100%;margin-top:20px;">
         <el-table-column v-for="item of uploadHeader" :key="item" :prop="item" :label="item" />
       </el-table>
@@ -26,7 +26,6 @@
 import { getBuildingList, getDormList, importList } from '@/api/dorm'
 import Kanban from '@/components/Kanban'
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
-
 
 export default {
   components: {
@@ -91,18 +90,17 @@ export default {
       })
     },
     beforeUpload(file) {
-      return true;
-      //restricti
+      return true
+      // restricti
     },
     handleUploadSuccess({ results, header }) {
-      let item
       this.uploadData = results
       this.uploadHeader = header
     },
-    handleUploadConfirm(){
-      importList({"list":this.uploadData,"dormbuilding_id":this.listQuery.dormbuilding_id}).then(response => {
+    handleUploadConfirm() {
+      importList({ 'list': this.uploadData, 'dormbuilding_id': this.listQuery.dormbuilding_id }).then(response => {
         this.fetchData()
-        this.dialogImportVisible=false
+        this.dialogImportVisible = false
       })
       // this.$api.person.person_import({"results":this.uploadData,"header":this.uploadHeader}).then(response=>{
       //   let result = response.data.result
@@ -119,21 +117,23 @@ export default {
       //   }
       //   this.fetchData()
       // })
-      //api
+      // api
       // console.log(this.uploadData)
-      // console.log(this.uploadHeader) 
-    },
+      // console.log(this.uploadHeader)
+    }
   }
 }
 </script>
 <style lang="scss">
 .board {
-  width: 1000px;
+  width: 100%;
   margin-left: 20px;
+  margin-top: 20px;
   display: flex;
-  justify-content: space-around;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 20px;
+  column-gap: 20px;
 }
 .kanban {
   &.todo {

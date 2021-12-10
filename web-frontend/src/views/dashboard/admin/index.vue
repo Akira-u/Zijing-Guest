@@ -16,7 +16,7 @@
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart :logs_hour="logs_hour"/>
+          <pie-chart :logs_hour="logs_hour" />
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
@@ -68,42 +68,42 @@ export default {
   },
   data() {
     return {
-      logCount: 0,      
+      logCount: 0,
       logs: undefined,
       logs_weekday: undefined,
-      logs_hour:undefined,
+      logs_hour: undefined,
       guestCount: 0,
       guests: undefined,
       guardCount: 0,
       guards: undefined,
       dormCount: 0,
       dorms: undefined,
-      lineChartData: [0,0,0,0,0,0,0],
+      lineChartData: [0, 0, 0, 0, 0, 0, 0]
     }
   },
-  created(){
+  created() {
     this.fetchLogData()
     setTimeout(() => {
       this.lineChartData = this.logs
-      }, 1.5 * 1000)
+    }, 1.5 * 1000)
   },
   methods: {
     fetchLogData() {
-      getLogStatic().then(response =>{
+      getLogStatic().then(response => {
         this.logs = response.logs
         this.logCount = response.total_count
         this.logs_weekday = response.logs_weekday
         this.logs_hour = response.logs_hour
       })
-      getGuestStatic().then(response =>{
+      getGuestStatic().then(response => {
         this.guests = response.guests
         this.guestCount = response.total_count
       })
-      getGuardStatic().then(response =>{
+      getGuardStatic().then(response => {
         this.guards = response.guards
         this.guardCount = response.total_count
       })
-      getDormStatic().then(response =>{
+      getDormStatic().then(response => {
         this.dorms = response.dorms
         this.dormCount = response.total_count
       })
