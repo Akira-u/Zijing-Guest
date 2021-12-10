@@ -73,7 +73,7 @@
     </el-table>
     <pagination v-if="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="limit" @pagination="fetchData" />
 
-    <el-dialog title="查看近期访问记录" :visible.sync="dialogFormVisible" width="65%">
+    <el-dialog title="查看近期访问记录" :visible.sync="dialogFormVisible" width="70%">
       <el-table
         v-loading="listLoading"
         :data="logList"
@@ -108,12 +108,17 @@
             {{ scope.row.host_student }}
           </template>
         </el-table-column>
-        <el-table-column label="进入时间" min-width="20%" align="center">
+        <el-table-column label="审批结果" min-width="8%" align="center">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
+        </template>
+      </el-table-column>
+        <el-table-column label="进入时间" min-width="16%" align="center">
           <template slot-scope="scope">
             {{ moment(scope.row.in_time).format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
-        <el-table-column label="离开时间" min-width="20%" align="center">
+        <el-table-column label="离开时间" min-width="16%" align="center">
           <template slot-scope="scope">
             {{ moment(scope.row.out_time).format("YYYY-MM-DD HH:mm:ss") }}
           </template>
@@ -154,6 +159,14 @@ export default {
       // console.log(student_id)
       if (student_id === null) return '其他访客无学号'
       else return student_id
+    },
+    approvalTagFilter(approval) {
+      if (approval === 'permit') return 'success'
+      else return 'danger'
+    },
+    approvalFilter(approval) {
+      if (approval === 'permit') return '通过'
+      else return '拒绝'
     },
     phoneFilter(phone) {
       if (phone === null) return '该访客还未录入手机号'

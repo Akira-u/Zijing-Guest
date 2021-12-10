@@ -116,6 +116,11 @@
           {{ scope.row.host_student }}
         </template>
       </el-table-column>
+      <el-table-column label="审批结果" width="110" align="center">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="进入时间" width="160" align="center">
         <template slot-scope="scope">
           {{ moment(scope.row.in_time).format("YYYY-MM-DD HH:mm:ss") }}
@@ -153,6 +158,14 @@ export default {
     creditFilter(credit) {
       if (credit) return '白名单'
       else return '黑名单'
+    },
+    approvalTagFilter(approval) {
+      if (approval === 'permit') return 'success'
+      else return 'danger'
+    },
+    approvalFilter(approval) {
+      if (approval === 'permit') return '通过'
+      else return '拒绝'
     },
     stuidFilter(student_id) {
       if (student_id === null) return '其他访客无学号'
