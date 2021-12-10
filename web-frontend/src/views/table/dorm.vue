@@ -9,7 +9,7 @@
       </el-button>
     </div>
     <div v-if="dormtotal>0" class="components-container board">
-      <Kanban :key="index" :list="[{name:dorm.student1,id:1},{name:dorm.student2,id:2},{name:dorm.student3,id:3},{name:dorm.student4,id:4}]" class="kanban working" :header-text="dormlist[index].name" v-for="(dorm, index) in dormlist"/> 
+      <Kanban v-for="(dorm, index) in dormlist" :key="index" :list="[{name:dorm.student1,id:1},{name:dorm.student2,id:2},{name:dorm.student3,id:3},{name:dorm.student4,id:4}]" class="kanban working" :header-text="dormlist[index].name" />
     </div>
     <el-dialog :visible.sync="dialogImportVisible" title="批量导入">
       <upload-excel-component :on-success="handleUploadSuccess" :before-upload="beforeUpload"/>
@@ -19,6 +19,7 @@
       <el-button type="danger" @click="dialogImportVisible=false">取消</el-button>
       <el-button type="primary" @click="handleUploadConfirm()">确定</el-button>
     </el-dialog>
+
   </div>
 </template>
 <script>
@@ -34,7 +35,7 @@ export default {
   },
   data() {
     return {
-      dormbuilding: "紫荆一号楼",
+      dormbuilding: '紫荆一号楼',
       buildinglist: [],
       dormlist: [],
       buildingtotal: 0,
@@ -45,7 +46,7 @@ export default {
       uploadData: [],
       uploadHeader: [],
       listQuery: {
-        dormbuilding_id: 1,
+        dormbuilding_id: 1
       },
       list1: [
         { name: 'Mission', id: 1 },
@@ -72,13 +73,13 @@ export default {
       this.buildinglist = response.results
       this.buildingtotal = response.count
       setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        this.listLoading = false
+      }, 1.5 * 1000)
     })
     this.fetchData()
   },
   methods: {
-    fetchData(){
+    fetchData() {
       this.listLoading = true
       getDormList(this.listQuery).then(response => {
         this.dormlist = response.results
