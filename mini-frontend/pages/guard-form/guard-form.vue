@@ -24,7 +24,6 @@ export default {
   methods: {
     scanQrcode: function () {
       console.log("scan qrcode");
-      var that = this;
       wx.scanCode({
         success(res) {
           console.log(res.result);

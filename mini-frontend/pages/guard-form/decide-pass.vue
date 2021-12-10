@@ -51,11 +51,18 @@
         content="注意：该访客在黑名单中！"
       ></uni-popup-dialog>
     </uni-popup>
-    <uni-popup ref="unmatch_popup" type="dialog">
+    <uni-popup ref="host_unmatch_popup" type="dialog">
       <uni-popup-dialog
         mode="base"
         type="warn"
-        :content="unmatch_text"
+        :content="host_unmatch_text"
+      ></uni-popup-dialog>
+    </uni-popup>
+    <uni-popup ref="building_unmatch_popup" type="dialog">
+      <uni-popup-dialog
+        mode="base"
+        type="warn"
+        :content="building_unmatch_text"
       ></uni-popup-dialog>
     </uni-popup>
   </view>
@@ -69,7 +76,8 @@ export default {
     return {
       log: {},
       detail_title: '访客申请（学生）',
-      unmatch_text: ''
+      host_unmatch_text: '',
+      building_unmatch_text: ''
     };
   },
   onLoad(options) {
@@ -88,6 +96,20 @@ export default {
       if (!res.credit) {
         this.$refs.credit_popup.open()
       }
+      uni.getStorage({
+        key: 'my_open_id',
+      }).then((res)=>{
+        url='/dorm/'+res
+        request({
+          url: url,
+        })
+      }).then((resp)=>{
+        if(resp.dormbuilding.id!==this.log.dormbuilding.id){
+          this.building_unmatch_text='注意：访客目的宿舍楼为'+this.log.dormbuilding.name+'，与您当前管理宿舍楼不同！'
+          this.$refs.building_unmatch_popup.open()
+        }
+      })
+      
       registeredGuardRequest({
         url: '/dorm/',
         data: {
@@ -105,8 +127,8 @@ export default {
               }
             }
             if (student_list.indexOf(this.log.host_student)===-1){
-              that.unmatch_text='注意：接待人与宿舍号不匹配！'+that.log.dorm.name+'的成员为：'+student_list.toString()
-              that.$refs.unmatch_popup.open()
+              that.host_unmatch_text='注意：接待人与宿舍号不匹配！'+that.log.dorm.name+'的成员为：'+student_list.toString()
+              that.$refs.host_unmatch_popup.open()
             }
           }
         })
