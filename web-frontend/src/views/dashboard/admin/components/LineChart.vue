@@ -91,10 +91,10 @@ export default {
           }
         },
         legend: {
-          data: ['student', 'other', 'total']
+          data: ['学生来访', '其他访客', '总计']
         },
         series: [{
-          name: 'student',
+          name: '学生来访',
           itemStyle: {
             color: '#FF005A',
             lineStyle: {
@@ -109,7 +109,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'other',
+          name: '其他访客',
           itemStyle: {
             color: '#C0C0C0',
             lineStyle: {
@@ -124,7 +124,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'total',
+          name: '总计',
           smooth: true,
           type: 'line',
           itemStyle: {

@@ -7,7 +7,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Guests
+            访客
           </div>
           <count-to :start-val="0" :end-val="guestCount" :duration="2600" class="card-panel-num" />
         </div>
@@ -20,7 +20,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Guards
+            管理员
           </div>
           <count-to :start-val="0" :end-val="guardCount" :duration="3000" class="card-panel-num" />
         </div>
@@ -33,7 +33,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Dorms
+            宿舍楼
           </div>
           <count-to :start-val="0" :end-val="dormCount" :duration="3200" class="card-panel-num" />
         </div>
@@ -46,7 +46,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Logs
+            访问记录
           </div>
           <count-to :start-val="0" :end-val="logCount" :duration="3600" class="card-panel-num" />
         </div>

@@ -49,9 +49,9 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
+      name: '主页',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '主页', icon: 'dashboard' }
     }]
   },
 
@@ -85,7 +85,7 @@ export const constantRoutes = [
         path: 'guest',
         name: 'Guest',
         component: () => import('@/views/table/guest'),
-        meta: { title: 'Guest', icon: 'el-icon-user' }
+        meta: { title: '访客', icon: 'el-icon-user' }
       }
     ]
   },
@@ -98,7 +98,7 @@ export const constantRoutes = [
         path: 'guard',
         name: 'Guard',
         component: () => import('@/views/table/guard'),
-        meta: { title: 'Guard', icon: 'el-icon-user-solid' }
+        meta: { title: '管理员', icon: 'el-icon-user-solid' }
       }
     ]
   },
@@ -111,7 +111,7 @@ export const constantRoutes = [
         path: 'log',
         name: 'Log',
         component: () => import('@/views/table/log'),
-        meta: { title: 'Log', icon: 'el-icon-notebook-2' }
+        meta: { title: '访问记录', icon: 'el-icon-notebook-2' }
       }
     ]
   },
@@ -123,7 +123,7 @@ export const constantRoutes = [
         path: 'dorm',
         name: 'dorm',
         component: () => import('@/views/table/dorm'),
-        meta: { title: 'Dorm', icon: 'el-icon-office-building' }
+        meta: { title: '宿舍楼', icon: 'el-icon-office-building' }
       }
     ]
   },
