@@ -16,10 +16,10 @@
         <uni-list-item title="接待人" :rightText="log.host_student"></uni-list-item>
       </uni-list>
       </view>
-    </view>
-    <view class="buttonList">
-      <button @tap="Pass">通过</button>
-      <button @tap="Deny">禁入</button>
+      <view class="buttonList">
+        <button @tap="Pass">通过</button>
+        <button @tap="Deny">禁入</button>
+      </view>
     </view>
     <uni-popup ref="credit_popup" type="dialog">
       <uni-popup-dialog mode="base" type="warn" content="请注意：该访客在黑名单中！"></uni-popup-dialog>
@@ -34,7 +34,7 @@ export default {
   data() {
     return { 
       log: {},
-      detail_title:'访客申请（学生）'
+      detail_title:'访客申请'
     };
   },
   onLoad(options) {
@@ -51,6 +51,9 @@ export default {
       }
       if(!res.guest.is_student){
         this.detail_title='访客申请（其它访客）'
+      }
+      else{
+        this.detail_title='访客申请（学生）'
       }
     });
   },
@@ -94,8 +97,8 @@ export default {
   position: absolute;
   width: 80%;
   left: 50%;
-  top: 10%;
-  transform: translate(-50%, 10%);
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .dataList {
@@ -103,10 +106,10 @@ export default {
 }
 
 .buttonList {
-  position: absolute;
-  width: 100%;
+  position: relative;
+  width: 125%;
   left: 50%;
-  transform: translate(-50%, 250%);
+  transform: translate(-50%, 0%);
 }
 
 button {
