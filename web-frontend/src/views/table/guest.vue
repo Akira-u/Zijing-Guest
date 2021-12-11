@@ -243,7 +243,7 @@ export default {
       })
     },
     checkLog(row) {
-      this.logQuery.guest__open_id = row.guest__open_id
+      this.logQuery.guest__open_id = row.open_id
       this.listLoading = true
       getLog(this.logQuery).then(response => {
         this.logList = response.results
