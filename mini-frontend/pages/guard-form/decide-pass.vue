@@ -39,10 +39,10 @@
           ></uni-list-item>
         </uni-list>
       </view>
-    </view>
-    <view class="buttonList">
-      <button @tap="Pass">通过</button>
-      <button @tap="Deny">禁入</button>
+      <view class="buttonList">
+        <button @tap="Pass">通过</button>
+        <button @tap="Deny">禁入</button>
+      </view>
     </view>
     <uni-popup ref="credit_popup" type="dialog">
       <uni-popup-dialog
@@ -174,8 +174,8 @@ export default {
   position: absolute;
   width: 80%;
   left: 50%;
-  top: 10%;
-  transform: translate(-50%, 10%);
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .dataList {
@@ -183,10 +183,10 @@ export default {
 }
 
 .buttonList {
-  position: absolute;
-  width: 100%;
+  position: relative;
+  width: 125%;
   left: 50%;
-  transform: translate(-50%, 250%);
+  transform: translate(-50%, 0%);
 }
 
 button {
