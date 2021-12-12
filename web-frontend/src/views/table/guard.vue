@@ -52,6 +52,9 @@
           <el-button type="primary" icon="el-icon-edit-outline" @click="editGuard(row)">
             编辑
           </el-button>
+          <el-button type="primary" icon="el-icon-delete" @click="deleteGuard(row)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -95,7 +98,7 @@
 </template>
 
 <script>
-import { getList, editBuilding, preCreate } from '@/api/guard'
+import { getList, editBuilding, preCreate, del } from '@/api/guard'
 import { getBuildingList } from '@/api/dorm'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
@@ -179,7 +182,6 @@ export default {
       this.fetchData()
     },
     createNewGuard(){
-      var that=this
       this.$prompt('请输入新管理员姓名', '添加管理员', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -187,27 +189,30 @@ export default {
           inputErrorMessage: '非中文姓名！'
         }).then(({ value }) => {
           preCreate({name:value,password:'111111'}).then(response=>{
-            console.log(response)
-            this.$alert(response.result['name']+'的注册码为：'+response.result['password'], '获取注册码', {confirmButtonText: '点击复制',}).then((res)=>{
+            this.$alert(response.result['name']+' 的注册码为：'+response.result['password'], '获取注册码', {confirmButtonText: '点击复制',}).then((res)=>{
               this.$copyText(response.result['password']).then((e) => {
-                that.$message({type:'success',message:'复制成功，请将注册码发给新管理员，切勿泄露！'})
+                this.$message({type:'success',message:'复制成功，请将注册码发给新管理员，切勿泄露！'})
               }).catch((e) => {
-                that.$alert('复制失败！')
+                this.$alert('复制失败！')
                 console.log(e)
               })
             })
           })
           
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消注册'
-          });       
-        });
+        })
     },
     editGuard(row) {
       this.editQuery.open_id = row.open_id
       this.dialogFormVisible = true
+    },
+    deleteGuard(row) {
+      del(row.open_id).then(response=>{
+        this.$message({
+            type: 'success',
+            message: '删除成功！'
+          });
+      })
+      this.fetchData()
     },
     handleCurrentChange(row) {
       this.editQuery.building_id = row.id
