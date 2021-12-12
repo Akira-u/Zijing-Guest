@@ -50,11 +50,8 @@ class GuestViewSet(viewsets.ModelViewSet):
     )
     def create(self, request, *args, **kwargs):
         try:
-            print(request.data.get("code"))
             log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
-            print(log_info)
             open_id = log_info.get("open_id")
-            print(open_id)
             session_key = log_info.get("session_key")
         except:
             return Response({"errmsg":log_info["errmsg"]})
@@ -78,7 +75,6 @@ class GuestViewSet(viewsets.ModelViewSet):
                 r = requests.post("https://alumni-test.iterator-traits.com/fake-id-tsinghua-proxy/api/user/session/token",data=data)
                 # print(eval(r.text))
                 packet = eval(r.text).get("user")
-                print(packet)
                 guest_object = {
                     "name":packet.get("name"),
                     "student_id":packet.get("card"),
@@ -86,14 +82,11 @@ class GuestViewSet(viewsets.ModelViewSet):
                     "is_student":True,
                     "open_id":open_id
                 }
-                print(guest_object)
                 serializer = self.get_serializer(data=guest_object)
                 serializer.is_valid(raise_exception=False)
                 self.perform_create(serializer)
                 resp = serializer.data
                 resp["open_id"]= encrypt(open_id)
-                print(serializer.errors)
-                print(resp)
                 return Response(resp, status=status.HTTP_201_CREATED)
         except:
             return Response(serializer.errors)
@@ -118,7 +111,6 @@ class GuestViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":log_info["errmsg"]})
         query = Guest.objects.filter(open_id=log_info.get("open_id"))
-        print(query)
         if query:
             serializer = GuestSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
@@ -147,7 +139,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response({"errmsg":"Invalid open_id"})
         try:
             log_exist=cache.get(open_id)
-            print(log_exist)
+            cache.persist(open_id)
             if log_exist:
                 return Response(log_exist)
             else:
@@ -185,7 +177,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         if guard_object:
             return Response({"status":"guard"})
         last_log=cache.get(open_id)
-        print(last_log)
+        cache.persist(open_id)
         try:
             if last_log["approval"]=="permit" and last_log["out_time"]==None:
                 return Response({"status":"still in"})
@@ -211,20 +203,13 @@ class GuestViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":"invalid open_id"})
         guest_object=Guest.objects.get(open_id=open_id)
-        print(guest_object)
         log_history=guest_object.guest_log.all()
-        print(log_history)
         serializer=LogSerializer(log_history,many=True)
-        # serializer.is_valid()
-        # print(serializer.errors)
         log_cache=cache.get(open_id)
+        cache.persist(open_id)
         result = serializer.data
-        # result["guest"] = guest_object.__dict__
         if log_cache:
             result.append(log_cache)
-        print(result)
-        # for log in result:
-        #     del log["guest_id"]
         p = Paginator(result,10)
         try:
             page = int(request.GET.get("page"))
@@ -238,9 +223,7 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["POST"])
     def to_black(self,request,*args, **kwargs):
         try:
-            print(request.data)
             query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
-            print(query)
             for guest in query:
                 guest.credit=False
             Guest.objects.bulk_update(query,fields=["credit",])
@@ -252,12 +235,19 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["POST"])
     def to_white(self,request,*args, **kwargs):
         try:
-            print(request.data)
             query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
-            print(query)
             for guest in query:
                 guest.credit=True
             Guest.objects.bulk_update(query,fields=["credit",])
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=False,methods=["GET"])
+    def static(self,request,*args,**kwargs):
+        query = Guest.objects.all()
+        resp={
+            "guards":{},
+            "total_count":query.count()
+        }
+        return Response(resp)

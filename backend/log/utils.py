@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django_filters import rest_framework as filters
 from log.models import Log
 from guest.utils import GuestSerializer
+from dorm.utils import DormSerializer,DormBuildingSerializer
 
 # TODO
 class LogFilter(filters.FilterSet):
@@ -14,13 +15,17 @@ class LogFilter(filters.FilterSet):
             "guest__name":["exact","icontains"],
             "guest__is_student":["exact"],
             "approval":["exact","in"],
+            "guest__open_id":["exact"]
         }
 
 
 class LogSerializer(serializers.ModelSerializer):
-    # guest = serializers.PrimaryKeyRelatedField(queryset=Guest.objects.all())
     guest = GuestSerializer(read_only=True)
     guest_id = serializers.CharField(allow_null=True, required=False)
+    dorm = DormSerializer(read_only=True)
+    dorm_id = serializers.IntegerField(allow_null=True, required=False)
+    dormbuilding = DormBuildingSerializer(read_only=True)
+    dormbuilding_id = serializers.IntegerField(allow_null=True, required=False)
     class Meta:
         model = Log
         fields = '__all__'

@@ -23,10 +23,3 @@ class GuestSerializer(serializers.ModelSerializer):
             "student_id":{"required": False},
             "department":{"required": False}
         }
-    # def validate(self,data):
-    #     if data["is_student"]:
-    #         """ check stu_id, department """
-    #         if not data.get("student_id") or not data.get("department"):
-    #             raise serializers.ValidationError("Error student msg")
-    #         return data
-

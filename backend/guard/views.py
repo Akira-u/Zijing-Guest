@@ -2,10 +2,11 @@ from django.shortcuts import render
 from rest_framework import viewsets, status
 from django_filters import rest_framework as filters
 from .models import Guard
-from .utils import GuardSerializer
+from .utils import GuardSerializer,GuardFilter
 from log.utils import LogSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter  # 导入排序
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -34,6 +35,8 @@ class GuardViewSet(viewsets.ModelViewSet):
     """ 人员信息 viewset """
     queryset = Guard.objects.all()
     serializer_class = GuardSerializer
+    filter_backends = (filters.DjangoFilterBackend,OrderingFilter)
+    filter_class = GuardFilter
 
     """ POST """
     """ register """
@@ -120,17 +123,14 @@ class GuardViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def backstage(self,request):
-        # try:
-        #     open_id = decrypt(request.GET.get("my_open_id"))
-        #     # open_id=request.GET.get("open_id")
-        # except:
-        #     return Response({"errmsg":"invalid open_id"})
         keys=cache.keys("*")
         logs = []
         for key in keys:
             log = cache.get(key)
+            cache.persist(key)
             if log.get("in_time"):
                 logs.append(cache.get(key))
+                cache.persist(key)
         p = Paginator(logs,10)
         try:
             page = int(request.GET.get("page"))
@@ -160,9 +160,7 @@ class GuardViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['POST'])
     def remind(self,request):
         try:
-            print(request.data)
             open_id = decrypt(request.data.get("open_id"))
-            # open_id=request.data.get("open_id")
         except:
             return Response({"errmsg":"invalid open_id"})
         try:    
@@ -170,7 +168,6 @@ class GuardViewSet(viewsets.ModelViewSet):
         except:
             return Response({"errmsg":"Wechat server error"})
         data = {
-            # "access_token": access_token,
             "touser": open_id,
             "template_id":remind_template,
             "data":request.data.get("msg"),
@@ -180,7 +177,17 @@ class GuardViewSet(viewsets.ModelViewSet):
         }
         # print(data)
         r = requests.post("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token="+access_token,data=json.dumps(data))
-        print(r.url)
         packet = eval(r.text)
-        print(packet)
         return Response({"msg":"success"})
+
+    @action(detail=False,methods=["GET"])
+    def static(self,request,*args,**kwargs):
+        query = Guard.objects.all()
+        resp={
+            "guards":{},
+            "total_count":query.count()
+        }
+        return Response(resp)
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)

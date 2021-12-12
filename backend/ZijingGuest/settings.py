@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'guest',
     'guard',
     'log',
+    'dorm',
     'drf_yasg',
     'api',
 ]
@@ -130,7 +131,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -180,12 +181,6 @@ NEVER_REDIS_TIMEOUT=365*24*60*60
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    # '*'
-    # 'http://127.0.0.1:8080',
-    # 'http://127.0.0.1:8085',
-    # 'http://spylft.icu',
-)
 
 CORS_ALLOW_METHODS = (
      'GET', 
