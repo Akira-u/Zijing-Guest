@@ -2,27 +2,25 @@
   <div>
     <div style="margin-top: 20px">
       <el-row>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-select v-model="listQuery.dormbuilding_id" placeholder="选择宿舍楼" style="margin-left: 20px" class="filter-item" @change="fetchData">
             <el-option v-for="item in buildinglist" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-button class="upload-item" style="margin-left: 10px" type="primary" icon="el-icon-upload2" @click="dialogImportVisible=true">
             导入Excel
           </el-button>
         </el-col>
-        <el-col :span="8">
-          <download-excel
-            class="export-excel-wrapper"
-            :data="json_data"
-            :fields="json_fields"
-            :name="json_name"
-          >
-            <el-button style="margin-left: 10px" type="primary" icon="el-icon-download" @click="handleDownload">
-              导出Excel
-            </el-button>
-          </download-excel>
+        <el-col :span="6">
+          <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="el-icon-document" @click="handleDownload">
+            导出Excel
+          </el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="el-icon-download" @click="handleDownloadModel">
+            下载Excel模板
+          </el-button>
         </el-col>
       </el-row>
     </div>
@@ -81,22 +79,15 @@ export default {
         { name: 'Mission', id: 9 },
         { name: 'Mission', id: 10 }
       ],
-      json_name: undefined,
-      json_fields: {
-        'name': 'name',
-        'student1': 'student1',
-        'student2': 'student2',
-        'student3': 'student3',
-        'student4': 'student4'
-      },
-      json_data: [],
-      json_meta: [
-        [
-          {
-            'key': 'charset',
-            'value': 'utf-8'
-          }
-        ]
+      downloadLoading: false,
+      modellist: [
+        {
+          name: '101A',
+          student1: '张三',
+          student2: '李四',
+          student3: '王五',
+          student4: '刘六'
+        }
       ]
     }
   },
@@ -106,6 +97,7 @@ export default {
       this.listLoading = true
       this.buildinglist = response.results
       this.buildingtotal = response.count
+      console.log('buildinglist:', this.buildinglist)
       setTimeout(() => {
         this.listLoading = false
       }, 1.5 * 1000)
@@ -114,6 +106,12 @@ export default {
   },
   methods: {
     fetchData() {
+      this.buildinglist.forEach(item => {
+        if (item.id === this.listQuery.dormbuilding_id) {
+          this.dormbuilding = item.name
+          return
+        }
+      })
       this.listLoading = true
       getDormList(this.listQuery).then(response => {
         this.dormlist = response.results
@@ -157,8 +155,39 @@ export default {
       // console.log(this.uploadHeader)
     },
     handleDownload() {
-      this.json_name = '宿舍楼名单'
-      this.json_data = this.dormlist
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['name', 'student1', 'student2', 'student3', 'student4']
+        const filterVal = ['name', 'student1', 'student2', 'student3', 'student4']
+        const list = this.dormlist
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.dormbuilding + '名单'
+        })
+        this.downloadLoading = false
+      })
+    },
+    handleDownloadModel() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['name', 'student1', 'student2', 'student3', 'student4']
+        const filterVal = ['name', 'student1', 'student2', 'student3', 'student4']
+        const list = this.modellist
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: '名单模板'
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        return v[j]
+      }))
     }
   }
 }
