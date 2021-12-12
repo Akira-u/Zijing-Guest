@@ -11,6 +11,9 @@
           <el-checkbox v-model="fuzzySearch" class="filter-item" style="margin-left:15px;">
             姓名模糊查找
           </el-checkbox>
+          <el-button v-waves class="filter-item" style="margin-left:15px;" type="primary" icon="el-icon-plus" @click="createNewGuard">
+            添加
+          </el-button>
         </el-col>
       </el-row>
     </div>
@@ -92,7 +95,7 @@
 </template>
 
 <script>
-import { getList, editBuilding } from '@/api/guard'
+import { getList, editBuilding, preCreate } from '@/api/guard'
 import { getBuildingList } from '@/api/dorm'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
@@ -174,6 +177,32 @@ export default {
         this.listQuery.name = this.guard_name
       }
       this.fetchData()
+    },
+    createNewGuard(){
+      var that=this
+      this.$prompt('请输入新管理员姓名', '添加管理员', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: /^[\u4E00-\u9FA5]{2,10}/,
+          inputErrorMessage: '非中文姓名！'
+        }).then(({ value }) => {
+          preCreate({name:value,password:'111111'}).then(response=>{
+            this.$alert(response.result['name']+'的注册码为：'+response.result['password'], '获取注册码', {confirmButtonText: '点击复制',}).then((res)=>{
+              this.$copyText(response.result['password']).then((e) => {
+                that.$message({type:'success',message:'复制成功，请将注册码发给新管理员，切勿泄露！'})
+              }).catch((e) => {
+                that.$alert('复制失败！')
+                console.log(e)
+              })
+            })
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消注册'
+          });       
+        });
     },
     editGuard(row) {
       this.editQuery.open_id = row.open_id
