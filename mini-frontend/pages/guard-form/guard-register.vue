@@ -1,12 +1,12 @@
 <template>
-  <view class="t-login">
-    <!-- 页面装饰图片 -->
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
-    <!-- 标题 -->
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <view class="t-b">{{ title }}</view>
     <form class="cl">
       <view class="t-a">
-        <image src="@/static/yz.png"></image>
+        <image src="@/static/ba.png"></image>
         <input
           type="text"
           name="name"
@@ -25,6 +25,15 @@
           v-model="phone"
         />
       </view>
+      <view class="t-a">
+        <image src="@/static/yz.png"></image>
+        <input
+          type="password"
+          name="password"
+          placeholder="请输入管理员注册码"
+          v-model="password"
+        />
+      </view>
       <button @tap="register">注 册</button>
     </form>
   </view>
@@ -39,6 +48,7 @@ export default {
       title: "注册",
       phone: "",
       name: "",
+      password: "",
     };
   },
   methods: {
@@ -60,20 +70,30 @@ export default {
       wx.login({
         success(res1) {
           if (res1.code) {
-            console.log(that.phone);
             request({
               url: "/guard/",
               method: "POST",
               data: {
                 code: res1.code,
                 phone: that.phone,
-                name: that.name,
+                name: that.name,  
+                password: that.password,
               },
             }).then((res) => {
-              navigateTo("/pages/guard-form/guard-form");
+              console.log(res)
+              if (res.errmsg === 'password incorrect') {
+                uni.showToast({
+                  title: '注册码错误！',
+                  icon: 'error',
+                  mask: true
+                })
+              }
+              else { 
+                navigateTo("/pages/guard-form/guard-form"); 
+              }
             });
           } else {
-            console.log("登陆失败！" + res1.errMsg);
+            console.log("登录失败！" + res1.errMsg);
           }
         },
       });
@@ -83,26 +103,7 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.t-login {
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-  font-size: 28rpx;
-  color: #000;
-}
-
-.t-login button {
+.container button {
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
@@ -112,7 +113,7 @@ export default {
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 
-.t-login input {
+.container input {
   padding: 0 20rpx 0 120rpx;
   height: 90rpx;
   line-height: 90rpx;
@@ -123,11 +124,11 @@ export default {
   border-radius: 50rpx;
 }
 
-.t-login .t-a {
+.container .t-a {
   position: relative;
 }
 
-.t-login .t-a image {
+.container .t-a image {
   width: 40rpx;
   height: 40rpx;
   position: absolute;
@@ -137,7 +138,7 @@ export default {
   padding-right: 20rpx;
 }
 
-.t-login .t-b {
+.container .t-b {
   text-align: left;
   font-size: 60rpx;
   color: #000;
@@ -146,7 +147,7 @@ export default {
   margin: 10%;
 }
 
-.t-login {
+.container {
   right: 20%;
   color: #fff;
   font-size: 24rpx;
@@ -156,13 +157,13 @@ export default {
   padding: 0 25rpx;
 }
 
-.t-login .t-d {
+.container .t-d {
   text-align: center;
   color: #999;
   margin: 80rpx 0;
 }
 
-.t-login {
+.container {
   text-align: center;
   float: left;
   width: 100%;
@@ -170,13 +171,13 @@ export default {
   color: #666;
 }
 
-.t-login text {
+.container text {
   margin-left: 20rpx;
   color: #aaaaaa;
   font-size: 27rpx;
 }
 
-.t-login .uni-input-placeholder {
+.container .uni-input-placeholder {
   color: #000;
 }
 

@@ -1,7 +1,8 @@
 <template>
-  <view class="t-login">
-    <!-- 页面装饰图片 -->
-    <image class="img-a" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <!-- 标题 -->
     <view class="t-b">{{ title }}</view>
     <form class="cl">
@@ -83,18 +84,7 @@ export default {
 </script>
 
 <style>
-.img-a {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.t-login {
+.container {
   width: 100%;
   height: 100%;
   margin: 0 auto;
@@ -102,7 +92,7 @@ export default {
   color: #000;
 }
 
-.t-login button {
+.container button {
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
@@ -112,7 +102,7 @@ export default {
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 
-.t-login input {
+.container input {
   padding: 0 20rpx 0 120rpx;
   height: 90rpx;
   line-height: 90rpx;
@@ -123,11 +113,11 @@ export default {
   border-radius: 50rpx;
 }
 
-.t-login .t-a {
+.container .t-a {
   position: relative;
 }
 
-.t-login .t-a image {
+.container .t-a image {
   width: 40rpx;
   height: 40rpx;
   position: absolute;
@@ -137,7 +127,7 @@ export default {
   padding-right: 20rpx;
 }
 
-.t-login .t-b {
+.container .t-b {
   text-align: left;
   font-size: 60rpx;
   color: #000;
@@ -146,7 +136,7 @@ export default {
   margin: 10%;
 }
 
-.t-login {
+.container {
   right: 20%;
   color: #fff;
   font-size: 24rpx;
@@ -156,13 +146,13 @@ export default {
   padding: 0 25rpx;
 }
 
-.t-login .t-d {
+.container .t-d {
   text-align: center;
   color: #999;
   margin: 80rpx 0;
 }
 
-.t-login {
+.container {
   text-align: center;
   float: left;
   width: 100%;
@@ -170,13 +160,13 @@ export default {
   color: #666;
 }
 
-.t-login text {
+.container text {
   margin-left: 20rpx;
   color: #aaaaaa;
   font-size: 27rpx;
 }
 
-.t-login .uni-input-placeholder {
+.container .uni-input-placeholder {
   color: #000;
 }
 

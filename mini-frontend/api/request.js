@@ -13,6 +13,7 @@ function isHttpSuccess(status) {
  * 返回值：Promise, 链式调用
  */
 function request(options = {}) {
+    console.log(options)
     const {
         success,
         fail,
@@ -54,53 +55,71 @@ function registeredGuardRequest(options = {}) {
     if (options.data === undefined) {
         options.data = {}
     }
-    try {
-        options.data.my_open_id = uni.getStorageSync('my_open_id')
-    } catch (e) {
-        // local storage can't get open id due to storage loss
-        wx.login({
-            success: function (login_res) {
-                request({ url: "/guard/login/", data: { code: login_res.code, } })
-                    .then((resp) => {
-                        uni.setStorage({
-                            key: 'my_open_id',
-                            data: resp.open_id,
-                        })
-                        options.data.my_open_id = resp.open_id
-                    })
-
-            }
-        })
-
+    options.data.my_open_id = uni.getStorageSync('my_open_id')
+    if (options.data.my_open_id) {
+        return request(options)
     }
-    return request(options)
+    else {
+        // local storage can't get open id due to storage loss
+        return new Promise((res, rej) => {
+            wx.login({
+                success: function (login_res) {
+                    request({ url: "/guard/login/", data: { code: login_res.code, } })
+                        .then((resp) => {
+                            console.log(resp.open_id)
+                            options.data.my_open_id = resp.open_id
+                            uni.setStorage({
+                                key: 'my_open_id',
+                                data: resp.open_id,
+                            })
+                            request(options).then((resp2) => {
+                                res(resp2)
+                            })
+
+                        })
+                        .catch((err) => {
+                            rej(err)
+                        })
+                }
+            })
+        });
+    }
 }
 function registeredGuestRequest(options = {}) {
+
     if (options.data === undefined) {
         options.data = {}
     }
-    try {
-        options.data.my_open_id = uni.getStorageSync('my_open_id')
-    } catch (e) {
-        // local storage can't get open id due to storage loss
-        wx.login({
-            success: function (login_res) {
-                request({ url: "/guest/login/", data: { code: login_res.code, } })
-                    .then((resp) => {
-                        console.log(resp.open_id)
-                        uni.setStorage({
-                            key: 'my_open_id',
-                            data: resp.open_id,
-                            fail: function (res) { console.log(res) }
-                        })
-                        options.data.my_open_id = resp.open_id
-                    })
 
-            }
-        })
-
+    options.data.my_open_id = uni.getStorageSync('my_open_id')
+    if (options.data.my_open_id) {
+        return request(options)
     }
-    return request(options)
+    else{
+        // local storage can't get open id due to storage loss
+        return new Promise((res, rej) => {
+            wx.login({
+                success: function (login_res) {
+                    request({ url: "/guest/login/", data: { code: login_res.code, } })
+                        .then((resp) => {
+                            console.log(resp.open_id)
+                            options.data.my_open_id = resp.open_id
+                            uni.setStorage({
+                                key: 'my_open_id',
+                                data: resp.open_id,
+                            })
+                            request(options).then((resp2) => {
+                                res(resp2)
+                            })
+                            
+                        })
+                        .catch((err) => {
+                            rej(err)
+                        })
+                }
+            })
+        }); 
+    }
 }
 export { registeredGuardRequest, registeredGuestRequest }
 export default request

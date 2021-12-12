@@ -1,9 +1,32 @@
 <template>
-  <view class="guestForm">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
-    <uni-forms class="inputList" ref="form" :modelValue="form_data" :rules="rules">
+    <view>
+    <uni-forms
+      class="inputList"
+      ref="form"
+      err-show-type="toast"
+      :modelValue="form_data"
+      :rules="rules"
+    >
+      <uni-forms-item required label="电话" name="phone">
+        <uni-easyinput
+          v-model="form_data.phone"
+          placeholder="您的电话号码"
+        />
+      </uni-forms-item>
+      <uni-forms-item required label="目的楼号" name="target_building">
+        <uni-combox 
+          :candidates="candidates" 
+          v-model="form_data.target_building" 
+          placeholder="请选择到访宿舍楼号"
+        />
+      </uni-forms-item>
       <uni-forms-item required label="目的宿舍" name="target_dorm">
+        <!-- TODO: combobox -->
         <uni-easyinput
           v-model="form_data.target_dorm"
           placeholder="您要拜访的宿舍号"
@@ -18,29 +41,55 @@
       <uni-forms-item label="访问事由" name="purpose">
         <uni-easyinput
           v-model="form_data.purpose"
+          type="textarea" autoHeight
           placeholder="请描述访问事由"
         />
       </uni-forms-item>
     </uni-forms>
-    <button @tap="submit">提交</button>
-    <button @tap="viewHistory">查看申请记录</button>
+    <view class="buttonList">
+      <button @tap="submit">提交</button>
+      <button @tap="viewHistory">查看申请记录</button>
+    </view>
+    </view>
+    <uni-popup ref="popupMessage" type="message">
+      <uni-popup-message type="success" :message="msg_text" :duration="3000"/>
+    </uni-popup>
   </view>
 </template>
 
 <script>
 import { registeredGuestRequest } from "@/api/request"
+import request from "@/api/request"
 import navigateTo from "@/api/navigate";
 export default {
   data() {
     return {
       form_data: {
-        target_dorm: '403',
-        host_student: '创世洐炎',
+        phone: "13919198100",
+        dorm_id: "1号楼",
+        target_dorm: '403A',
+        host_student: '李端',
         purpose: '拿杯'
       },
-
+      msg_text:"您好，欢迎。",
+      candidates:[
+        "紫荆1号楼","紫荆2号楼"
+      ],
       rules: {
-        // 对name字段进行必填验证
+        // 表单验证
+        phone: {
+          rules: [
+            {
+              required: true,
+              errorMessage: "请输入电话号码",
+            },
+            {
+              minLength: 11,
+              maxLength: 11,
+              errorMessage: "电话号码长度应为 11 个字符",
+            },
+          ],
+        },
         name: {
           rules: [
             {
@@ -63,93 +112,124 @@ export default {
       },
     };
   },
+  onShow() {
+    var that = this;
+    wx.login({
+      success(login_res) {
+        request({
+          url: "/guest/login/",
+          data: { code: login_res.code, }
+        })
+          .then((res) => {
+            if(res.phone){
+              that.form_data.phone = res.phone;
+            }
+            console.log("res:",res.name)
+            that.msg_text = res.name + " 您好，"
+            if(res.is_student) {
+              that.msg_text += "您以 学生 身份登录。"
+            }
+            else {
+              that.msg_text += "您以 非学生 身份登录。"
+            }
+            that.$refs.popupMessage.open()
+          })
+        },
+      fail(login_res) {
+        console.log("登录失败！" + login_res.errMsg);
+      }
+    });
+    registeredGuestRequest({url:"/guest/status/"})
+      .then((res)=>{
+        if (res.status === 'still in') {
+          // if user is in dorm, jump to in-dorm page directly
+          uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
+        }
+      })
+  },
   methods: {
     submit() {
-      this.$refs.form
+      var that=this
+      that.$refs.form
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-          registeredGuestRequest({ url: "/log/", method: "POST", data: this.form_data })
+          registeredGuestRequest({ url: "/log/", method: "POST", data: that.form_data })
             .then((resp_data) => {
               console.log({ resp_data: resp_data })
-              navigateTo("/pages/guest-form/guest-qrcode");
+              wx.requestSubscribeMessage({
+                tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
+                success(res) {
+                console.log("subscribe success", res)
+                },
+                fail(res) {
+                  console.log("fail", res)
+                },
+                complete: function() {
+                  navigateTo("/pages/guest-form/guest-qrcode");
+                }
+              })
             })
         })
         .catch((err) => {
           console.log("表单错误信息：", err);
         });
-      wx.requestSubscribeMessage({
-        tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
-        success(res) {
-          console.log("success", res)
-        },
-        fail(res) {
-          console.log("fail", res)
-        }
-      })
     },
-    viewHistory(){
+    viewHistory() {
       navigateTo("/pages/guest-form/my-history")
-    }
+    },
   },
-  // onReady() {
-  //   console.log("onReady")
-  //   wx.requestSubscribeMessage({
-  //     tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
-  //     success(res) {
-  //       console.log("success", res)
-  //     },
-  //     fail(res) {
-  //       console.log("fail", res)
-  //     }
-  //   })
-  // }
 };
 </script>
 
 <style>
-.guestForm {
-  margin: 10px;
-  justify-content: center;
-}
-
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
 .inputList {
   position: absolute;
+  width: 70%;
+  height:60%;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -120%);
+  top: 10%;
+  transform: translate(-50%, 0%);
 }
 
 .uni-easyinput {
-  padding: 0;
-  height: 90rpx;
   line-height: 90rpx;
   background: #f8f7fc;
-  border: 1px solid #e9e9e9;
-  font-size: 28rpx;
+  font-size: 30rpx;
   border-radius: 10rpx;
 }
 
-.guestForm button {
+.uni-forms-item {
+  height:120rpx;
+}
+
+.uni-combox {
+  z-index: 99;
+  background: #f8f7fc;
+  font-size: 30rpx;
+  border-radius: 10rpx;
+}
+
+button {
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
   height: 90rpx;
   line-height: 90rpx;
   border-radius: 50rpx;
-  margin: 40px;
+  margin: 30px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
-  transform: translate(0%, 800%);
+}
+
+.buttonList {
+  position: absolute;
+  width: 100%;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, 0%);
+}
+
+.uni-popup{
+  text-align: center;
 }
 </style>

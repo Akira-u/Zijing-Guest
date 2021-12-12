@@ -1,30 +1,29 @@
 <template>
-  <view class="decidePass">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <view class="dataTable">
-      <uni-table border stripe emptyText="暂无更多数据">
-        <uni-tr>
-          <uni-th>访客姓名</uni-th>
-          <uni-td>{{ log.guest_name }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>来访事由</uni-th>
-          <uni-td>{{ log.purpose }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>目的宿舍</uni-th>
-          <uni-td>{{ log.target_dorm }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>接待人</uni-th>
-          <uni-td>{{ log.host_student }}</uni-td>
-        </uni-tr>
-      </uni-table>
+      <uni-section :title="detail_title" type="line"></uni-section>
+      <view class="dataList">
+      <uni-list>
+        <uni-list-item title="访客姓名" :rightText="log.guest.name"></uni-list-item>
+        <uni-list-item title="学号" v-if="log.guest.is_student" :rightText="log.guest.student_id"></uni-list-item>
+        <uni-list-item title="院系" v-if="log.guest.is_student" :rightText="log.guest.department"></uni-list-item>
+        <uni-list-item title="电话" :rightText="log.guest.phone"></uni-list-item>
+        <uni-list-item title="来访事由" :rightText="log.purpose"></uni-list-item>
+        <uni-list-item title="目的宿舍" :rightText="log.dorm.name"></uni-list-item>
+        <uni-list-item title="接待人" :rightText="log.host_student"></uni-list-item>
+      </uni-list>
+      </view>
     </view>
     <view class="buttonList">
       <button @tap="Pass">通过</button>
       <button @tap="Deny">禁入</button>
     </view>
+    <uni-popup ref="credit_popup" type="dialog">
+      <uni-popup-dialog mode="base" type="warn" content="请注意：该访客在黑名单中！"></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -33,26 +32,31 @@ import { registeredGuardRequest } from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
 export default {
   data() {
-    return { log: {} };
+    return { 
+      log: {},
+      detail_title:'访客申请（学生）'
+    };
   },
   onLoad(options) {
     decodeOption(options);
-    console.log(options.code); //TO DO
-    var that = this;
     registeredGuardRequest({
       url: "/log/info/",
       method: "GET",
       data: { code: options.code },
     }).then((res) => {
       console.log({ res: res });
-      that.log = res;
+      this.log = res;
+      if(!res.credit){
+        this.$refs.credit_popup.open()
+      }
+      if(!res.guest.is_student){
+        this.detail_title='访客申请（其它访客）'
+      }
     });
   },
   methods: {
     Pass() {
       var date = new Date();
-      console.log(date);
-      console.log(this.log.guest_id);
       registeredGuardRequest({
         url: "/log/check/",
         method: "POST",
@@ -61,9 +65,7 @@ export default {
           in_time: date,
           approval: "permit",
         },
-      }).then((res) => {
-        console.log(res);
-      });
+      }).then((res) => {});
       reLaunch("/pages/guard-form/guard-form");
     },
     Deny() {
@@ -88,46 +90,34 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.decidePass {
-  padding: 20px;
-  font-size: 14px;
-  line-height: 24px;
-}
-
 .dataTable {
   position: absolute;
   width: 80%;
   left: 50%;
-  top: 20%;
-  transform: translate(-50%, 0%);
+  top: 10%;
+  transform: translate(-50%, 10%);
+}
+
+.dataList {
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 
 .buttonList {
   position: absolute;
-  width: 90%;
+  width: 100%;
   left: 50%;
   transform: translate(-50%, 250%);
 }
 
 button {
+  position: relative;
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
   height: 90rpx;
   line-height: 90rpx;
   border-radius: 50rpx;
-  margin: 20px;
+  margin: 30px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 </style>

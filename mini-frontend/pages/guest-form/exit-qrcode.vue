@@ -1,6 +1,8 @@
 <template>
-  <view class="exitCode">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <view class="QRcode">
       <uqrcode ref="exit_qrcode"></uqrcode>
       <view class="tips">请出示二维码给管理员，被扫码后点击结束按钮完成签离。</view>
@@ -8,9 +10,9 @@
     <view class="buttonList">
       <button @tap="exit">结束</button>
     </view>
-    <mp-dialog :show="dialog_show" @buttontap="exit">
-      <view class="dialog-submit-content">{{ dialog_text }}</view>
-    </mp-dialog>
+     <uni-popup ref="exit_popup" type="message">
+      <uni-popup-message :type="msg_type" :message="msg_text" :duration="1500"/>
+    </uni-popup>
   </view>
 </template>
 
@@ -20,7 +22,8 @@ import { registeredGuestRequest } from '@/api/request'
 export default {
   data() {
     return {
-      qrcode_text: ''
+      qrcode_text: '',
+      msg_text: '请让宿舍管理员扫码！'
     }
   },
   methods: {
@@ -29,19 +32,16 @@ export default {
         .then((status_res) => {
           console.log(status_res)
           if (status_res.status === 'out') {
-            this.dialog_show = true
-            this.dialog_text = '签离成功！'
+            this.$refs.exit_popup.open()
+            this.msg_text = '签离成功！'
             setTimeout(() => {
               this.dialog_show = false
+              reLaunch()
             }, 1000);
-            reLaunch()
           }
           else {
-            this.dialog_show = true
-            this.dialog_text = '请让宿舍管理员扫码！'
-            setTimeout(() => {
-              this.dialog_show = false
-            }, 1000);
+            this.$refs.exit_popup.open()
+            this.msg_text = '请让宿舍管理员扫码！'
           }
         })
 
@@ -73,25 +73,6 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.exitCode {
-  padding: 20px;
-  font-size: 20px;
-  line-height: 24px;
-  margin: 10px;
-  justify-content: center;
-}
-
 .QRcode {
   position: absolute;
   left: 50%;
@@ -100,8 +81,12 @@ export default {
 }
 
 .tips {
-  position: relative;
-  transform: translate(0%, 70%);
+  position: absolute;
+  padding: 40rpx 0 20rpx 0;
+  width:120%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  text-align:center;
   font-size: 18px;
 }
 
@@ -118,7 +103,7 @@ button {
 
 .buttonList {
   position: relative;
-  width: 120%;
+  width: 100%;
   left: 50%;
   transform: translate(-50%, 1000%);
 }
