@@ -1,11 +1,13 @@
 <template>
-  <view class="checkDetails">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <view class="dataTable">
       <uni-table border stripe emptyText="暂无更多数据">
         <uni-tr>
           <uni-th>访客姓名</uni-th>
-          <uni-td>{{ log.guest_name }}</uni-td>
+          <uni-td>{{ log.guest.name }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>来访事由</uni-th>
@@ -13,7 +15,7 @@
         </uni-tr>
         <uni-tr>
           <uni-th>目的宿舍</uni-th>
-          <uni-td>{{ log.target_dorm }}</uni-td>
+          <uni-td>{{ log.dorm.name }}</uni-td>
         </uni-tr>
         <uni-tr>
           <uni-th>接待人</uni-th>
@@ -94,10 +96,10 @@ export default {
             open_id: this.log.guest_id,
             msg: {
               thing6: {
-                value: this.log.guest_name,
+                value: this.log.guest.name,
               },
               thing1: {
-                value: this.log.target_dorm,
+                value: this.log.dorm.name,
               },
               thing5: {
                 value: this.remindMsg,
@@ -117,22 +119,6 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.checkDetails {
-  padding: 20px;
-  font-size: 14px;
-  line-height: 24px;
-}
 
 .dataTable {
   position: absolute;
@@ -144,7 +130,7 @@ export default {
 
 .buttonList {
   position: absolute;
-  width: 90%;
+  width: 100%;
   left: 50%;
   transform: translate(-50%, 450%);
 }

@@ -12,7 +12,7 @@ def decrypt(cipher_text):
     plaintext = cipher.decrypt(eval(cipher_text))
     # cipher2.update()
     # print(plaintext)
-    # print(plaintext.decode()[:28])
+    print(plaintext.decode()[:28])
     return plaintext.decode()[:28]
 
 
