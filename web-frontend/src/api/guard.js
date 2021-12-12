@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getList(query) {
   return request({
-    url: 'http://49.232.106.46:8000/guard',
+    url: 'http://49.232.106.46:8000/guard/',
     method: 'get',
     params: query
   })
@@ -17,10 +17,10 @@ export function editBuilding(query) {
   })
 }
 
-export function preCreate(data){
+export function preCreate(data) {
   return request({
-    url: 'http://49.232.106.46:8000/guard/pre_create',
+    url: 'http://49.232.106.46:8000/guard/pre_create/',
     method: 'post',
-    params:data
+    data
   })
 }

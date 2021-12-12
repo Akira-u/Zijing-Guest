@@ -187,6 +187,7 @@ export default {
           inputErrorMessage: '非中文姓名！'
         }).then(({ value }) => {
           preCreate({name:value,password:'111111'}).then(response=>{
+            console.log(response)
             this.$alert(response.result['name']+'的注册码为：'+response.result['password'], '获取注册码', {confirmButtonText: '点击复制',}).then((res)=>{
               this.$copyText(response.result['password']).then((e) => {
                 that.$message({type:'success',message:'复制成功，请将注册码发给新管理员，切勿泄露！'})
