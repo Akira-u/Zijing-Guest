@@ -16,6 +16,8 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import Moment from 'moment'
+import JsonExcel from 'vue-json-excel'
+Vue.component('downloadExcel', JsonExcel)
 
 /**
  * If you don't want to use mock-server

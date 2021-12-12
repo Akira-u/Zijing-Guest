@@ -1,12 +1,30 @@
 <template>
   <div>
     <div style="margin-top: 20px">
-      <el-select v-model="listQuery.dormbuilding_id" placeholder="选择宿舍楼" style="margin-left: 20px; width: 12%" class="filter-item" @change="fetchData">
-        <el-option v-for="item in buildinglist" :key="item.id" :label="item.name" :value="item.id" />
-      </el-select>
-      <el-button class="upload-item" style="margin-left: 10px; width: 15%" type="primary" icon="el-icon-upload2" @click="dialogImportVisible=true">
-        导入
-      </el-button>
+      <el-row>
+        <el-col :span="8">
+          <el-select v-model="listQuery.dormbuilding_id" placeholder="选择宿舍楼" style="margin-left: 20px" class="filter-item" @change="fetchData">
+            <el-option v-for="item in buildinglist" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-col>
+        <el-col :span="8">
+          <el-button class="upload-item" style="margin-left: 10px" type="primary" icon="el-icon-upload2" @click="dialogImportVisible=true">
+            导入Excel
+          </el-button>
+        </el-col>
+        <el-col :span="8">
+          <download-excel
+            class="export-excel-wrapper"
+            :data="json_data"
+            :fields="json_fields"
+            :name="json_name"
+          >
+            <el-button style="margin-left: 10px" type="primary" icon="el-icon-download" @click="handleDownload">
+              导出Excel
+            </el-button>
+          </download-excel>
+        </el-col>
+      </el-row>
     </div>
     <div v-if="dormtotal>0" class="board">
       <Kanban v-for="(dorm, index) in dormlist" :key="index" :list="[{name:dorm.student1,id:1},{name:dorm.student2,id:2},{name:dorm.student3,id:3},{name:dorm.student4,id:4}]" class="kanban todo" :header-text="dormlist[index].name" />
@@ -62,6 +80,23 @@ export default {
         { name: 'Mission', id: 8 },
         { name: 'Mission', id: 9 },
         { name: 'Mission', id: 10 }
+      ],
+      json_name: undefined,
+      json_fields: {
+        'name': 'name',
+        'student1': 'student1',
+        'student2': 'student2',
+        'student3': 'student3',
+        'student4': 'student4'
+      },
+      json_data: [],
+      json_meta: [
+        [
+          {
+            'key': 'charset',
+            'value': 'utf-8'
+          }
+        ]
       ]
     }
   },
@@ -120,6 +155,10 @@ export default {
       // api
       // console.log(this.uploadData)
       // console.log(this.uploadHeader)
+    },
+    handleDownload() {
+      this.json_name = '宿舍楼名单'
+      this.json_data = this.dormlist
     }
   }
 }
