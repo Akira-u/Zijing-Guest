@@ -17,6 +17,8 @@ import '@/permission' // permission control
 
 import Moment from 'moment'
 import VueClipboard from 'vue-clipboard2'
+import JsonExcel from 'vue-json-excel'
+Vue.component('downloadExcel', JsonExcel)
 
 /**
  * If you don't want to use mock-server

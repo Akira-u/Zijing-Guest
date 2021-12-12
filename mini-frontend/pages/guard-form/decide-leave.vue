@@ -4,36 +4,22 @@
       <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     </view>
     <view class="dataTable">
-      <uni-table border stripe emptyText="暂无更多数据">
-        <uni-tr>
-          <uni-th>访客姓名</uni-th>
-          <uni-td>{{ log.guest.name }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>来访事由</uni-th>
-          <uni-td>{{ log.purpose }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>目的宿舍</uni-th>
-          <uni-td>{{ log.dorm.id }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>接待人</uni-th>
-          <uni-td>{{ log.host_student }}</uni-td>
-        </uni-tr>
-        <uni-tr>
-          <uni-th>进入时间</uni-th>
-          <uni-td
-            ><uni-dateformat
-              :date="log.in_time"
-              format="hh:mm:ss"
-            ></uni-dateformat
-          ></uni-td>
-        </uni-tr>
-      </uni-table>
-    </view>
-    <view class="buttonList">
-      <button @tap="Leave">离开</button>
+      <uni-section :title="detail_title" type="line"></uni-section>
+      <view class="dataList">
+      <uni-list>
+        <uni-list-item title="访客姓名" :rightText="log.guest.name"></uni-list-item>
+        <uni-list-item title="学号" v-if="log.guest.is_student" :rightText="log.guest.student_id"></uni-list-item>
+        <uni-list-item title="院系" v-if="log.guest.is_student" :rightText="log.guest.department"></uni-list-item>
+        <uni-list-item title="电话" :rightText="log.guest.phone"></uni-list-item>
+        <uni-list-item title="来访事由" :rightText="log.purpose"></uni-list-item>
+        <uni-list-item title="目的宿舍" :rightText="log.dorm.name"></uni-list-item>
+        <uni-list-item title="接待人" :rightText="log.host_student"></uni-list-item>
+        <uni-list-item title="进入时间" :rightText="getInTime()"></uni-list-item>
+      </uni-list>
+      </view>
+      <view class="buttonList">
+        <button @tap="Leave">离开</button>
+      </view>
     </view>
   </view>
 </template>
@@ -45,6 +31,7 @@ export default {
   data() {
     return {
       log: {},
+      detail_title: '访客信息',
     };
   },
   onLoad(options) {
@@ -58,6 +45,12 @@ export default {
     }).then((res) => {
       console.log({ res: res });
       that.log = res;
+      if(!res.guest.is_student){
+        that.detail_title='访客申请（其它访客）'
+      }
+      else{
+        that.detail_title='访客申请（学生）'
+      }
     });
   },
   methods: {
@@ -74,6 +67,9 @@ export default {
       });
       reLaunch("/pages/guard-form/guard-form");
     },
+    getInTime() {
+      return this.log.in_time.format("yyyy-MM-dd hh:mm:ss");
+    }
   },
 };
 </script>
@@ -83,15 +79,19 @@ export default {
   position: absolute;
   width: 80%;
   left: 50%;
-  top: 20%;
-  transform: translate(-50%, 0%);
+  top: 50%;
+  transform: translate(-50%, -55%);
+}
+
+.dataList {
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 
 .buttonList {
-  position: absolute;
-  width: 100%;
+  position: relative;
+  width: 125%;
   left: 50%;
-  transform: translate(-50%, 480%);
+  transform: translate(-50%, 0%);
 }
 
 button {

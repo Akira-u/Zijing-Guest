@@ -63,17 +63,27 @@ export default {
       this.setOptions(this.chartData)
     },
     setOptions({ student, other, total } = {}) {
+      var today = new Date()
+      var date_list = []
+      for (var i = 6; i >= 0; i--) {
+        var newDate = new Date(today.getTime() - i * 1000 * 60 * 60 * 24)
+        var year = newDate.getFullYear()
+        var month = (parseInt(newDate.getMonth()) + 1) > 9 ? (parseInt(newDate.getMonth()) + 1) : '0' + (parseInt(newDate.getMonth()) + 1)
+        var day = (newDate.getDate()) > 9 ? newDate.getDate() : '0' + newDate.getDate()
+        var fullDate = `${year}-${month}-${day}`
+        date_list.push(fullDate)
+      }
       this.chart.setOption({
         xAxis: {
-          data: ['12.4', '12.5', '12.6', '12.7', '12.8', '12.9', '12.10'],
+          data: date_list,
           boundaryGap: false,
           axisTick: {
             show: false
           }
         },
         grid: {
-          left: 10,
-          right: 10,
+          left: 60,
+          right: 60,
           bottom: 20,
           top: 30,
           containLabel: true
@@ -91,10 +101,10 @@ export default {
           }
         },
         legend: {
-          data: ['student', 'other', 'total']
+          data: ['学生来访', '其他访客', '总计']
         },
         series: [{
-          name: 'student',
+          name: '学生来访',
           itemStyle: {
             color: '#FF005A',
             lineStyle: {
@@ -109,7 +119,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'other',
+          name: '其他访客',
           itemStyle: {
             color: '#C0C0C0',
             lineStyle: {
@@ -124,7 +134,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'total',
+          name: '总计',
           smooth: true,
           type: 'line',
           itemStyle: {

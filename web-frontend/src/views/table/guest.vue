@@ -29,7 +29,7 @@
     <el-table
       v-loading="listLoading"
       :data="list"
-      element-loading-text="Loading"
+      element-loading-text="加载中"
       stripe
       border
       fit
@@ -77,7 +77,7 @@
       <el-table
         v-loading="listLoading"
         :data="logList"
-        element-loading-text="Loading"
+        element-loading-text="加载中"
         stripe
         border
         fit
@@ -109,10 +109,10 @@
           </template>
         </el-table-column>
         <el-table-column label="审批结果" min-width="8%" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
-        </template>
-      </el-table-column>
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="进入时间" min-width="16%" align="center">
           <template slot-scope="scope">
             {{ moment(scope.row.in_time).format("YYYY-MM-DD HH:mm:ss") }}
@@ -243,7 +243,7 @@ export default {
       })
     },
     checkLog(row) {
-      this.logQuery.guest__open_id = row.guest__open_id
+      this.logQuery.guest__open_id = row.open_id
       this.listLoading = true
       getLog(this.logQuery).then(response => {
         this.logList = response.results
