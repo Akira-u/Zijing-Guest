@@ -1,9 +1,9 @@
 django==3.2.9
-django-filter==21.1
-django-filters==0.2.1
+django-filter==2.4.0
+# django-filters
 django-utils-six==2.0
 djangorestframework==3.12.4
-djangorestframework-filters==0.11.1
+djangorestframework-filters
 django-extensions==3.1.5
 django-werkzeug-debugger-runserver==0.3.1
 pyOpenSSL==19.0.0
@@ -14,3 +14,4 @@ PyMySQL==1.0.2
 django-sslserver==0.22
 django-redis==5.0.0
 drf-yasg==1.20.0
+django-cors-headers==3.10.1
