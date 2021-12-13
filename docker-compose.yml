@@ -1,0 +1,76 @@
+version: "3"
+services:
+  app:
+    restart: always
+    build: .
+    command: >
+      bash -c
+      "
+      cd backend &&
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - .:/code
+    container_name: app
+    expose:
+      - "8000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - web_network
+      - db_network
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    volumes:
+      - "/home/ubuntu/mysql/:/var/lib/mysql"
+    expose:
+      - "3306"
+    env_file: .env
+    restart: always
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - TZ=Asia/Shanghai
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    networks:
+      - db_network
+  nginx:
+    restart: always
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "5000:5000"
+    volumes:
+      # - static-volume:/code/application/static
+      # - templates-volume:/code/application/templates
+      - ./config/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - web_network
+  redis:
+    image: redis:latest
+    restart: "no"
+    container_name: redis
+    ports:
+      - "5001:6379"
+    volumes:
+      - ./redis.conf:/etc/redis/redis.conf 
+    command: redis-server /etc/redis/redis.conf 
+    privileged: true
+    networks:
+      - cache_network
+networks:
+  web_network:
+    driver: bridge
+  db_network:
+    driver: bridge
+  cache_network:
+    driver: bridge
+
+volumes:
+  static-volume:
+  templates-volume:
