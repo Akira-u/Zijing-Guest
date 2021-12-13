@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class DormBuilding(models.Model):
-    name = models.CharField(max_length=20,default="紫荆1号楼")
+    name = models.CharField(max_length=12,default="紫荆1号楼")
     
 
 class Dorm(models.Model):

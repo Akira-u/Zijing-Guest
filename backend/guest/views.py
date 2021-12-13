@@ -49,31 +49,19 @@ class GuestViewSet(viewsets.ModelViewSet):
         )
     )
     def create(self, request, *args, **kwargs):
-        try:
-            log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
-            open_id = log_info.get("open_id")
-            session_key = log_info.get("session_key")
-        except:
-            return Response({"errmsg":log_info["errmsg"]})
+        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
+        open_id = log_info.get("open_id")
+        if not open_id:
+            return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         try:
             token=request.data.get("token")
             if not token:
-                guest_object = request.data
-                del guest_object["code"]
-                guest_object["open_id"]=open_id
-                guest_object["is_student"]=False
-                serializer = self.get_serializer(data=guest_object)
-                serializer.is_valid()
-                self.perform_create(serializer)
-                resp = serializer.data
-                resp["open_id"] =encrypt(open_id)
-                return Response(resp, status=status.HTTP_201_CREATED)
+                return Response({"token":["no token received"]},status=status.HTTP_400_BAD_REQUEST)
             else:
                 data = {
                     "token":token
                 }
                 r = requests.post("https://alumni-test.iterator-traits.com/fake-id-tsinghua-proxy/api/user/session/token",data=data)
-                # print(eval(r.text))
                 packet = eval(r.text).get("user")
                 guest_object = {
                     "name":packet.get("name"),
@@ -83,13 +71,16 @@ class GuestViewSet(viewsets.ModelViewSet):
                     "open_id":open_id
                 }
                 serializer = self.get_serializer(data=guest_object)
-                serializer.is_valid(raise_exception=False)
+                try:
+                    serializer.is_valid(raise_exception=True)
+                except:
+                    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
                 self.perform_create(serializer)
                 resp = serializer.data
                 resp["open_id"]= encrypt(open_id)
                 return Response(resp, status=status.HTTP_201_CREATED)
         except:
-            return Response(serializer.errors)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         
     @swagger_auto_schema(
@@ -105,20 +96,20 @@ class GuestViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def login(self,request):
-        try:
-            code = request.GET.get("code")
-            log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
-        except:
-            return Response({"errmsg":log_info["errmsg"]})
-        query = Guest.objects.filter(open_id=log_info.get("open_id"))
+        code = request.GET.get("code")
+        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
+        open_id = log_info.get("open_id")
+        if not open_id:
+            return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
+        query = Guest.objects.filter(open_id=open_id)
         if query:
             serializer = GuestSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
             guest_object=serializer.data[0]
             guest_object["open_id"]=encrypt(guest_object["open_id"])
-            return Response(guest_object)
+            return Response(guest_object,status=status.HTTP_200_OK)
         else:
-            return Response({"errmsg":"Account Not Found"})
+            return Response({"code":"Account Not Found"},status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
     operation_summary='返回当前Guest对应的Log',
@@ -136,16 +127,13 @@ class GuestViewSet(viewsets.ModelViewSet):
         try:
             open_id = decrypt(request.GET.get("my_open_id"))
         except:
-            return Response({"errmsg":"Invalid open_id"})
-        try:
-            log_exist=cache.get(open_id)
+            return Response({"my_open_id":"Invalid open_id"},status=status.HTTP_400_BAD_REQUEST)
+        log_exist=cache.get(open_id)
+        if log_exist:
             cache.persist(open_id)
-            if log_exist:
-                return Response(log_exist)
-            else:
-                raise Exception
-        except:
-            return Response({"approval":"reject"})
+            return Response(log_exist,status=status.HTTP_200_OK)
+        else:
+            return Response({"approval":"reject"},status=status.HTTP_200_OK)
     @swagger_auto_schema(
     operation_summary='返回当前Guest的访问状态',
     manual_parameters=[
@@ -159,32 +147,31 @@ class GuestViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def status(self,request):
-        try:
-            if request.GET.get("code"):
-                log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
-                open_id = log_info["open_id"]
-            else:
+        if request.GET.get("code"):
+            log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
+            open_id = log_info.get("open_id")
+            if not open_id:
+                return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
                 open_id = decrypt(request.GET.get("my_open_id"))
-        except KeyError:
-            return Response({"errmsg":log_info["errmsg"]})
-        except:
-            return Response({"errmsg":"Invalid open_id"})
-    
+            except:
+                return Response({"my_open_id":["please check your open_id in storage, it is invalid"]},status=status.HTTP_400_BAD_REQUEST)    
         guard_object = Guard.objects.filter(open_id=open_id)
         guest_object = Guest.objects.filter(open_id=open_id)
         if (not guard_object) and (not guest_object):
-            return Response({"status":"no account"})
+            return Response({"status":"no account"},status=status.HTTP_400_BAD_REQUEST)
         if guard_object:
-            return Response({"status":"guard"})
+            return Response({"status":"guard"},status=status.HTTP_200_OK)
         last_log=cache.get(open_id)
-        cache.persist(open_id)
         try:
+            cache.persist(open_id)
             if last_log["approval"]=="permit" and last_log["out_time"]==None:
-                return Response({"status":"still in"})
+                return Response({"status":"still in"},status=status.HTTP_200_OK)
             else:
-                return Response({"status":"out"})    
+                return Response({"status":"out"},status=status.HTTP_200_OK)    
         except:
-            return Response({"status":"out"})  
+            return Response({"status":"out"},status=status.HTTP_200_OK)  
     @swagger_auto_schema(
     operation_summary='返回当前Guest的访问历史',
     manual_parameters=[
@@ -199,17 +186,12 @@ class GuestViewSet(viewsets.ModelViewSet):
     def history(self,request):
         try:
             open_id = decrypt(request.GET.get("my_open_id"))
-            # open_id = request.GET.get("open_id")
+            guest_object=Guest.objects.get(open_id=open_id)
         except:
-            return Response({"errmsg":"invalid open_id"})
-        guest_object=Guest.objects.get(open_id=open_id)
+            return Response({"my_open_id":"please check your open_id in storage, it is invalid"},status=status.HTTP_400_BAD_REQUEST)
         log_history=guest_object.guest_log.all()
         serializer=LogSerializer(log_history,many=True)
-        log_cache=cache.get(open_id)
-        cache.persist(open_id)
         result = serializer.data
-        if log_cache:
-            result.append(log_cache)
         p = Paginator(result,10)
         try:
             page = int(request.GET.get("page"))
@@ -217,7 +199,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             page=1
         if page>p.num_pages:page=p.num_pages
         elif page<1:page=1
-        return Response({"data":p.page(page).object_list,"total":p.count})
+        return Response({"data":p.page(page).object_list,"total":p.count},status=status.HTTP_200_OK)
     
 
     @action(detail=False,methods=["POST"])
@@ -250,4 +232,4 @@ class GuestViewSet(viewsets.ModelViewSet):
             "guards":{},
             "total_count":query.count()
         }
-        return Response(resp)
+        return Response(resp,status=status.HTTP_200_OK)

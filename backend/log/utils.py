@@ -3,6 +3,7 @@ from django_filters import rest_framework as filters
 from log.models import Log
 from guest.utils import GuestSerializer
 from dorm.utils import DormSerializer,DormBuildingSerializer
+from dorm.models import Dorm,DormBuilding
 
 # TODO
 class LogFilter(filters.FilterSet):
@@ -26,6 +27,12 @@ class LogSerializer(serializers.ModelSerializer):
     dorm_id = serializers.IntegerField(allow_null=True, required=False)
     dormbuilding = DormBuildingSerializer(read_only=True)
     dormbuilding_id = serializers.IntegerField(allow_null=True, required=False)
+    def validate(self, data):
+        print(data)
+        if data['in_time'] > data['out_time']:
+            raise serializers.ValidationError("in time should earlier than out time")
+        # if DormBuilding.objects.get(id=data.get("dormbuilding").get("id")) == :
+        return data
     class Meta:
         model = Log
         fields = '__all__'

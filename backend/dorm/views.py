@@ -40,4 +40,4 @@ class DormViewSet(viewsets.ModelViewSet):
             "dorms":{},
             "total_count":query.count()
         }
-        return Response(resp)
+        return Response(resp,status=status.HTTP_200_OK)
