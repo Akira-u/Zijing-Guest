@@ -109,10 +109,10 @@
           </template>
         </el-table-column>
         <el-table-column label="审批结果" min-width="8%" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
-        </template>
-      </el-table-column>
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="进入时间" min-width="16%" align="center">
           <template slot-scope="scope">
             {{ moment(scope.row.in_time).format("YYYY-MM-DD HH:mm:ss") }}
