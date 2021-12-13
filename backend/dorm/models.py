@@ -5,7 +5,6 @@ from django.db import models
 class DormBuilding(models.Model):
     name = models.CharField(max_length=12,default="紫荆1号楼")
     
-
 class Dorm(models.Model):
     dormbuilding = models.ForeignKey(
         DormBuilding,
