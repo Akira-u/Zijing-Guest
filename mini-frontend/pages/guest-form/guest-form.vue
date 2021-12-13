@@ -1,7 +1,10 @@
 <template>
-  <view>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
-    <uni-forms ref="form" :modelValue="form_data" :rules="rules">
+    <uni-forms class="inputList" ref="form" :modelValue="form_data" :rules="rules">
       <uni-forms-item required label="目的宿舍" name="target_dorm">
         <uni-easyinput
           v-model="form_data.target_dorm"
@@ -21,12 +24,15 @@
         />
       </uni-forms-item>
     </uni-forms>
-    <button @tap="submit">提交</button>
+    <view class="buttonList">
+      <button @tap="submit">提交</button>
+      <button @tap="viewHistory">查看申请记录</button>
+    </view>
   </view>
 </template>
 
 <script>
-import requestData from "@/api/request"
+import { registeredGuestRequest } from "@/api/request"
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -63,34 +69,81 @@ export default {
   },
   methods: {
     submit() {
-      var that = this
       this.$refs.form
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-          wx.login({
-            success: function (res) {
-              if (res.code) {
-                that.form_data.code = res.code // pass a user code to associate guest info and user
-                requestData({ url: "http://c02.whiteffire.cn:8000/guard/log/", method: "POST", data: that.form_data })
-                  .then((resp_data) => {
-                    console.log({ resp_data: resp_data })
-                    navigateTo("/pages/guest-form/guest-qrcode");
-                  })
-              } else {
-                console.log(res.errMsg)
-              }
-            }
-          })
-
+          registeredGuestRequest({ url: "/log/", method: "POST", data: this.form_data })
+            .then((resp_data) => {
+              console.log({ resp_data: resp_data })
+              navigateTo("/pages/guest-form/guest-qrcode");
+            })
         })
         .catch((err) => {
           console.log("表单错误信息：", err);
         });
+      wx.requestSubscribeMessage({
+        tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
+        success(res) {
+          console.log("success", res)
+        },
+        fail(res) {
+          console.log("fail", res)
+        }
+      })
     },
+    viewHistory(){
+      navigateTo("/pages/guest-form/my-history")
+    }
   },
+  // onReady() {
+  //   console.log("onReady")
+  //   wx.requestSubscribeMessage({
+  //     tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
+  //     success(res) {
+  //       console.log("success", res)
+  //     },
+  //     fail(res) {
+  //       console.log("fail", res)
+  //     }
+  //   })
+  // }
 };
 </script>
 
 <style>
+.inputList {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -120%);
+}
+
+.uni-easyinput {
+  padding: 0;
+  height: 90rpx;
+  line-height: 90rpx;
+  background: #f8f7fc;
+  border: 1px solid #e9e9e9;
+  font-size: 28rpx;
+  border-radius: 10rpx;
+}
+
+button {
+  font-size: 28rpx;
+  background: #5677fc;
+  color: #fff;
+  height: 90rpx;
+  line-height: 90rpx;
+  border-radius: 50rpx;
+  margin: 40px;
+  box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
+}
+
+.buttonList {
+  position: relative;
+  width: 100%;
+  left: 50%;
+  transform: translate(-50%, 300%);
+}
 </style>

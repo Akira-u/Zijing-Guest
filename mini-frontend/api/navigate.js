@@ -21,11 +21,25 @@ function navigateTo(url, args = {}) {
     return uni.navigateTo({ url: url })
 }
 
+function reLaunch(url='/pages/index/index', args = {}) {
+    if (args.constructor !== Object) {
+        console.warn("wrong arg type: ", args.constructor)
+        return uni.reLaunch({ url: url })
+    }
+    var str_arg = ''
+    for (var k in args) {
+        let value = args[k] !== undefined ? args[k] : ''
+        str_arg += k + '=' + encodeURIComponent(value) + '&'
+    }
+    url = str_arg === '' ? url : url + "?" + str_arg.substr(0, str_arg.length - 1)
+    return uni.reLaunch({ url: url })
+}
+
 function decodeOption(option) {
     for (var k in option) {
         option[k]=decodeURIComponent(option[k])
     }
 }
 
-export { decodeOption }
+export { decodeOption, reLaunch }
 export default navigateTo;

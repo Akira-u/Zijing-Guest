@@ -159,9 +159,10 @@ class LogViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["GET"])
     def static(self,request,*args,**kwargs):
         from datetime import datetime,timedelta
-        from django.utils import timezone
-
-        dt_s = timezone.now().date()-timedelta(6)
+        from django.utils.timezone import get_current_timezone
+        print(get_current_timezone())
+        dt_s = datetime.now(tz=get_current_timezone()).date()-timedelta(6)
+        print(dt_s)
         student_log=[]
         other_log=[]
         total_log=[]
@@ -180,7 +181,7 @@ class LogViewSet(viewsets.ModelViewSet):
             student_log.append(student_total)
             other_log.append(total-student_total)
             dt_s+=timedelta(1)
-        for i in range(7):
+        for i in range(1,8):
             query = Log.objects.filter(in_time__week_day=i)
             total = query.count()
             total_log_weekday.append(total)

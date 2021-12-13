@@ -1,8 +1,8 @@
-<!-- 蓝色简洁登录页面 -->
 <template>
-  <view class="t-login">
-    <!-- 页面装饰图片 -->
-    <image class="img-a" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <!-- 标题 -->
     <view class="t-b">{{ title }}</view>
     <form class="cl">
@@ -30,9 +30,9 @@
     </form>
   </view>
 </template>
+
 <script>
-import requestData from "@/api/request";
-import { decodeOption } from "@/api/navigate";
+import request from "@/api/request";
 import navigateTo from "@/api/navigate";
 export default {
   data() {
@@ -41,9 +41,6 @@ export default {
       phone: "",
       name: "",
     };
-  },
-  onLoad(options) {
-    decodeOption(options);
   },
   methods: {
     //当前注册按钮操作
@@ -65,8 +62,8 @@ export default {
         success(res1) {
           if (res1.code) {
             console.log(that.phone);
-            requestData({
-              url: "http://49.232.106.46:8000/guard/guest/",
+            request({
+              url: "/guest/",
               method: "POST",
               data: {
                 code: res1.code,
@@ -85,25 +82,17 @@ export default {
   },
 };
 </script>
-<style>
-.img-a {
-  position: absolute;
-  width: 1000rpx;
-  height: 1000rpx;
-  top: -300%;
-  right: 0%;
-  z-index: -1;
-  opacity: 0.1;
-}
 
-.t-login {
-  width: 600rpx;
+<style>
+.container {
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
   font-size: 28rpx;
   color: #000;
 }
 
-.t-login button {
+.container button {
   font-size: 28rpx;
   background: #5677fc;
   color: #fff;
@@ -113,7 +102,7 @@ export default {
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
 }
 
-.t-login input {
+.container input {
   padding: 0 20rpx 0 120rpx;
   height: 90rpx;
   line-height: 90rpx;
@@ -124,11 +113,11 @@ export default {
   border-radius: 50rpx;
 }
 
-.t-login .t-a {
+.container .t-a {
   position: relative;
 }
 
-.t-login .t-a image {
+.container .t-a image {
   width: 40rpx;
   height: 40rpx;
   position: absolute;
@@ -138,16 +127,16 @@ export default {
   padding-right: 20rpx;
 }
 
-.t-login .t-b {
+.container .t-b {
   text-align: left;
   font-size: 60rpx;
   color: #000;
   padding: 0rpx 0 120rpx 0;
   font-weight: bold;
+  margin: 10%;
 }
 
-.t-login {
-  position: absolute;
+.container {
   right: 20%;
   color: #fff;
   font-size: 24rpx;
@@ -157,32 +146,36 @@ export default {
   padding: 0 25rpx;
 }
 
-.t-login .t-d {
+.container .t-d {
   text-align: center;
   color: #999;
   margin: 80rpx 0;
 }
 
-.t-login {
+.container {
   text-align: center;
   float: left;
-  width: 80%;
-  right: 7%;
+  width: 100%;
   margin: 200rpx 0 0 0;
   color: #666;
 }
 
-.t-login text {
+.container text {
   margin-left: 20rpx;
   color: #aaaaaa;
   font-size: 27rpx;
 }
 
-.t-login .uni-input-placeholder {
+.container .uni-input-placeholder {
   color: #000;
 }
 
 .cl {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
   zoom: 1;
 }
 
