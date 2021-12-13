@@ -17,7 +17,7 @@ class GuestSerializer(serializers.ModelSerializer):
     def validate_name(self,data):
         if not isinstance(data,str):
             raise serializers.ValidationError("name must be string type")
-        if not re.match(r'^[\u4E00-\u9FA5A-Za-z]{2,10}$'):
+        if not re.match(r'^[\u4E00-\u9FA5A-Za-z]{2,10}$',data):
             raise serializers.ValidationError("invalid name")
         return data
     def validate_phone(self,data):

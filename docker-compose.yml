@@ -7,6 +7,7 @@ services:
       bash -c
       "
       cd backend &&
+      python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000
       "
@@ -15,6 +16,8 @@ services:
     container_name: app
     expose:
       - "8000"
+    ports:
+      - "0.0.0.0:8000:8000"
     depends_on:
       - db
       - redis
@@ -31,7 +34,7 @@ services:
     env_file: .env
     restart: always
     environment:
-      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_DATABASE=zijingguest
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - TZ=Asia/Shanghai
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
@@ -56,7 +59,7 @@ services:
     restart: "no"
     container_name: redis
     ports:
-      - "5001:6379"
+      - "6379:6379"
     volumes:
       - ./redis.conf:/etc/redis/redis.conf 
     command: redis-server /etc/redis/redis.conf 
