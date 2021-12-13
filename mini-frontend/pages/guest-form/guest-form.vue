@@ -79,6 +79,7 @@ export default {
       building_list:[],
       building_info:[],
       dorm_list:[],
+      dorm_info:[],
       rules: {
         // 表单验证
         phone: {
@@ -192,7 +193,7 @@ export default {
       .then((res) => {
         that.building_list = []
         that.building_info = res.results
-        var len = res.count
+        var len = res.results.length
         for(var j = 0; j < len; j++) {
           that.building_list.push(res.results[j].name)
         }
@@ -208,13 +209,23 @@ export default {
         .validate()
         .then((res) => {
           console.log("表单内容：", res);
-          registeredGuestRequest({ url: "/log/", method: "POST", data: that.form_data })
+          var building = that.form_data.target_building
+          var index_building = that.building_list.findIndex(i => i == building)
+          var dorm = that.form_data.target_dorm
+          var index_dorm = that.dorm_list.findIndex(i => i == dorm)
+          registeredGuestRequest({ url: "/log/", method: "POST", data: {
+              phone: that.form_data.phone,
+              target_building: that.building_info[index_building].id,
+              target_dorm: that.dorm_info[index_dorm].id,
+              host_student: that.form_data.host_student,
+              purpose: that.form_data.purpose
+            }})
             .then((resp_data) => {
               console.log({ resp_data: resp_data })
               wx.requestSubscribeMessage({
                 tmplIds: ['7oNPU5JtIAl73LkYMi2PFkPh-Eqf15h8qpRfA4YQVkM'],
                 success(res) {
-                console.log("subscribe success", res)
+                  console.log("subscribe success", res)
                 },
                 fail(res) {
                   console.log("fail", res)
@@ -242,8 +253,9 @@ export default {
         request({ url: url })
           .then((res) => {
             console.log("dorm",res)
-            var len = res.count
-            that.dorm_list=[]
+            that.dorm_info = res.results
+            var len = res.results.length
+            that.dorm_list = []
             for(var j = 0; j < len; j++) {
               that.dorm_list.push(res.results[j].name)
             }
