@@ -12,10 +12,10 @@
       :modelValue="form_data"
       :rules="rules"
     >
-      <uni-forms-item required label="电话" name="phone">
+      <uni-forms-item required label="手机号" name="phone">
         <uni-easyinput
           v-model="form_data.phone"
-          placeholder="您的电话号码"
+          placeholder="请填写您的手机号码"
         />
       </uni-forms-item>
       <uni-forms-item required label="到访楼号" name="target_building">
@@ -38,7 +38,7 @@
       <uni-forms-item required label="接待人" name="host_student">
         <uni-easyinput
           v-model="form_data.host_student"
-          placeholder="您要拜访的人姓名"
+          placeholder="请填写您要拜访的人姓名"
         />
       </uni-forms-item>
       <uni-forms-item label="访问事由" name="purpose">
@@ -86,12 +86,12 @@ export default {
           rules: [
             {
               required: true,
-              errorMessage: "请输入电话号码",
+              errorMessage: "请输入手机号码",
             },
             {
               minLength: 11,
               maxLength: 11,
-              errorMessage: "电话号码长度应为 11 个字符",
+              errorMessage: "手机号码长度应为 11 个字符",
             },
           ],
         },
@@ -99,12 +99,12 @@ export default {
           rules: [
             {
               required: true,
-              errorMessage: "请输入姓名",
+              errorMessage: "请输入接待人姓名",
             },
             {
               minLength: 3,
               maxLength: 5,
-              errorMessage: "姓名长度在 {minLength} 到 {maxLength} 个字符",
+              errorMessage: "接待人姓名长度在 {minLength} 到 {maxLength} 个字符",
             },
           ],
         },
