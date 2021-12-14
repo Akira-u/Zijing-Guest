@@ -92,10 +92,11 @@ WSGI_APPLICATION = 'ZijingGuest.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ZijingGuest',
-        'USER': 'c02',
+        'NAME': 'zijingguest',
+        'USER': 'root',
         'PASSWORD': 'LDq1w2e3r4!',
-        'HOST': '49.232.106.46',
+        # 'HOST': '127.0.0.1',
+        'HOST': 'db',
         'PORT': '3306',
     }
 }
@@ -131,7 +132,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -165,7 +166,7 @@ ASGI_APPLICATION = "ZijingGuest.asgi.application"
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://49.232.106.46:6379',
+        'LOCATION': 'redis://0.0.0.0:6379',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },

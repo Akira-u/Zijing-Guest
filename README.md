@@ -14,7 +14,11 @@ https://vuejs.org/v2/style-guide/
 ### main
 stable released version. Allowed commit: meeting minutes, update Readme
 ### develop(Default)
-newest iteration version. Allowed coommit: bug fix
+newest iteration version. Allowed commit: bug fix
+
+host: 82.157.107.167:8000
+
+(latest backend version: 49.232.106.46:8000)
 
 **Write your code in branches below. After passing tests, create a new PR to develop**
 
