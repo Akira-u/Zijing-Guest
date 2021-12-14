@@ -36,7 +36,8 @@ class LogViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         log_object = request.data
         try:
-            qopen_id = request.data.get("my_open_id")
+            qopen_id = decrypt(request.data.get("my_open_id"))
+            # qopen_id = request.data.get("my_open_id")
         except:
             return Response({"my_open_id":["please check your open_id in storage, it is invalid"]},status=status.HTTP_400_BAD_REQUEST)
         guest_object = Guest.objects.get(open_id=qopen_id)
@@ -50,7 +51,7 @@ class LogViewSet(viewsets.ModelViewSet):
         except:
             return Response({"dorm_object":["no corrsponding dorm with your target_dorm"]},status=status.HTTP_400_BAD_REQUEST)
         try:
-            dormbuilding_object = DormBuilding.objects.get(id = request.data.get("target_dormbuilding"))
+            dormbuilding_object = DormBuilding.objects.get(id = request.data.get("target_building"))
         except:
             return Response({"dormbuilding_object":["no corrsponding dormbuilding with your target_dormbuilding"]},status=status.HTTP_400_BAD_REQUEST)
         if dorm_object.dormbuilding != dormbuilding_object:
@@ -64,25 +65,24 @@ class LogViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
         except:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        finally:
-            log_object = serializer.data
-            log_object["guest_id"]=encrypt(log_object["guest_id"])
-            log_object["guest"] = guest_object.__dict__
-            log_object["dorm"] = dorm_object.__dict__
-            log_object["dormbuilding"] = dormbuilding_object.__dict__
-            for i in range(1,5):
-                if log_object["host_student"]==log_object["dorm"][f"student{i}"]:
-                    break
-                if i==4:
-                    return Response({"host_student":["no corresponding student in your target dorm"]},status=status.HTTP_400_BAD_REQUEST)
-            del log_object["guest"]["_state"]
-            del log_object["dorm"]["_state"]
-            del log_object["dormbuilding"]["_state"]
-            if cache.set(open_id,log_object, timeout=None):
-                cache.persist(open_id)
-                return Response(log_object, status=status.HTTP_201_CREATED)
-            else:
-                return Response({"system cache":"cache error"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        log_object = serializer.data
+        log_object["guest_id"]=encrypt(log_object["guest_id"])
+        log_object["guest"] = guest_object.__dict__
+        log_object["dorm"] = dorm_object.__dict__
+        log_object["dormbuilding"] = dormbuilding_object.__dict__
+        for i in range(1,5):
+            if log_object["host_student"]==log_object["dorm"][f"student{i}"]:
+                break
+            if i==4:
+                return Response({"host_student":["no corresponding student in your target dorm"]},status=status.HTTP_400_BAD_REQUEST)
+        del log_object["guest"]["_state"]
+        del log_object["dorm"]["_state"]
+        del log_object["dormbuilding"]["_state"]
+        if cache.set(open_id,log_object, timeout=None):
+            cache.persist(open_id)
+            return Response(log_object, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"system cache":"cache error"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=False,methods=["POST"])
     def check(self,request,*args, **kwargs):

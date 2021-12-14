@@ -28,7 +28,9 @@ class LogSerializer(serializers.ModelSerializer):
     dormbuilding = DormBuildingSerializer(read_only=True)
     dormbuilding_id = serializers.IntegerField(allow_null=True, required=False)
     def validate(self, data):
-        print(data)
+        # print(data)
+        if not data.get("in_time") or not data.get("out_time"):
+            return data
         if data['in_time'] > data['out_time']:
             raise serializers.ValidationError("in time should earlier than out time")
         # if DormBuilding.objects.get(id=data.get("dormbuilding").get("id")) == :
