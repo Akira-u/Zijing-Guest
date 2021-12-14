@@ -27,7 +27,7 @@ export function preCreate(data) {
 
 export function del(open_id) {
   return request({
-    url: 'http://49.232.106.46:8000/guard/'+open_id+'/',
-    method: 'delete',
+    url: 'http://49.232.106.46:8000/guard/' + open_id + '/',
+    method: 'delete'
   })
 }

@@ -22,7 +22,7 @@ export default {
       type: String,
       default: '300px'
     },
-    logs_hour: {
+    logsHour: {
       type: Object
     }
   },
@@ -44,7 +44,7 @@ export default {
     this.chart = null
   },
   watch: {
-    logs_hour: {
+    logsHour: {
       deep: true,
       handler(val) {
         console.log(val)
@@ -73,7 +73,7 @@ export default {
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '50%'],
-            data: this.logs_hour,
+            data: this.logsHour,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
