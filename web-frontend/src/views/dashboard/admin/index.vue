@@ -47,16 +47,41 @@ export default {
   data() {
     return {
       logCount: 0,
-      logs: undefined,
-      logs_weekday: undefined,
-      logs_hour: undefined,
+      logs: {
+        student: [0,0,0,0,0,0,0],
+        other: [0,0,0,0,0,0,0],
+        total: [0,0,0,0,0,0,0]
+      },
+      logs_weekday: {
+        student: [0,0,0,0,0,0,0],
+        other: [0,0,0,0,0,0,0],
+        total: [0,0,0,0,0,0,0]
+      },
+      logs_hour: [
+        {
+          name: '0-5',value:0
+        },
+        {
+          name: '6-11',value:0
+        },
+        {
+          name: '12-17',value:0
+        },
+        {
+          name: '18-23',value:0
+        }
+      ],
       guestCount: 0,
       guests: undefined,
       guardCount: 0,
       guards: undefined,
       dormCount: 0,
       dorms: undefined,
-      lineChartData: [0, 0, 0, 0, 0, 0, 0]
+      lineChartData: {
+        student: [0,0,0,0,0,0,0],
+        other: [0,0,0,0,0,0,0],
+        total: [0,0,0,0,0,0,0]
+      },
     }
   },
   created() {

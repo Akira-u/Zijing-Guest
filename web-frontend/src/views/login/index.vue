@@ -49,11 +49,21 @@
       </div>
 
     </el-form>
+
+    <el-dialog title="提示" :visible.sync="dialogFormVisible" width="40%">
+      <h3>密码错误！</h3>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          关闭
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { adminLogin } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -75,7 +85,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -83,7 +93,8 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      dialogFormVisible: false
     }
   },
   watch: {
@@ -109,11 +120,21 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
+          adminLogin(this.loginForm).then(response => {
+            if (response === '') {
+              this.$store.dispatch('user/login', this.loginForm).then(() => {
+                this.$router.push({ path: this.redirect || '/' })
+                this.loading = false
+              }).catch(() => {
+                this.loading = false
+              })
+            } else {
+              this.dialogFormVisible = true
+              console.log('登录失败，status:', response)
+            }
+            setTimeout(() => {
+              this.loading = false
+            }, 1.5 * 1000)
           })
         } else {
           console.log('error submit!!')
