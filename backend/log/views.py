@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from django_filters import rest_framework as filters
 from .models import Log
 from guest.models import Guest
-from .utils import LogSerializer
+from .utils import LogSerializer,LogFilter
 from Crypto.Cipher import AES
 
 from rest_framework.response import Response
@@ -21,13 +21,17 @@ class LogViewSet(viewsets.ModelViewSet):
     """ 来访日志 viewset """
     queryset = Log.objects.all()
     serializer_class = LogSerializer
-    # filter_backends = (filters.DjangoFilterBackend,)
-    # filter_class = LogFilter
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = LogFilter
     """ POST """
     def create(self, request, *args, **kwargs):
+        print(self.get_queryset())
+
         log_object = request.data
+        # print(log_object)
+        print(request.data.get("my_open_id"))
         try:
-            qopen_id = decrypt(request.data.get("open_id"))
+            qopen_id = decrypt(request.data.get("my_open_id"))
         except:
             return Response({"errmsg":"Invalid open_id"})
         try:
@@ -43,8 +47,13 @@ class LogViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             log_object = serializer.data
             print(log_object)
-            del log_object["guest_id"]            
-            if cache.set(open_id,log_object,timeout=300, nx=True):
+            log_object["guest_id"]=encrypt(log_object["guest_id"])
+            log_object["guest"] = guest_object.__dict__
+            # serializer=self.get_serializer(data=log_object)
+            # serializer.is_valid()
+            # print(serializer.errors)
+            del log_object["guest"]["_state"]
+            if cache.set(open_id,log_object, timeout=None):
                 print(cache.get(open_id))
                 return Response(log_object, status=status.HTTP_201_CREATED)
             else:
@@ -56,10 +65,12 @@ class LogViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["POST"])
     def check(self,request,*args, **kwargs):
         kwargs['partial'] = True
+        print(request.data)
         print("patch")
         try:
             # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-            open_id = decrypt(request.data.get("open_id")) 
+            print(request.data.get("open_id"))
+            open_id = decrypt(request.data.get("open_id"))
             # print(open_id)
             ex_log = cache.get(open_id)
             print(ex_log)
@@ -69,22 +80,33 @@ class LogViewSet(viewsets.ModelViewSet):
                     ex_log["in_time"]=request.data.get("in_time")
                     ex_log["approval"]=request.data.get("approval")
                     if ex_log["approval"]=="reject":
+                        ex_log["guest_id"]=open_id
+                        ex_log["out_time"]=request.data.get("in_time")
                         cache.delete_pattern(open_id)
-                        return Response({"msg":"Reject"})
+                        # del ex_log["guest"]
+                        serializer=self.get_serializer(data=ex_log)
+                        serializer.is_valid(raise_exception=False)
+                        if not serializer.errors:
+                            self.perform_create(serializer)
+                            return Response(serializer.data,status=status.HTTP_201_CREATED)
+                        else:
+                            return Response({"errmsg":serializer.errors})
                     else:
                         print("1")
                         cache.delete_pattern(open_id)
                         print("2")
-                        cache.set(open_id,ex_log)
+                        cache.set(open_id,ex_log,timeout=None)
                         print("3")
                         return Response({"msg":"Permit"})
                 elif request.data.get("out_time"):
                     ex_log["out_time"]=request.data.get("out_time")
                     cache.delete_pattern(open_id)
                     ex_log["guest_id"]=open_id
+                    # del ex_log["guest"]
                     serializer=self.get_serializer(data=ex_log)
                     serializer.is_valid(raise_exception=False)
                     if not serializer.errors:
+                        print("success")
                         self.perform_create(serializer)
                         return Response(serializer.data,status=status.HTTP_201_CREATED)
                     else:
@@ -117,10 +139,8 @@ class LogViewSet(viewsets.ModelViewSet):
             # print(log_object)
             if not log_object:
                 raise Exception
-            guest_object = Guest.objects.filter(open_id=open_id).last().__dict__
-            # print(guest_object)
-            log_object["guest_name"] = guest_object["name"]
             log_object["guest_id"]= encrypt(open_id)
+            print(log_object)
             return Response(log_object)
         except:
             return Response({"errmsg":"Log Not Found"})

@@ -1,6 +1,8 @@
 <template>
-  <view class="guardForm">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <image
       class="scanCode"
       @tap="scanQrcode"
@@ -22,7 +24,6 @@ export default {
   methods: {
     scanQrcode: function () {
       console.log("scan qrcode");
-      var that = this;
       wx.scanCode({
         success(res) {
           console.log(res.result);
@@ -49,12 +50,6 @@ export default {
 </script>
 
 <style>
-.guardForm {
-  padding: 20px;
-  font-size: 14px;
-  line-height: 24px;
-}
-
 button {
   position: relative;
   font-size: 28rpx;
@@ -69,21 +64,10 @@ button {
 
 .buttonList {
   position: absolute;
-  width: 90%;
+  width: 100%;
   left: 50%;
   top: 70%;
   transform: translate(-50%, -50%);
-}
-
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
 }
 
 .scanCode {

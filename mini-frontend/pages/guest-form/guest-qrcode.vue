@@ -1,6 +1,8 @@
 <template>
-  <view class="QRcodePage">
-    <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+  <view class="container">
+    <view class="imgbox">
+      <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
+    </view>
     <!-- https://ext.dcloud.net.cn/plugin?id=1287 -->
     <view class="QRcode">
       <uqrcode ref="guest_qrcode"></uqrcode>
@@ -11,8 +13,7 @@
       <button @tap="checkResult">审批结束，查看结果</button>
     </view>
     <uni-popup ref="popupMessage" type="message">
-      <!-- <uni-popup-dialog :content="dialog_text"/> -->
-      <uni-popup-message :type="msg_type" :message="msg_text" :duration="2000" />
+      <uni-popup-message :type="msg_type" :message="msg_text" :duration="1500"/>
     </uni-popup>
   </view>
 </template>
@@ -55,9 +56,6 @@ export default {
             this.msg_text = '尚未审批，请稍等...'
             this.msg_type = 'warn'
             this.$refs.popupMessage.open()
-            setTimeout(() => {
-             this.$refs.popupMessage.close()
-            }, 1500);
           }
         })
     }
@@ -90,25 +88,6 @@ export default {
 </script>
 
 <style>
-.img-xiaohui {
-  position: absolute;
-  width: 1100rpx;
-  height: 1100rpx;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.QRcodePage {
-  padding: 20px;
-  font-size: 20px;
-  line-height: 24px;
-  margin: 10px;
-  justify-content: center;
-}
-
 .QRcode {
   position: absolute;
   left: 50%;
@@ -118,8 +97,12 @@ export default {
 }
 
 .tips {
-  position: relative;
-  transform: translate(0%, 150%);
+  position: absolute;
+  padding: 40rpx 0 20rpx 0;
+  width:120%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  text-align:center;
   font-size: 18px;
 }
 
@@ -136,7 +119,7 @@ button {
 
 .buttonList {
   position: relative;
-  width: 120%;
+  width: 100%;
   left: 50%;
   transform: translate(-50%, 1000%);
 }

@@ -40,4 +40,32 @@ export default {
 
 <style>
 /*每个页面公共css */
+.container {
+  height:100%;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.imgbox {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  width:100%;
+	padding-bottom: 150%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+.img-xiaohui {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.1;
+}
 </style>

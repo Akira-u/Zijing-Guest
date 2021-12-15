@@ -4,11 +4,7 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "紫荆来客",
-				"mp-weixin": {
-					"usingComponents": {
-						"mp-dialog": "weui-miniprogram/dialog/dialog"
-					}
-				}
+				"enablePullDownRefresh": false
 			}
 		}
 	    ,{
@@ -25,12 +21,7 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "申请码",
-                "enablePullDownRefresh": false,
-				"mp-weixin": {
-					"usingComponents": {
-						"mp-dialog": "weui-miniprogram/dialog/dialog"
-					}
-				}
+                "enablePullDownRefresh": false
             }
             
         },
@@ -85,15 +76,6 @@
 		    
 		},
 		{
-		    "path" : "pages/guard-form/check-details",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "查看详情",
-		        "enablePullDownRefresh": false
-		    }
-		    
-		},
-		{
             "path" : "pages/guest-form/guest-register",
             "style" :                                                                                    
             {
@@ -107,12 +89,7 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",
-                "enablePullDownRefresh": false,
-				"mp-weixin": {
-					"usingComponents": {
-						"mp-dialog": "weui-miniprogram/dialog/dialog"
-					}
-				}
+                "enablePullDownRefresh": false
             }
             
         }

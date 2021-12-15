@@ -14,7 +14,9 @@ from drf_yasg.utils import swagger_auto_schema
 from guard.wx_api import *
 from guard.const import *
 from guard.cipher import *
+from guard.models import Guard
 from django.core.cache import cache
+from django.core.paginator import Paginator
 
 # Create your views here.
 class GuestViewSet(viewsets.ModelViewSet):
@@ -136,25 +138,18 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def approve_result(self,request):
         try:
-            open_id = decrypt(request.GET.get("open_id"))
+            open_id = decrypt(request.GET.get("my_open_id"))
         except:
             return Response({"errmsg":"Invalid open_id"})
         try:
             log_exist=cache.get(open_id)
             print(log_exist)
-            # print(log_exist)
             if log_exist:
                 return Response(log_exist)
             else:
                 raise Exception
-                
-            # guest_object = Guest.objects.get(open_id=open_id)
-            # logs=guest_object.guest_log.all()
-            # serializer=LogSerializer(data=list(logs.values())[-1])
-            # serializer.is_valid(raise_exception=True)
-            # return Response(serializer.validated_data)
         except:
-            return Response({"errmsg":"Log Not Found"})
+            return Response({"approval":"reject"})
     @swagger_auto_schema(
     operation_summary='返回当前Guest的访问状态',
     manual_parameters=[
@@ -164,7 +159,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             description='Guest code',
             type=openapi.TYPE_STRING
         ),],
-    responses={200:openapi.Response('返回当前Guest的访问状态',openapi.Schema("status",type=openapi.TYPE_STRING,enum=["still in","out"]))}
+    responses={200:openapi.Response('返回当前Guest的访问状态',openapi.Schema("status",type=openapi.TYPE_STRING,enum=["still in","out","guard","no account"]))}
     )
     @action(detail=False,methods=['GET'])
     def status(self,request):
@@ -173,19 +168,69 @@ class GuestViewSet(viewsets.ModelViewSet):
                 log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
                 open_id = log_info["open_id"]
             else:
-                open_id = decrypt(request.GET.get("open_id"))
+                open_id = decrypt(request.GET.get("my_open_id"))
         except KeyError:
             return Response({"errmsg":log_info["errmsg"]})
         except:
             return Response({"errmsg":"Invalid open_id"})
+    
+        guard_object = Guard.objects.filter(open_id=open_id)
+        guest_object = Guest.objects.filter(open_id=open_id)
+        if (not guard_object) and (not guest_object):
+            return Response({"status":"no account"})
+        if guard_object:
+            return Response({"status":"guard"})
+        last_log=cache.get(open_id)
+        print(last_log)
         try:
-            guest_object=Guest.objects.get(open_id=open_id)
-            last_log=guest_object.guest_log.last()
-            result={}
-            if last_log.approval=="permit" and last_log.out_time==None:
-                result["status"] = "still in"
+            if last_log["approval"]=="permit" and last_log["out_time"]==None:
+                return Response({"status":"still in"})
             else:
-                result["status"] = "out"
-            return Response(result)
+                return Response({"status":"out"})    
         except:
-            return Response({"errmsg":"No Log"})
+            return Response({"status":"out"})  
+    @swagger_auto_schema(
+    operation_summary='返回当前Guest的访问历史',
+    manual_parameters=[
+        openapi.Parameter(
+            name='open_id',
+            in_=openapi.IN_QUERY,
+            description='Guest open_id',
+            type=openapi.TYPE_STRING
+        ),],
+    )
+    @action(detail=False,methods=['GET'])
+    def history(self,request):
+        try:
+            open_id = decrypt(request.GET.get("my_open_id"))
+            # open_id = request.GET.get("open_id")
+        except:
+            return Response({"errmsg":"invalid open_id"})
+        guest_object=Guest.objects.get(open_id=open_id)
+        print(guest_object)
+        log_history=guest_object.guest_log.all()
+        print(log_history)
+        serializer=LogSerializer(log_history,many=True)
+        # serializer.is_valid()
+        # print(serializer.errors)
+        log_cache=cache.get(open_id)
+        result = serializer.data
+        # result["guest"] = guest_object.__dict__
+        if log_cache:
+            result.append(log_cache)
+        print(result)
+        # for log in result:
+        #     del log["guest_id"]
+        p = Paginator(result,10)
+        try:
+            page = int(request.GET.get("page"))
+        except:
+            page=1
+        if page>p.num_pages:page=p.num_pages
+        elif page<1:page=1
+        return Response({"data":p.page(page).object_list,"total":p.count})
+            
+            
+                
+
+
