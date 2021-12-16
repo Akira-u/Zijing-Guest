@@ -18,7 +18,7 @@
       </uni-list>
       </view>
       <view class="buttonList">
-        <button @tap="Leave">离开</button>
+        <button @tap="leave">离开</button>
       </view>
     </view>
     <uni-popup ref="fail_popup" type="dialog">
@@ -26,6 +26,8 @@
         type="error"
         mode="base"
         content="无效二维码！"
+        @close="back"
+        @confirm="back"
       ></uni-popup-dialog>
     </uni-popup>
   </view>
@@ -34,6 +36,7 @@
 <script>
 import { registeredGuardRequest } from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
+import DateFormat from "@/api/date";
 export default {
   data() {
     return {
@@ -59,13 +62,11 @@ export default {
       }
     }).catch((err)=>{
       this.$refs.fail_popup.open()
-      uni.navigateBack({ delta: 1 })
     })
   },
   methods: {
-    Leave() {
+    leave() {
       var date = new Date();
-      console.log(date);
       registeredGuardRequest({
         url: "/log/check/",
         method: "POST",
@@ -77,32 +78,13 @@ export default {
       reLaunch("/pages/guard-form/guard-form");
     },
     getInTime() {
-      var date = this.log.in_time;
-      var month = date.getMonth() + 1;
-      var strDate = date.getDate();           
-      var strHour = date.getHours();
-      var strMinute = date.getMinutes();
-      var strSeconde = date.getSeconds();
-
-      if (month >= 1 && month <= 9) {
-        month = "0" + month;
+      if(this.log.in_time){
+        var date=new DateFormat();
+        return date.setTime(new Date(this.log.in_time)).toString('yyyy-0m-0d 0h:0f:0s');
       }
-      if (strDate >= 1 && strDate <= 9) {
-          strDate = "0" + strDate;
-      }
-      if (strHour >= 1 && strHour <=9) {
-        strHour = "0" + strHour
-      }
-      if (strMinute >= 1 && strMinute <= 9) {
-        strMinute = "0" + strMinute;
-      }
-
-      if (strSeconde >= 1 && strSeconde <= 9) {
-        strSeconde = "0" + strSeconde;
-      }
-      var NewDate = date.getFullYear() + "-"+ month + "-" + strDate + " " +
-                      strHour + ":" + strMinute + ":" + strSeconde;
-      return NewDate;
+    },
+    back(){
+      uni.navigateBack({ delta: 1 })
     }
   },
 };
