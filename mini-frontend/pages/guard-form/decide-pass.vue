@@ -40,8 +40,8 @@
         </uni-list>
       </view>
       <view class="buttonList">
-        <button @tap="Pass">通过</button>
-        <button @tap="Deny">禁入</button>
+        <button @tap="pass">通过</button>
+        <button @tap="deny">禁入</button>
       </view>
     </view>
     <uni-popup ref="fail_popup" type="dialog">
@@ -49,6 +49,8 @@
         type="error"
         mode="base"
         content="无效二维码！"
+        @close="back"
+        @confirm="back"
       ></uni-popup-dialog>
     </uni-popup>
     <uni-popup ref="credit_popup" type="dialog">
@@ -104,14 +106,14 @@ export default {
         this.$refs.credit_popup.open()
       }
       registeredGuardRequest({
-          url: '/guard/',
-      }).then((resp)=>{
+        url: '/guard/',
+      }).then((resp) => {
         console.log(resp)
-        if(resp.results[0].dormbuilding.id!==this.log.dormbuilding.id){
-          this.building_unmatch_text='注意：访客目的宿舍楼为'+this.log.dormbuilding.name+'，与您当前管理宿舍楼不同！'
+        if (resp.results[0].dormbuilding.id !== this.log.dormbuilding.id) {
+          this.building_unmatch_text = '注意：访客目的宿舍楼为' + this.log.dormbuilding.name + '，与您当前管理宿舍楼不同！'
           this.$refs.building_unmatch_popup.open()
         }
-        else if(resp.results[0].dormbuilding===undefined){
+        else if (resp.results[0].dormbuilding === undefined) {
           uni.showToast({
             title: '您尚未被分配宿舍楼！',
             icon: 'error',
@@ -119,7 +121,7 @@ export default {
           })
         }
       })
-      
+
       registeredGuardRequest({
         url: '/dorm/',
         data: {
@@ -130,29 +132,30 @@ export default {
         dorm_list.forEach(item => {
           if (item.id === that.log.dorm.id) {
             // check if host student lives in this dorm
-            let student_list=Array()
-            for(var k in item){
-              if(k.startsWith('student')){
+            let student_list = Array()
+            for (var k in item) {
+              if (k.startsWith('student')) {
                 student_list.push(item[k])
               }
             }
-            if (student_list.indexOf(this.log.host_student)===-1){
-              that.host_unmatch_text='注意：接待人与宿舍号不匹配！'+that.log.dorm.name+'的成员为：'+student_list.toString()
+            if (student_list.indexOf(this.log.host_student) === -1) {
+              that.host_unmatch_text = '注意：接待人与宿舍号不匹配！' + that.log.dorm.name + '的成员为：' + student_list.toString()
               that.$refs.host_unmatch_popup.open()
             }
           }
         })
-        
+
       })
 
-    }).catch((err)=>{
+    }).catch((err) => {
+      console.log('qrcode', err)
       this.$refs.fail_popup.open()
-      uni.navigateBack({ delta: 1 })
     })
   },
   methods: {
-    Pass() {
+    pass() {
       var date = new Date();
+      console.log(date)
       registeredGuardRequest({
         url: "/log/check/",
         method: "POST",
@@ -164,7 +167,7 @@ export default {
       }).then((res) => { });
       reLaunch("/pages/guard-form/guard-form");
     },
-    Deny() {
+    deny() {
       var date = new Date();
       console.log(date);
       console.log(this.log.guest_id);
@@ -181,6 +184,9 @@ export default {
       });
       uni.navigateBack();
     },
+    back() {
+      uni.navigateBack({ delta: 1 })
+    }
   },
 };
 </script>

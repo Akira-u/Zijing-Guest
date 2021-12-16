@@ -93,7 +93,7 @@ export default {
               }
             }).catch((err)=>{
               uni.showToast({
-                title: err.detail.data.errmsg[0],
+                title: err.errmsg[0],
                 icon: 'none',
                 mask: true
               })

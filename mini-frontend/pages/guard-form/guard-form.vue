@@ -30,10 +30,8 @@ export default {
   },
   methods: {
     scanQrcode: function () {
-      console.log("scan qrcode");
       wx.scanCode({
         success(res) {
-          console.log(res.result);
           var l = res.result.length;
           var code = res.result.substr(0, l - 1);
           if (res.result[l - 1] == "i") {
