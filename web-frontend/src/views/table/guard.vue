@@ -185,8 +185,8 @@ export default {
       this.$prompt('请输入新管理员姓名', '添加管理员', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputPattern: /^[\u4E00-\u9FA5]{2,10}/,
-        inputErrorMessage: '非中文姓名！'
+        inputPattern: /^[\u4E00-\u9FA5]{2,10}[0-9]?$/,
+        inputErrorMessage: '请输入合理中文姓名！'
       }).then(({ value }) => {
         preCreate({ name: value, password: '111111' }).then(response => {
           this.$alert(response.result['name'] + ' 的注册码为：' + response.result['password'], '获取注册码', { confirmButtonText: '点击复制' }).then((res) => {
@@ -211,7 +211,10 @@ export default {
           message: '删除成功！'
         })
       })
-      this.fetchData()
+      setTimeout(() => {
+          this.fetchData()
+        }, 0.5 * 1000)
+      
     },
     handleCurrentChange(row) {
       this.editQuery.building_id = row.id
@@ -221,8 +224,10 @@ export default {
         this.editQuery.building_id = 1
       }
       editBuilding(this.editQuery)
-      this.fetchData()
-      this.dialogFormVisible = false
+      setTimeout(() => {
+        this.fetchData()
+        this.dialogFormVisible = false
+      }, 0.5 * 1000)
     }
   }
 }
