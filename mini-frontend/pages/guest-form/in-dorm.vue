@@ -42,6 +42,8 @@ export default {
   top: 50%;
   transform: translate(-50%, 200%);
   font-size: 26px;
+  width:100%;
+  text-align: center;
 }
 
 button {

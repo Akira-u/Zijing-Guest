@@ -68,7 +68,32 @@ export default {
       reLaunch("/pages/guard-form/guard-form");
     },
     getInTime() {
-      return this.log.in_time.format("yyyy-MM-dd hh:mm:ss");
+      var date = this.log.in_time;
+      var month = date.getMonth() + 1;
+      var strDate = date.getDate();           
+      var strHour = date.getHours();
+      var strMinute = date.getMinutes();
+      var strSeconde = date.getSeconds();
+
+      if (month >= 1 && month <= 9) {
+        month = "0" + month;
+      }
+      if (strDate >= 1 && strDate <= 9) {
+          strDate = "0" + strDate;
+      }
+      if (strHour >= 1 && strHour <=9) {
+        strHour = "0" + strHour
+      }
+      if (strMinute >= 1 && strMinute <= 9) {
+        strMinute = "0" + strMinute;
+      }
+
+      if (strSeconde >= 1 && strSeconde <= 9) {
+        strSeconde = "0" + strSeconde;
+      }
+      var NewDate = date.getFullYear() + "-"+ month + "-" + strDate + " " +
+                      strHour + ":" + strMinute + ":" + strSeconde;
+      return NewDate;
     }
   },
 };
