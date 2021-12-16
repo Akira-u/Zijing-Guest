@@ -97,8 +97,10 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def login(self,request):
         code = request.GET.get("code")
+        print(code)
         log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
         open_id = log_info.get("open_id")
+        print(open_id)
         if not open_id:
             return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         query = Guest.objects.filter(open_id=open_id)
@@ -109,7 +111,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             guest_object["open_id"]=encrypt(guest_object["open_id"])
             return Response(guest_object,status=status.HTTP_200_OK)
         else:
-            return Response({"code":"Account Not Found"},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"code":"Account Not Found"},status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
     operation_summary='返回当前Guest对应的Log',
@@ -151,12 +153,12 @@ class GuestViewSet(viewsets.ModelViewSet):
             log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
             open_id = log_info.get("open_id")
             if not open_id:
-                return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
+                return Response({"code":log_info["errmsg"]},status=status.HTTP_200_OK)
         else:
             try:
                 open_id = decrypt(request.GET.get("my_open_id"))
             except:
-                return Response({"my_open_id":["please check your open_id in storage, it is invalid"]},status=status.HTTP_400_BAD_REQUEST)    
+                return Response({"my_open_id":["please check your open_id in storage, it is invalid"]},status=status.HTTP_200_OK)    
         guard_object = Guard.objects.filter(open_id=open_id)
         guest_object = Guest.objects.filter(open_id=open_id)
         if (not guard_object) and (not guest_object):

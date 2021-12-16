@@ -209,6 +209,7 @@ class LogViewSet(viewsets.ModelViewSet):
             "logs_hour":total_log_hour,
             "total_count":total_count
         }
+        print(resp)
         return Response(resp,status=status.HTTP_200_OK)
 
         

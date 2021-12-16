@@ -116,7 +116,7 @@ class GuardViewSet(viewsets.ModelViewSet):
             guard_object["open_id"]=encrypt(guard_object["open_id"])
             return Response(guard_object)
         else:
-            return Response({"code":["Account Not Found"]},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"code":["Account Not Found"]},status=status.HTTP_200_OK)
     @swagger_auto_schema(
     operation_summary='管理员后台获取，获取所有仍在楼内的访问记录',
     manual_parameters=[
@@ -130,7 +130,7 @@ class GuardViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def backstage(self,request):
-        try:
+        if 1==1:
             keys=cache.keys("*")
             logs = []
             for key in keys:
@@ -147,7 +147,7 @@ class GuardViewSet(viewsets.ModelViewSet):
             if page>p.num_pages:page=p.num_pages
             elif page<1:page=1
             return Response({"data":p.page(page).object_list,"total":p.count},status=status.HTTP_200_OK)
-        except:
+        else:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -211,3 +211,10 @@ class GuardViewSet(viewsets.ModelViewSet):
             return Response({"result":pre_guard},status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(detail=False,methods=["POST"])
+    def admin_login(self,request):
+        if request.data.get("password")==admin_password:
+            return Response(status=status.HTTP_200_OK)
+        else: 
+            return Response({"password":"incorrect password"},status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)

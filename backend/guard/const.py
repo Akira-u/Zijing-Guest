@@ -28,4 +28,5 @@ key = b'0123456789abcdef'
 cipher = AES.new(key,AES.MODE_ECB)
 
 guard_password="123456"
+
 admin_password="123456"

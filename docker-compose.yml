@@ -9,7 +9,7 @@ services:
       cd backend &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000
+      python manage.py runserver_plus --cert-file certificate.crt --key-file certificate.key 0.0.0.0:8000
       "
     volumes:
       - .:/code
@@ -18,12 +18,12 @@ services:
       - "8000"
     ports:
       - "0.0.0.0:8000:8000"
+    links:
+      - db
+      - redis
     depends_on:
       - db
       - redis
-    networks:
-      - web_network
-      - db_network
   db:
     image: mysql:8.0
     container_name: mysql
@@ -38,8 +38,6 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - TZ=Asia/Shanghai
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
-    networks:
-      - db_network
   nginx:
     restart: always
     image: nginx:latest
@@ -52,28 +50,16 @@ services:
       - ./config/nginx:/etc/nginx/conf.d
     depends_on:
       - app
-    networks:
-      - web_network
   redis:
     image: redis:latest
     restart: "no"
     container_name: redis
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     volumes:
       - ./redis.conf:/etc/redis/redis.conf 
-    command: redis-server /etc/redis/redis.conf 
+    command: redis-server /etc/redis/redis.conf
     privileged: true
-    networks:
-      - cache_network
-networks:
-  web_network:
-    driver: bridge
-  db_network:
-    driver: bridge
-  cache_network:
-    driver: bridge
-
 volumes:
   static-volume:
   templates-volume:
