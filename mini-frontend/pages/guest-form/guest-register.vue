@@ -74,7 +74,7 @@ export default {
               navigateTo("/pages/guest-form/guest-form");
             });
           } else {
-            console.log("登陆失败！" + res1.errMsg);
+            console.log("登录失败！" + res1.errMsg);
           }
         },
       });

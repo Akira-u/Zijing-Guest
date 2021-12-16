@@ -12,6 +12,13 @@
     <view class="buttonList">
       <button @tap="checkBackstage">查看后台</button>
     </view>
+    <uni-popup ref="fail_popup" type="dialog">
+      <uni-popup-dialog
+        type="error"
+        mode="base"
+        content="无效二维码！"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -34,7 +41,7 @@ export default {
           } else if (res.result[l - 1] == "o") {
             navigateTo("/pages/guard-form/decide-leave", { code: code });
           } else {
-            console.log("error code");
+            this.$refs.fail_popup.open()
           }
         },
         fail(res) {

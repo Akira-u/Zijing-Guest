@@ -44,6 +44,13 @@
         <button @tap="Deny">禁入</button>
       </view>
     </view>
+    <uni-popup ref="fail_popup" type="dialog">
+      <uni-popup-dialog
+        type="error"
+        mode="base"
+        content="无效二维码！"
+      ></uni-popup-dialog>
+    </uni-popup>
     <uni-popup ref="credit_popup" type="dialog">
       <uni-popup-dialog
         mode="base"
@@ -70,7 +77,6 @@
 
 <script>
 import { registeredGuardRequest } from "@/api/request";
-import request from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
 export default {
   data() {
@@ -132,7 +138,10 @@ export default {
         
       })
 
-    });
+    }).catch((err)=>{
+      this.$refs.fail_popup.open()
+      uni.navigateBack({ delta: 1 })
+    })
   },
   methods: {
     Pass() {
