@@ -21,6 +21,13 @@
         <button @tap="Leave">离开</button>
       </view>
     </view>
+    <uni-popup ref="fail_popup" type="dialog">
+      <uni-popup-dialog
+        type="error"
+        mode="base"
+        content="无效二维码！"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -36,7 +43,6 @@ export default {
   },
   onLoad(options) {
     decodeOption(options);
-    console.log(options.code); //TO DO
     var that = this;
     registeredGuardRequest({
       url: "/log/info/",
@@ -51,7 +57,10 @@ export default {
       else{
         that.detail_title='访客申请（学生）'
       }
-    });
+    }).catch((err)=>{
+      this.$refs.fail_popup.open()
+      uni.navigateBack({ delta: 1 })
+    })
   },
   methods: {
     Leave() {
