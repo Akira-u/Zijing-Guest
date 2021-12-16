@@ -111,6 +111,13 @@ export default {
           this.building_unmatch_text='注意：访客目的宿舍楼为'+this.log.dormbuilding.name+'，与您当前管理宿舍楼不同！'
           this.$refs.building_unmatch_popup.open()
         }
+        else if(resp.results[0].dormbuilding===undefined){
+          uni.showToast({
+            title: '您尚未被分配宿舍楼！',
+            icon: 'error',
+            mask: true
+          })
+        }
       })
       
       registeredGuardRequest({
