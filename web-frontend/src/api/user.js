@@ -1,16 +1,8 @@
 import request from '@/utils/request'
 
-export function adminLogin(data) {
-  return request({
-    url: 'https://c02.whiteffire.cn:8000/guard/admin_login/',
-    method: 'post',
-    data
-  })
-}
-
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/guard/admin_login/',
     method: 'post',
     data
   })
@@ -18,7 +10,7 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-admin-template/user/info',
+    url: '/guard/admin_userinfo/',
     method: 'get',
     params: { token }
   })

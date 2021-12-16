@@ -23,7 +23,7 @@ const mutations = {
     state.name = name
   },
   SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+    state.avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
   }
 }
 
@@ -33,9 +33,8 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        // const { data } = response
-        console.log('login:', response)
-        const { data } = { code: 20000, data: { token: 'admin-token' }}
+        const data = response
+        console.log('login:', data)
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
@@ -49,22 +48,15 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        // const { data } = response
+        const data = response
         console.log('getInfo:', response)
-        const { data } = { code: 20000, data: { avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-          introduction: 'I am a super administrator',
-          name: 'Super Admin',
-          roles: ['admin']
-        }}
-
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
+        const { name } = data
 
         commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {
         reject(error)

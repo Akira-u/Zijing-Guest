@@ -63,7 +63,6 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import { adminLogin } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -85,7 +84,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: ''
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -120,21 +119,11 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          adminLogin(this.loginForm).then(response => {
-            if (response === '') {
-              this.$store.dispatch('user/login', this.loginForm).then(() => {
-                this.$router.push({ path: this.redirect || '/' })
-                this.loading = false
-              }).catch(() => {
-                this.loading = false
-              })
-            } else {
-              this.dialogFormVisible = true
-              console.log('登录失败，status:', response)
-            }
-            setTimeout(() => {
-              this.loading = false
-            }, 1.5 * 1000)
+          this.$store.dispatch('user/login', this.loginForm).then(() => {
+            this.$router.push({ path: this.redirect || '/' })
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
           })
         } else {
           console.log('error submit!!')

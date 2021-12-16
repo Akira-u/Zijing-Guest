@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getList(query) {
   return request({
-    url: 'https://c02.whiteffire.cn:8000/guard/',
+    url: '/guard/',
     method: 'get',
     params: query
   })
@@ -11,7 +11,7 @@ export function getList(query) {
 export function editBuilding(query) {
   const data = { open_id: query.open_id, dormbuilding_id: query.building_id }
   return request({
-    url: 'https://c02.whiteffire.cn:8000/guard/' + query.open_id + '/',
+    url: '/guard/' + query.open_id + '/',
     method: 'patch',
     data
   })
@@ -19,7 +19,7 @@ export function editBuilding(query) {
 
 export function preCreate(data) {
   return request({
-    url: 'https://c02.whiteffire.cn:8000/guard/pre_create/',
+    url: '/guard/pre_create/',
     method: 'post',
     data
   })
