@@ -1,4 +1,4 @@
-var base_url = "http://c02.whiteffire.cn:8000"
+var base_url = "https://c02.whiteffire.cn:8000"
 /**
  * 判断请求状态是否成功
  * 参数：http状态码

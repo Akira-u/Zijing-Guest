@@ -10,7 +10,7 @@
         <uni-list-item title="访客姓名" :rightText="log.guest.name"></uni-list-item>
         <uni-list-item title="学号" v-if="log.guest.is_student" :rightText="log.guest.student_id"></uni-list-item>
         <uni-list-item title="院系" v-if="log.guest.is_student" :rightText="log.guest.department"></uni-list-item>
-        <uni-list-item title="电话" :rightText="log.guest.phone"></uni-list-item>
+        <uni-list-item title="手机号" :rightText="log.guest.phone"></uni-list-item>
         <uni-list-item title="来访事由" :rightText="log.purpose"></uni-list-item>
         <uni-list-item title="目的宿舍" :rightText="log.dorm.name"></uni-list-item>
         <uni-list-item title="接待人" :rightText="log.host_student"></uni-list-item>

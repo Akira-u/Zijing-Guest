@@ -22,7 +22,7 @@
             :rightText="log.guest.department"
           ></uni-list-item>
           <uni-list-item
-            title="电话"
+            title="手机号"
             :rightText="log.guest.phone"
           ></uni-list-item>
           <uni-list-item
