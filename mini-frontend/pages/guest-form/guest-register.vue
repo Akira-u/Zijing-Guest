@@ -12,7 +12,7 @@
           type="text"
           name="name"
           placeholder="请输入姓名"
-          maxlength="20"
+          maxlength="10"
           v-model="name"
         />
       </view>

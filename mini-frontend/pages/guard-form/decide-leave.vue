@@ -61,7 +61,14 @@ export default {
         that.detail_title='访客申请（学生）'
       }
     }).catch((err)=>{
-      this.$refs.fail_popup.open()
+      if (err.code === '无效二维码') { this.$refs.fail_popup.open() }
+      else{
+        uni.showToast({
+          title: '网络错误！',
+          icon: 'error',
+          mask: true
+        })
+      }
     })
   },
   methods: {

@@ -75,8 +75,10 @@ function registeredGuardRequest(options = {}) {
                                 rej(err)
                             })
 
+                        }).catch((err) => {
+                            rej(err)
                         })
-                        
+
                 }
             })
         });
@@ -92,7 +94,7 @@ function registeredGuestRequest(options = {}) {
     if (options.data.my_open_id) {
         return request(options)
     }
-    else{
+    else {
         // local storage can't get open id due to storage loss
         return new Promise((res, rej) => {
             wx.login({
@@ -106,15 +108,17 @@ function registeredGuestRequest(options = {}) {
                             })
                             request(options).then((resp2) => {
                                 res(resp2)
+                            }).catch((err) => {
+                                rej(err)
                             })
-                            
+
                         })
                         .catch((err) => {
                             rej(err)
                         })
                 }
             })
-        }); 
+        });
     }
 }
 export { registeredGuardRequest, registeredGuestRequest }
