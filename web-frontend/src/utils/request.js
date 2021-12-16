@@ -6,6 +6,7 @@ import { getToken } from '@/utils/auth'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // baseURL: 'http://c02.whiteffire.cn:8000',
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
@@ -43,7 +44,12 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    const res = response.data
+    const res = response
+    if (res.status === 200) {
+      return res.data
+    } else {
+      return res.status
+    }
 
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 20000) {
@@ -70,7 +76,6 @@ service.interceptors.response.use(
     // } else {
     //   return res
     // }
-    return res
   },
   error => {
     console.log('err' + error) // for debug
