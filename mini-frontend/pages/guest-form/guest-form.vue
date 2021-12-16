@@ -41,7 +41,7 @@
           placeholder="请填写您要拜访的人姓名"
         />
       </uni-forms-item>
-      <uni-forms-item label="访问事由" name="purpose">
+      <uni-forms-item required label="访问事由" name="purpose">
         <uni-easyinput
           v-model="form_data.purpose"
           type="textarea" autoHeight
@@ -69,11 +69,11 @@ export default {
     var that = this;
     return {
       form_data: {
-        phone: "13919198100",
+        phone: '',
         target_building: '',
         target_dorm: '',
-        host_student: '李端',
-        purpose: '拿杯'
+        host_student: '',
+        purpose: ''
       },
       msg_text:"您好，欢迎。",
       building_list:[],
@@ -150,6 +150,18 @@ export default {
                   callback("不存在该宿舍号")
                 }
               }
+            },
+          ]
+        },
+        purpose:{
+          rules: [
+            {
+              required: true,
+              errorMessage: "请选择到访宿舍门牌号",
+            },
+            {
+              maxLength: 100,
+              errorMessage: "宿舍门牌号长度最大为{maxLength}",
             },
           ]
         }

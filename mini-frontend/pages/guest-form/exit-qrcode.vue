@@ -83,11 +83,11 @@ export default {
 .tips {
   position: absolute;
   padding: 40rpx 0 20rpx 0;
-  width:120%;
+  width:100%;
   left: 50%;
   transform: translate(-50%, 0%);
   text-align:center;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 button {
