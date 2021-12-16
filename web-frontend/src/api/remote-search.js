@@ -18,28 +18,28 @@ export function transactionList(query) {
 
 export function getGuestStatic(query) {
   return request({
-    url: 'http://49.232.106.46:8000/guest/static',
+    url: 'https://c02.whiteffire.cn:8000/guest/static',
     method: 'get',
     params: query
   })
 }
 export function getGuardStatic(query) {
   return request({
-    url: 'http://49.232.106.46:8000/guard/static',
+    url: 'https://c02.whiteffire.cn:8000/guard/static',
     method: 'get',
     params: query
   })
 }
 export function getLogStatic(query) {
   return request({
-    url: 'http://49.232.106.46:8000/log/static',
+    url: 'https://c02.whiteffire.cn:8000/log/static',
     method: 'get',
     params: query
   })
 }
 export function getDormStatic(query) {
   return request({
-    url: 'http://49.232.106.46:8000/dorm/static',
+    url: 'https://c02.whiteffire.cn:8000/dorm/static',
     method: 'get',
     params: query
   })

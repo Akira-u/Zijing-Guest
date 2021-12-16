@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function adminLogin(data) {
   return request({
-    url: 'http://49.232.106.46:8000/guard/admin_login/',
+    url: 'https://c02.whiteffire.cn:8000/guard/admin_login/',
     method: 'post',
     data
   })

@@ -25,4 +25,4 @@ host: 82.157.107.167:8000
 
 
 ## Interface Document
-http://49.232.106.46:8000/swagger
+https://c02.whiteffire.cn:8000/swagger
