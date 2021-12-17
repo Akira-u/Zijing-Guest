@@ -137,13 +137,11 @@ export default {
 }
 
 .container {
-  right: 20%;
   color: #fff;
   font-size: 24rpx;
   border-radius: 50rpx;
   height: 50rpx;
   line-height: 50rpx;
-  padding: 0 25rpx;
 }
 
 .container .t-d {
@@ -185,5 +183,11 @@ export default {
   visibility: hidden;
   height: 0;
   content: "\20";
+}
+
+.container {
+  height:100%;
+  font-size: 14px;
+  line-height: 24px;
 }
 </style>
