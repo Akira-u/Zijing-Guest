@@ -49,10 +49,10 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" icon="el-icon-edit-outline" @click="editGuard(row)">
+          <el-button v-waves type="primary" icon="el-icon-edit-outline" @click="editGuard(row)">
             编辑
           </el-button>
-          <el-button type="primary" icon="el-icon-delete" @click="deleteGuard(row)">
+          <el-button v-waves type="primary" icon="el-icon-delete" @click="deleteGuard(row)">
             删除
           </el-button>
         </template>
@@ -85,10 +85,10 @@
         </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editBuilding">
+        <el-button v-waves type="primary" @click="editBuilding">
           保存
         </el-button>
-        <el-button @click="dialogFormVisible = false">
+        <el-button v-waves @click="dialogFormVisible = false">
           取消
         </el-button>
       </div>
@@ -188,16 +188,31 @@ export default {
         inputPattern: /^[\u4E00-\u9FA5]{2,10}[0-9]?$/,
         inputErrorMessage: '请输入合理中文姓名！'
       }).then(({ value }) => {
-        preCreate({ name: value, password: '111111' }).then(response => {
-          this.$alert(response.result['name'] + ' 的注册码为：' + response.result['password'], '获取注册码', { confirmButtonText: '点击复制' }).then((res) => {
-            this.$copyText(response.result['password']).then((e) => {
-              this.$message({ type: 'success', message: '复制成功，请将注册码发给新管理员，切勿泄露！' })
-            }).catch((e) => {
-              this.$alert('复制失败！')
-              console.log(e)
-            })
+        let guardName = value
+        this.$prompt('请输入admin密码', '验证密码', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: /^[0-9]{6}$/,
+          inputErrorMessage: '密码格式错误！'
+        }).then(({ value }) => {
+          preCreate({ name: guardName, password: value }).then(response => {
+            console.log(response)
+            if (response.result !== undefined) {
+              this.$alert(response.result['name'] + ' 的注册码为：' + response.result['password'], '获取注册码', { confirmButtonText: '点击复制' }).then((res) => {
+                this.$copyText(response.result['password']).then((e) => {
+                  this.$message({ type: 'success', message: '复制成功，请将注册码发给新管理员，切勿泄露！' })
+                }).catch((e) => {
+                  this.$alert('复制失败！')
+                  console.log(e)
+                })
+              })
+            } else {
+              this.$alert('密码错误！')
+            }
           })
         })
+      }).catch((e) => {
+        console.log(e)
       })
     },
     editGuard(row) {
@@ -205,16 +220,26 @@ export default {
       this.dialogFormVisible = true
     },
     deleteGuard(row) {
-      del(row.open_id).then(response => {
-        this.$message({
-          type: 'success',
-          message: '删除成功！'
+      this.$confirm('此操作将删除该管理员, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        del(row.open_id).then(response => {
+          this.$message({
+            type: 'success',
+            message: '删除成功！'
+          })
         })
-      })
-      setTimeout(() => {
+        setTimeout(() => {
           this.fetchData()
         }, 0.5 * 1000)
-      
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     handleCurrentChange(row) {
       this.editQuery.building_id = row.id
