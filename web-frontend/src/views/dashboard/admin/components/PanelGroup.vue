@@ -29,7 +29,7 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('dorms')">
         <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="tab" class-name="card-panel-icon" />
+          <svg-icon icon-class="dorm" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
