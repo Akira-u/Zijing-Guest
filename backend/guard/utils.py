@@ -18,12 +18,12 @@ class GuardFilter(filters.FilterSet):
 class GuardSerializer(serializers.ModelSerializer):
     dormbuilding = DormBuildingSerializer(read_only=True)
     dormbuilding_id = serializers.IntegerField(allow_null=True, required=False)
-    def validate_name(self,data):
-        if not isinstance(data,str):
-            raise serializers.ValidationError("name must be string type")
-        if not re.match(r'^[\u4E00-\u9FA5A-Za-z]{2,10}$'):
-            raise serializers.ValidationError("invalid name")
-        return data
+    # def validate_name(self,data):
+    #     if not isinstance(data,str):
+    #         raise serializers.ValidationError("name must be string type")
+    #     if not re.match(r'^[\u4E00-\u9FA5A-Za-z]{2,10}$',data):
+    #         raise serializers.ValidationError("invalid name")
+    #     return data
     def validate_phone(self,data):
         if not isinstance(data,str):
             raise serializers.ValidationError("phone must be string type")

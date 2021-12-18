@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time
 from logging import log
 from os import stat_result
 from django.shortcuts import render
@@ -24,7 +24,7 @@ from guard.cipher import *
 
 from django.core.cache import cache
 # Create your views here.
-
+from django.utils import timezone
 class LogViewSet(viewsets.ModelViewSet):
     """ 来访日志 viewset """
     queryset = Log.objects.all()
@@ -37,7 +37,6 @@ class LogViewSet(viewsets.ModelViewSet):
         log_object = request.data
         try:
             qopen_id = decrypt(request.data.get("my_open_id"))
-            # qopen_id = request.data.get("my_open_id")
         except:
             return Response({"my_open_id":["please check your open_id in storage, it is invalid"]},status=status.HTTP_400_BAD_REQUEST)
         guest_object = Guest.objects.get(open_id=qopen_id)
@@ -61,8 +60,10 @@ class LogViewSet(viewsets.ModelViewSet):
             log_object["guest_id"]=open_id # confusing???? 
             log_object["dorm_id"]=dorm_object.id
             log_object["dorm_building_id"]=dormbuilding_object.id
-            serializer = self.get_serializer(data=log_object)
-            serializer.is_valid(raise_exception=True)
+            for i in range(10):
+                serializer = self.get_serializer(data=log_object)
+                serializer.is_valid(raise_exception=True)
+                self.perform_create(serializer)
         except:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         log_object = serializer.data
@@ -70,11 +71,6 @@ class LogViewSet(viewsets.ModelViewSet):
         log_object["guest"] = guest_object.__dict__
         log_object["dorm"] = dorm_object.__dict__
         log_object["dormbuilding"] = dormbuilding_object.__dict__
-        for i in range(1,5):
-            if log_object["host_student"]==log_object["dorm"][f"student{i}"]:
-                break
-            if i==4:
-                return Response({"host_student":["no corresponding student in your target dorm"]},status=status.HTTP_400_BAD_REQUEST)
         del log_object["guest"]["_state"]
         del log_object["dorm"]["_state"]
         del log_object["dormbuilding"]["_state"]
@@ -99,6 +95,7 @@ class LogViewSet(viewsets.ModelViewSet):
             if ex_log.get("out_time"):
                 return Response({"in_time":["already have a out_time"]},status=status.HTTP_400_BAD_REQUEST)
             ex_log["in_time"]=request.data.get("in_time")
+            print(ex_log.get("in_time"))
             ex_log["approval"]=request.data.get("approval")
             if ex_log["approval"]=="reject":
                 ex_log["guest_id"]=open_id
@@ -113,6 +110,7 @@ class LogViewSet(viewsets.ModelViewSet):
                 self.perform_create(serializer)
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
             elif ex_log["approval"]=="permit":
+                print(ex_log.get("in_time"))
                 cache.delete_pattern(open_id)
                 cache.set(open_id,ex_log,timeout=None)
                 return Response(ex_log,status=status.HTTP_200_OK)
@@ -145,6 +143,8 @@ class LogViewSet(viewsets.ModelViewSet):
         log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
         open_id = log_info.get("open_id")
         if not open_id:
+            if not log_info.get("errmsg"):
+                return Response({"code":"无效二维码"},status=status.HTTP_400_BAD_REQUEST)
             return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         try:
             log_object = cache.get(open_id)
@@ -152,6 +152,7 @@ class LogViewSet(viewsets.ModelViewSet):
             if not log_object:
                 raise Exception
             log_object["guest_id"]= encrypt(open_id)
+            # print(log_object)
             return Response(log_object,status=status.HTTP_200_OK)
         except:
             return Response({"log":["no log info for this guest,please fill in the form again"]},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

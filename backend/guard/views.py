@@ -25,16 +25,6 @@ import random
 # Create your views here.
 
 
-# 11.17
-# 当前的处理逻辑是改某个guest对应的所有log记录中的最近一条，如果操作不规范则会出现问题
-# 二轮迭代加入缓存表后可以解决
-# 接口主要通过 重写父类函数(没有action的标识) 或 定义action 来完成
-# url: /{application_name}/{model_name}/{action_name(if exist)}
-# 例: POST /guard/log/ 调用Log的create
-#     POST /guard/log/checkin 调用Log的checkin
-
-pending_guard={}
-
 class GuardViewSet(viewsets.ModelViewSet):
     """ 人员信息 viewset """
     queryset = Guard.objects.all()
@@ -72,23 +62,27 @@ class GuardViewSet(viewsets.ModelViewSet):
         log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=request.data.get("code"))
         open_id = log_info.get("open_id")
         if not open_id:
+            if not log_info.get("errmsg"):
+                return Response({"code":"无效二维码"},status=status.HTTP_400_BAD_REQUEST)
             return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         guard_object = request.data
-        if request.data.get("password") == guard_password or request.data.get("password") == pending_guard.get(request.data.get("name")).get("password"):
+        if not cache.get(request.data.get("name")):
+            return Response({"errmsg":["没有对应的姓名信息,输入错误或已过期"]},status=status.HTTP_400_BAD_REQUEST)
+        if request.data.get("password") == cache.get(request.data.get("name")).get("password"):
             del guard_object["code"]
             guard_object["open_id"]=open_id
             serializer = self.get_serializer(data=guard_object)
             try:
                 serializer.is_valid(raise_exception=True)
             except:
-                return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response({"errmsg":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
             self.perform_create(serializer)
             resp = serializer.data
             resp["open_id"] =encrypt(open_id)
-            del pending_guard[request.data.get("name")]
+            cache.delete_pattern(request.data.get("name"))
             return Response(resp, status=status.HTTP_201_CREATED)
         else:
-            return Response({"password":["password incorrect"]},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"errmsg":["密码错误"]},status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
     operation_summary='判断当前Guard是否已注册',
@@ -130,7 +124,7 @@ class GuardViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False,methods=['GET'])
     def backstage(self,request):
-        if 1==1:
+        try:
             keys=cache.keys("*")
             logs = []
             for key in keys:
@@ -147,7 +141,7 @@ class GuardViewSet(viewsets.ModelViewSet):
             if page>p.num_pages:page=p.num_pages
             elif page<1:page=1
             return Response({"data":p.page(page).object_list,"total":p.count},status=status.HTTP_200_OK)
-        else:
+        except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -202,12 +196,14 @@ class GuardViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["POST"])
     def pre_create(self,request,*args,**kwargs):
         try:
+            if request.data.get("password")!=admin_password:
+                return Response({"password":"密码错误"},status=status.HTTP_200_OK)
             password=random.sample("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",10)
             pre_guard = {
                 "name":request.data.get("name"),
                 "password": "".join(password)
             }
-            pending_guard[request.data.get("name")]=pre_guard
+            cache.set(request.data.get("name"),pre_guard)
             return Response({"result":pre_guard},status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -215,6 +211,12 @@ class GuardViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=["POST"])
     def admin_login(self,request):
         if request.data.get("password")==admin_password:
-            return Response(status=status.HTTP_200_OK)
-        else: 
+            return Response({"token":"admin-token"},status=status.HTTP_200_OK)
+        else:   
             return Response({"password":"incorrect password"},status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    @action(detail=False,methods=["GET"])
+    def admin_userinfo(self,request):
+       return Response({
+           "name": 'Super Admin',
+           "roles": ['admin']},status=status.HTTP_200_OK)
+       

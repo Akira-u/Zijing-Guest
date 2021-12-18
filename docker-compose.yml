@@ -9,7 +9,7 @@ services:
       cd backend &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver_plus --cert-file certificate.crt --key-file certificate.key 0.0.0.0:8000
+      gunicorn -w 4 -b 0.0.0.0:8000 --certfile=certificate.crt --keyfile=certificate.key ZijingGuest.wsgi
       "
     volumes:
       - .:/code
@@ -31,6 +31,8 @@ services:
       - "/home/ubuntu/mysql/:/var/lib/mysql"
     expose:
       - "3306"
+    ports:
+      - "0.0.0.0:3306:3306"
     env_file: .env
     restart: always
     environment:

@@ -52,11 +52,27 @@ class GuestViewSet(viewsets.ModelViewSet):
         log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
         open_id = log_info.get("open_id")
         if not open_id:
+            if not log_info.get("errmsg"):
+                return Response({"code":"无效二维码"},status=status.HTTP_400_BAD_REQUEST)
             return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         try:
             token=request.data.get("token")
             if not token:
-                return Response({"token":["no token received"]},status=status.HTTP_400_BAD_REQUEST)
+                guest_object = {
+                    "name":request.data.get("name"),
+                    "phone":request.data.get("phone"),
+                    "is_student":False,
+                    "open_id":open_id,
+                }
+                serializer = self.get_serializer(data=guest_object)
+                try:
+                    serializer.is_valid(raise_exception=True)
+                except:
+                    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+                self.perform_create(serializer)
+                resp = serializer.data
+                resp["open_id"]= encrypt(open_id)
+                return Response(resp, status=status.HTTP_201_CREATED)
             else:
                 data = {
                     "token":token
@@ -97,11 +113,11 @@ class GuestViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['GET'])
     def login(self,request):
         code = request.GET.get("code")
-        print(code)
         log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
         open_id = log_info.get("open_id")
-        print(open_id)
         if not open_id:
+            if not log_info.get("errmsg"):
+                return Response({"code":"无效二维码"},status=status.HTTP_400_BAD_REQUEST)
             return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         query = Guest.objects.filter(open_id=open_id)
         if query:
@@ -153,6 +169,8 @@ class GuestViewSet(viewsets.ModelViewSet):
             log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
             open_id = log_info.get("open_id")
             if not open_id:
+                if not log_info.get("errmsg"):
+                    return Response({"code":"无效二维码"},status=status.HTTP_400_BAD_REQUEST)
                 return Response({"code":log_info["errmsg"]},status=status.HTTP_200_OK)
         else:
             try:
@@ -162,7 +180,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         guard_object = Guard.objects.filter(open_id=open_id)
         guest_object = Guest.objects.filter(open_id=open_id)
         if (not guard_object) and (not guest_object):
-            return Response({"status":"no account"},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status":"no account"},status=status.HTTP_200_OK)
         if guard_object:
             return Response({"status":"guard"},status=status.HTTP_200_OK)
         last_log=cache.get(open_id)
@@ -192,16 +210,16 @@ class GuestViewSet(viewsets.ModelViewSet):
         except:
             return Response({"my_open_id":"please check your open_id in storage, it is invalid"},status=status.HTTP_400_BAD_REQUEST)
         log_history=guest_object.guest_log.all()
-        serializer=LogSerializer(log_history,many=True)
-        result = serializer.data
-        p = Paginator(result,10)
+        p = Paginator(log_history,10)
         try:
             page = int(request.GET.get("page"))
         except:
             page=1
         if page>p.num_pages:page=p.num_pages
         elif page<1:page=1
-        return Response({"data":p.page(page).object_list,"total":p.count},status=status.HTTP_200_OK)
+        serializer = LogSerializer(p.page(page).object_list,many=True)
+        result = serializer.data
+        return Response({"data": result,"total":p.count},status=status.HTTP_200_OK)
     
 
     @action(detail=False,methods=["POST"])
