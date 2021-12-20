@@ -12,7 +12,7 @@
           <pie-chart :logs_hour="logs_hour" />
         </div>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
+      <el-col :xs="48" :sm="48" :lg="16">
         <div class="chart-wrapper">
           <bar-chart :log_weekday="logs_weekday" />
         </div>
@@ -24,7 +24,6 @@
 <script>
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 
@@ -35,7 +34,6 @@ export default {
   components: {
     PanelGroup,
     LineChart,
-    RaddarChart,
     PieChart,
     BarChart
   },
@@ -43,27 +41,27 @@ export default {
     return {
       logCount: 0,
       logs: {
-        student: [0,0,0,0,0,0,0],
-        other: [0,0,0,0,0,0,0],
-        total: [0,0,0,0,0,0,0]
+        student: [0, 0, 0, 0, 0, 0, 0],
+        other: [0, 0, 0, 0, 0, 0, 0],
+        total: [0, 0, 0, 0, 0, 0, 0]
       },
       logs_weekday: {
-        student: [0,0,0,0,0,0,0],
-        other: [0,0,0,0,0,0,0],
-        total: [0,0,0,0,0,0,0]
+        student: [0, 0, 0, 0, 0, 0, 0],
+        other: [0, 0, 0, 0, 0, 0, 0],
+        total: [0, 0, 0, 0, 0, 0, 0]
       },
       logs_hour: [
         {
-          name: '0-5',value:0
+          name: '0-5', value: 0
         },
         {
-          name: '6-11',value:0
+          name: '6-11', value: 0
         },
         {
-          name: '12-17',value:0
+          name: '12-17', value: 0
         },
         {
-          name: '18-23',value:0
+          name: '18-23', value: 0
         }
       ],
       guestCount: 0,
@@ -73,10 +71,10 @@ export default {
       dormCount: 0,
       dorms: undefined,
       lineChartData: {
-        student: [0,0,0,0,0,0,0],
-        other: [0,0,0,0,0,0,0],
-        total: [0,0,0,0,0,0,0]
-      },
+        student: [0, 0, 0, 0, 0, 0, 0],
+        other: [0, 0, 0, 0, 0, 0, 0],
+        total: [0, 0, 0, 0, 0, 0, 0]
+      }
     }
   },
   created() {

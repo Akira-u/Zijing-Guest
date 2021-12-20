@@ -188,7 +188,7 @@ export default {
         inputPattern: /^[\u4E00-\u9FA5]{2,10}[0-9]?$/,
         inputErrorMessage: '仅支持中文姓名（最后可加一位0-9数字）！'
       }).then(({ value }) => {
-        let guardName = value
+        const guardName = value
         this.$prompt('请输入admin密码', '验证密码', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

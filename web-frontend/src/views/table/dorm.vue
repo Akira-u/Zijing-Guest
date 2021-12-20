@@ -8,17 +8,17 @@
           </el-select>
         </el-col>
         <el-col :span="6">
-          <el-button class="upload-item" style="margin-left: 10px" type="primary" icon="el-icon-upload2" @click="dialogImportVisible=true">
+          <el-button class="upload-item" type="primary" icon="el-icon-upload2" @click="dialogImportVisible=true">
             导入Excel
           </el-button>
         </el-col>
         <el-col :span="6">
-          <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="el-icon-document" @click="handleDownload">
+          <el-button :loading="downloadLoading" type="primary" icon="el-icon-document" @click="handleDownload">
             导出Excel
           </el-button>
         </el-col>
         <el-col :span="6">
-          <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="el-icon-download" @click="handleDownloadModel">
+          <el-button :loading="downloadLoading" type="primary" icon="el-icon-download" @click="handleDownloadModel">
             下载Excel模板
           </el-button>
         </el-col>
@@ -58,7 +58,7 @@ export default {
       listLoading: false,
       dialogImportVisible: false,
       uploadData: [],
-      uploadHeader: ['name','student1','student2','student3','student4'],
+      uploadHeader: ['name', 'student1', 'student2', 'student3', 'student4'],
       listQuery: {
         dormbuilding_id: 1
       },
@@ -72,7 +72,7 @@ export default {
           student4: '刘六'
         },
         {
-          name:'101B',
+          name: '101B',
           student1: '羞男',
           student2: '宁',
           student3: '明',
@@ -114,29 +114,27 @@ export default {
     },
     beforeUpload(file) {
       // verify file format
-      const filename=file.name
-      if(!filename || !(filename.endsWith('.xlsx') || filename.endsWith('.xls'))){
-        this.$message({type:'error',message:'仅支持.xlsx或.xls格式的文件！'})
+      const filename = file.name
+      if (!filename || !(filename.endsWith('.xlsx') || filename.endsWith('.xls'))) {
+        this.$message({ type: 'error', message: '仅支持.xlsx或.xls格式的文件！' })
         return false
       }
       return true
     },
     handleUploadSuccess({ results, header }) {
-      
       for (let i in results) {
         // format results: filter redundant column
-        results[i]=(({name,student1,student2,student3,student4})=>({name,student1,student2,student3,student4}))(results[i])
+        results[i] = (({ name, student1, student2, student3, student4 }) => ({ name, student1, student2, student3, student4 }))(results[i])
         console.log(results)
         // fill missing column
-        let format={
+        let format = {
           name: '未指定宿舍号',
           student1: '无',
           student2: '无',
           student3: '无',
           student4: '无'
         }
-        results[i]=Object.assign(format,results[i])
-        
+        results[i] = Object.assign(format, results[i])
       }
       this.uploadData = results
       // this.uploadHeader = header
