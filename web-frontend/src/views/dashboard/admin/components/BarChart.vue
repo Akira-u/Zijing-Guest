@@ -38,7 +38,6 @@ export default {
     log_weekday: {
       deep: true,
       handler(val) {
-        console.log(val)
         this.initChart()
       }
     }
@@ -57,7 +56,6 @@ export default {
   },
   methods: {
     initChart() {
-      console.log(this.log_weekday)
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         tooltip: {
@@ -75,7 +73,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: ['星期一','星期二', '星期三', '星期四', '星期五', '星期六', '星期日'],
           axisTick: {
             alignWithLabel: true
           }

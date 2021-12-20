@@ -22,8 +22,8 @@ export default {
       type: String,
       default: '300px'
     },
-    logsHour: {
-      type: Object
+    logs_hour: {
+      type: Array
     }
   },
   data() {
@@ -44,10 +44,10 @@ export default {
     this.chart = null
   },
   watch: {
-    logsHour: {
+    logs_hour: {
       deep: true,
       handler(val) {
-        console.log(val)
+        // console.log(val)
         this.initChart()
       }
     }
@@ -55,7 +55,7 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-
+      console.log(this.logs_hour)
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
@@ -73,7 +73,7 @@ export default {
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '50%'],
-            data: this.logsHour,
+            data: this.logs_hour,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }

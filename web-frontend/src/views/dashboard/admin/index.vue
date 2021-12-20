@@ -9,11 +9,6 @@
     <el-row :gutter="32">
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <raddar-chart />
-        </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
           <pie-chart :logs_hour="logs_hour" />
         </div>
       </el-col>
@@ -97,6 +92,7 @@ export default {
         this.logCount = response.total_count
         this.logs_weekday = response.logs_weekday
         this.logs_hour = response.logs_hour
+        // console.log(this.logs_hour)
       })
       getGuestStatic().then(response => {
         this.guests = response.guests
