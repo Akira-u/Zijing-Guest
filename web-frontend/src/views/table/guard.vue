@@ -186,13 +186,13 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         inputPattern: /^[\u4E00-\u9FA5]{2,10}[0-9]?$/,
-        inputErrorMessage: '请输入合理中文姓名！'
+        inputErrorMessage: '仅支持中文姓名（最后可加一位0-9数字）！'
       }).then(({ value }) => {
         let guardName = value
         this.$prompt('请输入admin密码', '验证密码', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          inputPattern: /^[0-9]{6}$/,
+          inputPattern: /^[0-9a-zA-z]*/,
           inputErrorMessage: '密码格式错误！'
         }).then(({ value }) => {
           preCreate({ name: guardName, password: value }).then(response => {
