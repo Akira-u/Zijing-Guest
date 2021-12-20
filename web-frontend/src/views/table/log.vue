@@ -21,7 +21,7 @@
           </el-button>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row style="margin: 1em auto;">
         <el-col :span="12">
           <div class="block">
             <span class="demonstration">进入时间：</span>

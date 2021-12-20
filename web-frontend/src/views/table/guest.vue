@@ -228,7 +228,6 @@ export default {
       this.fetchData()
     },
     handleSelectionChange(val) {
-      // console.log(val)
       this.multipleSelection = val
     },
     handleBlackList() {

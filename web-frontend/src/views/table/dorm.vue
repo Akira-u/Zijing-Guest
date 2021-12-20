@@ -29,7 +29,7 @@
     </div>
     <el-dialog :visible.sync="dialogImportVisible" title="批量导入">
       <upload-excel-component :on-success="handleUploadSuccess" :before-upload="beforeUpload" />
-      <el-table :data="uploadData" border highlight-current-row style="width: 100%;margin-top:20px;">
+      <el-table :data="uploadData" stripe border highlight-current-row style="width: 100%;margin: 20px auto;">
         <el-table-column v-for="item of uploadHeader" :key="item" :prop="item" :label="item" />
       </el-table>
       <el-button type="danger" @click="dialogImportVisible=false">取消</el-button>
@@ -56,29 +56,12 @@ export default {
       buildingtotal: 0,
       dormtotal: 0,
       listLoading: false,
-      group: 'mission',
       dialogImportVisible: false,
       uploadData: [],
-      uploadHeader: [],
+      uploadHeader: ['name','student1','student2','student3','student4'],
       listQuery: {
         dormbuilding_id: 1
       },
-      list1: [
-        { name: 'Mission', id: 1 },
-        { name: 'Mission', id: 2 },
-        { name: 'Mission', id: 3 },
-        { name: 'Mission', id: 4 }
-      ],
-      list2: [
-        { name: 'Mission', id: 5 },
-        { name: 'Mission', id: 6 },
-        { name: 'Mission', id: 7 }
-      ],
-      list3: [
-        { name: 'Mission', id: 8 },
-        { name: 'Mission', id: 9 },
-        { name: 'Mission', id: 10 }
-      ],
       downloadLoading: false,
       modellist: [
         {
@@ -87,6 +70,13 @@ export default {
           student2: '李四',
           student3: '王五',
           student4: '刘六'
+        },
+        {
+          name:'101B',
+          student1: '羞男',
+          student2: '宁',
+          student3: '明',
+          student4: '杰克辣舞'
         }
       ]
     }
@@ -123,12 +113,33 @@ export default {
       })
     },
     beforeUpload(file) {
+      // verify file format
+      const filename=file.name
+      if(!filename || !(filename.endsWith('.xlsx') || filename.endsWith('.xls'))){
+        this.$message({type:'error',message:'仅支持.xlsx或.xls格式的文件！'})
+        return false
+      }
       return true
-      // restricti
     },
     handleUploadSuccess({ results, header }) {
+      
+      for (let i in results) {
+        // format results: filter redundant column
+        results[i]=(({name,student1,student2,student3,student4})=>({name,student1,student2,student3,student4}))(results[i])
+        console.log(results)
+        // fill missing column
+        let format={
+          name: '未指定宿舍号',
+          student1: '无',
+          student2: '无',
+          student3: '无',
+          student4: '无'
+        }
+        results[i]=Object.assign(format,results[i])
+        
+      }
       this.uploadData = results
-      this.uploadHeader = header
+      // this.uploadHeader = header
     },
     handleUploadConfirm() {
       importList({ 'list': this.uploadData, 'dormbuilding_id': this.listQuery.dormbuilding_id }).then(response => {
