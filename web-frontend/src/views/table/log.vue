@@ -81,7 +81,7 @@
           <el-tag :type="scope.row.guest.is_student | tagFilter">{{ scope.row.guest.is_student | typeFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="学号" width="110" align="center">
+      <el-table-column label="学号" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.guest.student_id | stuidFilter }}</span>
         </template>
@@ -106,7 +106,7 @@
           {{ scope.row.dorm.name }}
         </template>
       </el-table-column>
-      <el-table-column label="来访事由" width="110" align="center">
+      <el-table-column label="来访事由" width="300" align="center">
         <template slot-scope="scope">
           {{ scope.row.purpose }}
         </template>
