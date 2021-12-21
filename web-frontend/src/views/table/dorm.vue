@@ -25,12 +25,12 @@
       </el-row>
     </div>
     <div v-if="dormtotal>0" class="board">
-      <Kanban v-for="(dorm, index) in dormlist_show" :key="index" :list="[{name:dorm.student1,id:1},{name:dorm.student2,id:2},{name:dorm.student3,id:3},{name:dorm.student4,id:4}]" class="kanban todo" :header-text="dormlist[index].name" />
+      <Kanban v-for="(dorm, index) in dormlist" :key="index" :list="[{name:dorm.student1,id:1},{name:dorm.student2,id:2},{name:dorm.student3,id:3},{name:dorm.student4,id:4}]" class="kanban todo" :header-text="dormlist[index].name" />
     </div>
     <el-dialog :visible.sync="dialogImportVisible" title="批量导入">
       <upload-excel-component :on-success="handleUploadSuccess" :before-upload="beforeUpload" />
       <el-table :data="uploadData" stripe border highlight-current-row style="width: 100%;margin: 20px auto;">
-        <el-table-column v-for="(item, index) of uploadHeader" :key="item" :prop="item" :label="uploadHeader_show[index]" />
+        <el-table-column v-for="(item, index) of uploadHeader" :key="item" :prop="item" :label="uploadHeader_zhcn[index]" />
       </el-table>
       <el-button type="danger" @click="dialogImportVisible=false">取消</el-button>
       <el-button type="primary" @click="handleUploadConfirm()">确定</el-button>
@@ -53,14 +53,13 @@ export default {
       dormbuilding: '紫荆一号楼',
       buildinglist: [],
       dormlist: [],
-      dormlist_show: [],
       buildingtotal: 0,
       dormtotal: 0,
       listLoading: false,
       dialogImportVisible: false,
       uploadData: [],
       uploadHeader: ['name', 'student1', 'student2', 'student3', 'student4'],
-      uploadHeader_show: ['宿舍号', '1号床', '2号床', '3号床', '4号床'],
+      uploadHeader_zhcn: ['宿舍号', '1号床', '2号床', '3号床', '4号床'],
       listQuery: {
         dormbuilding_id: 1
       },
@@ -85,7 +84,6 @@ export default {
   },
   created() {
     getBuildingList().then(response => {
-      // console.log(response)
       this.listLoading = true
       this.buildinglist = response.results
       this.buildingtotal = response.count
@@ -107,15 +105,6 @@ export default {
       this.listLoading = true
       getDormList(this.listQuery).then(response => {
         this.dormlist = response.results
-        this.dormlist_show=[...this.dormlist] // deep copy
-        // translate 'empty' to '空'
-        this.dormlist_show.forEach(dorm=>{
-          for(const i in dorm){
-            if(dorm[i]==='empty'){
-              dorm[i]='空'
-            }
-          }
-        })
         this.dormtotal = response.count
         setTimeout(() => {
           this.listLoading = false
@@ -133,18 +122,17 @@ export default {
     },
     handleUploadSuccess({ results, header }) {
       for (const i in results) {
-        // format results: filter redundant column
-        results[i] = (({ name, student1, student2, student3, student4 }) => ({ name, student1, student2, student3, student4 }))(results[i])
-        console.log(results)
-        // fill missing column
+        // format results: fill missing column
         const format = {
-          name: '未指定宿舍号',
+          name: '无',
           student1: '无',
           student2: '无',
           student3: '无',
           student4: '无'
         }
         results[i] = Object.assign(format, results[i])
+        // format results: discard redundant column
+        results[i] = (({ name, student1, student2, student3, student4 }) => ({ name, student1, student2, student3, student4 }))(results[i])
       }
       this.uploadData = results
     },
