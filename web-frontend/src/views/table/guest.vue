@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-col :span="16">
+      <el-row style="margin: 1em auto;">
+        <el-col :span="16" >
           <el-input v-model="guest_name" placeholder="访客姓名" style="width: 24%;" class="filter-item" @keyup.enter.native="handleFilter" />
           <el-input v-model="listQuery.student_id__icontains" placeholder="学号" style="width: 24%" class="filter-item" @keyup.enter.native="handleFilter" />
           <el-select v-model="listQuery.is_student" placeholder="选择身份" style="width: 12%" class="filter-item" @change="handleFilter">

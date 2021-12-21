@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
+      <el-row style="margin: 1em auto;">
         <el-col :span="24">
           <el-input v-model="guard_name" placeholder="管理员姓名" style="width: 24%;" class="filter-item" @keyup.enter.native="handleFilter" />
           <el-input v-model="listQuery.phone__icontains" placeholder="手机号" style="width: 24%" class="filter-item" @keyup.enter.native="handleFilter" />
