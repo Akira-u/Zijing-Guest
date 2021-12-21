@@ -157,11 +157,11 @@ export default {
           rules: [
             {
               required: true,
-              errorMessage: "请选择到访宿舍门牌号",
+              errorMessage: "请输入访问事由",
             },
             {
               maxLength: 100,
-              errorMessage: "宿舍门牌号长度最大为{maxLength}",
+              errorMessage: "访问事由长度最大为{maxLength}",
             },
           ]
         }
