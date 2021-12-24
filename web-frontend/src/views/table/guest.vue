@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-row style="margin: 1em auto;">
-        <el-col :span="16" >
+        <el-col :span="16">
           <el-input v-model="guest_name" placeholder="访客姓名" style="width: 24%;" class="filter-item" @keyup.enter.native="handleFilter" />
           <el-input v-model="listQuery.student_id__icontains" placeholder="学号" style="width: 24%" class="filter-item" @keyup.enter.native="handleFilter" />
           <el-select v-model="listQuery.is_student" placeholder="选择身份" style="width: 12%" class="filter-item" @change="handleFilter">
@@ -53,12 +53,12 @@
           <el-tag :type="scope.row.credit | tagFilter">{{ scope.row.credit | creditFilter }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="学号" width="110" align="center">
+      <el-table-column label="学号" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.student_id | stuidFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="手机号" width="110" align="center">
+      <el-table-column label="手机号" width="130" align="center">
         <template slot-scope="scope">
           {{ scope.row.phone | phoneFilter }}
         </template>
@@ -88,7 +88,7 @@
             {{ scope.$index }}
           </template>
         </el-table-column>
-        <el-table-column label="到访宿舍楼" min-width="15%" align="center">
+        <el-table-column label="到访宿舍楼" min-width="10%" align="center">
           <template slot-scope="scope">
             {{ scope.row.dormbuilding.name }}
           </template>
@@ -98,7 +98,7 @@
             {{ scope.row.dorm.name }}
           </template>
         </el-table-column>
-        <el-table-column label="来访事由" min-width="20%" align="center">
+        <el-table-column label="来访事由" min-width="25%" align="center">
           <template slot-scope="scope">
             {{ scope.row.purpose }}
           </template>

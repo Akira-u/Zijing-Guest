@@ -192,6 +192,7 @@ export default {
         this.$prompt('请输入admin密码', '验证密码', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
+          inputType: 'password',
           inputPattern: /^[0-9a-zA-z]*/,
           inputErrorMessage: '密码格式错误！'
         }).then(({ value }) => {

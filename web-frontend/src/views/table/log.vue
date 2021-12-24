@@ -75,7 +75,7 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="访客姓名">
+      <el-table-column label="访客姓名" width="130">
         <template slot-scope="scope">
           {{ scope.row.guest.name }}
           <el-tag :type="scope.row.guest.is_student | tagFilter">{{ scope.row.guest.is_student | typeFilter }}</el-tag>
@@ -86,12 +86,12 @@
           <span>{{ scope.row.guest.student_id | stuidFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="手机号" width="110" align="center">
+      <el-table-column label="手机号" width="130" align="center">
         <template slot-scope="scope">
           {{ scope.row.guest.phone | phoneFilter }}
         </template>
       </el-table-column>
-      <el-table-column label="信用状态" width="110" align="center">
+      <el-table-column label="信用状态" width="90" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.guest.credit | tagFilter">{{ scope.row.guest.credit | creditFilter }}</el-tag>
         </template>
@@ -101,7 +101,7 @@
           {{ scope.row.dormbuilding.name }}
         </template>
       </el-table-column>
-      <el-table-column label="到访宿舍" width="110" align="center">
+      <el-table-column label="到访宿舍" width="80" align="center">
         <template slot-scope="scope">
           {{ scope.row.dorm.name }}
         </template>
@@ -111,12 +111,12 @@
           {{ scope.row.purpose }}
         </template>
       </el-table-column>
-      <el-table-column label="接待人" width="110" align="center">
+      <el-table-column label="接待人" width="90" align="center">
         <template slot-scope="scope">
           {{ scope.row.host_student }}
         </template>
       </el-table-column>
-      <el-table-column label="审批结果" width="110" align="center">
+      <el-table-column label="审批结果" width="80" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
         </template>
