@@ -73,7 +73,7 @@
     </el-table>
     <pagination v-if="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="limit" @pagination="fetchData" />
 
-    <el-dialog title="查看近期访问记录" :visible.sync="dialogFormVisible" width="70%">
+    <el-dialog title="查看近期访问记录" :visible.sync="dialogFormVisible" width="1200px">
       <el-table
         v-loading="listLoading"
         :data="logList"
@@ -83,42 +83,42 @@
         fit
         highlight-current-row
       >
-        <el-table-column align="center" label="序号" min-width="5%">
+        <el-table-column align="center" label="序号" min-width="50">
           <template slot-scope="scope">
             {{ scope.$index }}
           </template>
         </el-table-column>
-        <el-table-column label="到访宿舍楼" min-width="10%" align="center">
+        <el-table-column label="到访宿舍楼" min-width="70" align="center">
           <template slot-scope="scope">
             {{ scope.row.dormbuilding.name }}
           </template>
         </el-table-column>
-        <el-table-column label="到访宿舍" min-width="10%" align="center">
+        <el-table-column label="到访宿舍" min-width="60" align="center">
           <template slot-scope="scope">
             {{ scope.row.dorm.name }}
           </template>
         </el-table-column>
-        <el-table-column label="来访事由" min-width="25%" align="center">
+        <el-table-column label="来访事由" min-width="180" align="center">
           <template slot-scope="scope">
             {{ scope.row.purpose }}
           </template>
         </el-table-column>
-        <el-table-column label="接待人" min-width="10%" align="center">
+        <el-table-column label="接待人" min-width="60" align="center">
           <template slot-scope="scope">
             {{ scope.row.host_student }}
           </template>
         </el-table-column>
-        <el-table-column label="审批结果" min-width="8%" align="center">
+        <el-table-column label="审批结果" min-width="60" align="center">
           <template slot-scope="scope">
             <el-tag :type="scope.row.approval | approvalTagFilter">{{ scope.row.approval | approvalFilter }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="进入时间" min-width="16%" align="center">
+        <el-table-column label="进入时间" min-width="110" align="center">
           <template slot-scope="scope">
             {{ moment(scope.row.in_time).format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
-        <el-table-column label="离开时间" min-width="16%" align="center">
+        <el-table-column label="离开时间" min-width="110" align="center">
           <template slot-scope="scope">
             {{ moment(scope.row.out_time).format("YYYY-MM-DD HH:mm:ss") }}
           </template>
