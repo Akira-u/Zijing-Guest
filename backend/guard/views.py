@@ -99,12 +99,14 @@ class GuardViewSet(viewsets.ModelViewSet):
     #登录(获取加密open_id)
     @action(detail=False,methods=['GET'])
     def login(self,request):
-        try:
-            code = request.GET.get("code")
-            log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=code)
-        except:
+        code = request.GET.get("code")
+        log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=code)
+        open_id=log_info.get("open_id")
+        if not open_id:
+            if not log_info.get("errmsg"):
+                return Response({"code":"无效二维码"},status=status.HTTP_400_BAD_REQUEST)
             return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
-        query = Guard.objects.filter(open_id=log_info.get("open_id"))
+        query = Guard.objects.filter(open_id=open_id)
         if query:
             serializer = GuardSerializer(data=list(query.values()),many=True)
             serializer.is_valid()
