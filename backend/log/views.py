@@ -33,14 +33,16 @@ class LogViewSet(viewsets.ModelViewSet):
     filter_class = LogFilter
     ordering_fields = ('id',)
     """ POST """
+    # 创建来访记录（redis)
     def create(self, request, *args, **kwargs):
         log_object = request.data
         try:
             qopen_id = decrypt(request.data.get("my_open_id"))
         except:
             return Response({"my_open_id":["please check your open_id in storage, it is invalid"]},status=status.HTTP_400_BAD_REQUEST)
-        guest_object = Guest.objects.get(open_id=qopen_id)
-        if not guest_object:
+        try:
+            guest_object = Guest.objects.get(open_id=qopen_id)
+        except:
             return Response({"my_open_id":["no corrsponding guest account with your open_id"]},status=status.HTTP_400_BAD_REQUEST)
         if guest_object.is_student:
             guest_object.phone=request.data.get("phone")
@@ -60,10 +62,8 @@ class LogViewSet(viewsets.ModelViewSet):
             log_object["guest_id"]=open_id # confusing???? 
             log_object["dorm_id"]=dorm_object.id
             log_object["dorm_building_id"]=dormbuilding_object.id
-            for i in range(10):
-                serializer = self.get_serializer(data=log_object)
-                serializer.is_valid(raise_exception=True)
-                self.perform_create(serializer)
+            serializer = self.get_serializer(data=log_object)
+            serializer.is_valid(raise_exception=True)
         except:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         log_object = serializer.data
@@ -79,7 +79,7 @@ class LogViewSet(viewsets.ModelViewSet):
             return Response(log_object, status=status.HTTP_201_CREATED)
         else:
             return Response({"system cache":"cache error"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+    # 审批来访记录(mysql)
     @action(detail=False,methods=["POST"])
     def check(self,request,*args, **kwargs):
         kwargs['partial'] = True
@@ -95,7 +95,6 @@ class LogViewSet(viewsets.ModelViewSet):
             if ex_log.get("out_time"):
                 return Response({"in_time":["already have a out_time"]},status=status.HTTP_400_BAD_REQUEST)
             ex_log["in_time"]=request.data.get("in_time")
-            print(ex_log.get("in_time"))
             ex_log["approval"]=request.data.get("approval")
             if ex_log["approval"]=="reject":
                 ex_log["guest_id"]=open_id
@@ -110,7 +109,6 @@ class LogViewSet(viewsets.ModelViewSet):
                 self.perform_create(serializer)
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
             elif ex_log["approval"]=="permit":
-                print(ex_log.get("in_time"))
                 cache.delete_pattern(open_id)
                 cache.set(open_id,ex_log,timeout=None)
                 return Response(ex_log,status=status.HTTP_200_OK)
@@ -138,6 +136,7 @@ class LogViewSet(viewsets.ModelViewSet):
     responses={200:openapi.Response('response guest latest log info',LogSerializer)}
     )
     @action(detail=False,methods=["GET"])
+    # 查看申请信息
     def info(self,request,*args, **kwargs):
         code = request.GET.get("code")
         log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
@@ -152,18 +151,16 @@ class LogViewSet(viewsets.ModelViewSet):
             if not log_object:
                 raise Exception
             log_object["guest_id"]= encrypt(open_id)
-            # print(log_object)
             return Response(log_object,status=status.HTTP_200_OK)
         except:
             return Response({"log":["no log info for this guest,please fill in the form again"]},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=False,methods=["GET"])
+    # 统计信息
     def static(self,request,*args,**kwargs):
         from datetime import datetime,timedelta
         from django.utils.timezone import get_current_timezone
-        print(get_current_timezone())
         dt_s = datetime.now(tz=get_current_timezone()).date()-timedelta(6)
-        print(dt_s)
         student_log=[]
         other_log=[]
         total_log=[]
@@ -182,7 +179,7 @@ class LogViewSet(viewsets.ModelViewSet):
             student_log.append(student_total)
             other_log.append(total-student_total)
             dt_s+=timedelta(1)
-        for i in range(1,8):
+        for i in [2,3,4,5,6,7,1]:
             query = Log.objects.filter(in_time__week_day=i)
             total = query.count()
             total_log_weekday.append(total)
@@ -210,7 +207,6 @@ class LogViewSet(viewsets.ModelViewSet):
             "logs_hour":total_log_hour,
             "total_count":total_count
         }
-        print(resp)
         return Response(resp,status=status.HTTP_200_OK)
 
         

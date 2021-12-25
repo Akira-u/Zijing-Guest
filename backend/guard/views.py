@@ -58,6 +58,7 @@ class GuardViewSet(viewsets.ModelViewSet):
             }
         )
     )
+    #注册账号
     def create(self, request, *args, **kwargs):
         log_info = code2Session(appId=guard_appId, appSecret=guard_appSecret,code=request.data.get("code"))
         open_id = log_info.get("open_id")
@@ -95,6 +96,7 @@ class GuardViewSet(viewsets.ModelViewSet):
         ),],
     responses={200:openapi.Response('查询是否已注册，如果已注册则返回Guard,否则为空',GuardSerializer)}
     )
+    #登录(获取加密open_id)
     @action(detail=False,methods=['GET'])
     def login(self,request):
         try:
@@ -123,6 +125,7 @@ class GuardViewSet(viewsets.ModelViewSet):
     responses={200:openapi.Response('查询是否已注册，如果已注册则返回Guard,否则为空',GuardSerializer)}
     )
     @action(detail=False,methods=['GET'])
+    #获取后台信息(所有仍在楼内的访客)
     def backstage(self,request):
         try:
             keys=cache.keys("*")
@@ -161,6 +164,7 @@ class GuardViewSet(viewsets.ModelViewSet):
             }
         )
     )
+    # 发送提醒
     @action(detail=False,methods=['POST'])
     def remind(self,request):
         try:
@@ -186,6 +190,7 @@ class GuardViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=False,methods=["GET"])
+    # 统计信息
     def static(self,request,*args,**kwargs):
         query = Guard.objects.all()
         resp={
@@ -194,6 +199,7 @@ class GuardViewSet(viewsets.ModelViewSet):
         }
         return Response(resp,status=status.HTTP_200_OK)
     @action(detail=False,methods=["POST"])
+    # web端预注册
     def pre_create(self,request,*args,**kwargs):
         try:
             if request.data.get("password")!=admin_password:
@@ -207,10 +213,11 @@ class GuardViewSet(viewsets.ModelViewSet):
             return Response({"result":pre_guard},status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+    
+    # web端登录
     @action(detail=False,methods=["POST"])
     def admin_login(self,request):
-        if request.data.get("password")==admin_password:
+        if encrypt(request.data.get("password"))==encrypt(admin_password):
             return Response({"token":"admin-token"},status=status.HTTP_200_OK)
         else:   
             return Response({"password":"incorrect password"},status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)

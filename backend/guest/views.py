@@ -48,6 +48,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             }
         )
     )
+    # 访客注册
     def create(self, request, *args, **kwargs):
         log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.data.get("code"))
         open_id = log_info.get("open_id")
@@ -57,7 +58,7 @@ class GuestViewSet(viewsets.ModelViewSet):
             return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         try:
             token=request.data.get("token")
-            if not token:
+            if not token: #其他访客
                 guest_object = {
                     "name":request.data.get("name"),
                     "phone":request.data.get("phone"),
@@ -73,7 +74,7 @@ class GuestViewSet(viewsets.ModelViewSet):
                 resp = serializer.data
                 resp["open_id"]= encrypt(open_id)
                 return Response(resp, status=status.HTTP_201_CREATED)
-            else:
+            else: #学生访客
                 data = {
                     "token":token
                 }
@@ -110,6 +111,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         ),],
     responses={200:openapi.Response('查询是否已注册，如果已注册则返回Guest,否则为空',GuestSerializer)}
     )
+    #登录(获取加密open_id)
     @action(detail=False,methods=['GET'])
     def login(self,request):
         code = request.GET.get("code")
@@ -141,6 +143,7 @@ class GuestViewSet(viewsets.ModelViewSet):
     responses={200:openapi.Response('返回当前Guest的Log',LogSerializer)}
     )
     @action(detail=False,methods=['GET'])
+    # 查看审批结果
     def approve_result(self,request):
         try:
             open_id = decrypt(request.GET.get("my_open_id"))
@@ -164,6 +167,7 @@ class GuestViewSet(viewsets.ModelViewSet):
     responses={200:openapi.Response('返回当前Guest的访问状态',openapi.Schema("status",type=openapi.TYPE_STRING,enum=["still in","out","guard","no account"]))}
     )
     @action(detail=False,methods=['GET'])
+    # 查询当前用户状态(身份/访问状态)
     def status(self,request):
         if request.GET.get("code"):
             log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=request.GET.get("code"))
@@ -203,6 +207,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         ),],
     )
     @action(detail=False,methods=['GET'])
+    # 访问记录
     def history(self,request):
         try:
             open_id = decrypt(request.GET.get("my_open_id"))
@@ -221,30 +226,26 @@ class GuestViewSet(viewsets.ModelViewSet):
         result = serializer.data
         return Response({"data": result,"total":p.count},status=status.HTTP_200_OK)
     
-
+    # 黑白名单
     @action(detail=False,methods=["POST"])
     def to_black(self,request,*args, **kwargs):
-        try:
-            query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
-            for guest in query:
-                guest.credit=False
-            Guest.objects.bulk_update(query,fields=["credit",])
-            return Response(status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print(request.data)
+        query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
+        for guest in query:
+            guest.credit=False
+        Guest.objects.bulk_update(query,fields=["credit",])
+        return Response(status=status.HTTP_200_OK)
             
                 
     @action(detail=False,methods=["POST"])
     def to_white(self,request,*args, **kwargs):
-        try:
-            query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
-            for guest in query:
-                guest.credit=True
-            Guest.objects.bulk_update(query,fields=["credit",])
-            return Response(status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        print(request.data)
+        query=[Guest.objects.get(open_id=guest["open_id"]) for guest in request.data]
+        for guest in query:
+            guest.credit=True
+        Guest.objects.bulk_update(query,fields=["credit",])
+        return Response(status=status.HTTP_200_OK)
+    #统计信息
     @action(detail=False,methods=["GET"])
     def static(self,request,*args,**kwargs):
         query = Guest.objects.all()
