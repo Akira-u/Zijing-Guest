@@ -1,0 +1,67 @@
+version: "3"
+services:
+  app:
+    restart: always
+    build: .
+    command: >
+      bash -c
+      "
+      cd backend &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      gunicorn -w 4 -b 0.0.0.0:8000 --certfile=certificate.crt --keyfile=certificate.key ZijingGuest.wsgi
+      "
+    volumes:
+      - .:/code
+    container_name: app
+    expose:
+      - "8000"
+    ports:
+      - "0.0.0.0:8000:8000"
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    volumes:
+      - "/home/ubuntu/mysql/:/var/lib/mysql"
+    expose:
+      - "3306"
+    ports:
+      - "0.0.0.0:3306:3306"
+    env_file: .env
+    restart: always
+    environment:
+      - MYSQL_DATABASE=zijingguest
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - TZ=Asia/Shanghai
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+  nginx:
+    restart: always
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "5000:5000"
+    volumes:
+      # - static-volume:/code/application/static
+      # - templates-volume:/code/application/templates
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+  redis:
+    image: redis:latest
+    restart: "no"
+    container_name: redis
+    expose:
+      - "6379"
+    volumes:
+      - ./redis.conf:/etc/redis/redis.conf 
+    command: redis-server /etc/redis/redis.conf
+    privileged: true
+volumes:
+  static-volume:
+  templates-volume:

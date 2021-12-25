@@ -10,16 +10,13 @@ def code2Session(appId, appSecret, code):
             "js_code": code,
             "grant_type": "authorization_code"
         }
-    # print(payload)
     r = requests.get('https://api.weixin.qq.com/sns/jscode2session',params=payload)
     packet = eval(r.text)
     openid=""
     session_key=""
     unionid="" # discard in iter stage 1
-    # print(packet)
     openid = packet.get("openid")
     session_key = packet.get("session_key")
-    # print(openid)
     return {"open_id":openid,"session_key":session_key}
         
 def getAccessToken(appId, appSecret):
@@ -28,11 +25,11 @@ def getAccessToken(appId, appSecret):
         "secret": appSecret,
         "grant_type": "client_credential",
     }
-    print(payload)
     r = requests.get("https://api.weixin.qq.com/cgi-bin/token",params=payload)
     packet = eval(r.text)
     return packet.get("access_token")
 
+# abort
 def getUserEncryptKey(access_token,openid,session_key):
     raw=""
     signature = hmac.new(session_key.encode(),raw.encode(),digestmod=sha256).hexdigest()
@@ -42,11 +39,7 @@ def getUserEncryptKey(access_token,openid,session_key):
         "signature": signature,
         "sig_method": "hmac_sha256",
     }
-    # print(str(signature))
-    # print(signature)
-    print(data)
     r = requests.post("https://api.weixin.qq.com/wxa/business/getuserencryptkey",data=data)
     packet = eval(r.text)
-    print(packet)
     key_info_list=packet.get("key_info_list")
     return key_info_list[0]

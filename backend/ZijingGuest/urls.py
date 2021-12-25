@@ -25,11 +25,14 @@ from api import views
 import guard.views
 import guest.views
 import log.views
+import dorm.views
 
 router = routers.DefaultRouter()
 router.register(r'log',log.views.LogViewSet)
 router.register(r'guard',guard.views.GuardViewSet)
 router.register(r'guest',guest.views.GuestViewSet)
+router.register(r'dormbuilding',dorm.views.DormBuildingViewSet)
+router.register(r'dorm',dorm.views.DormViewSet)
 
 router.register('api_info', views.APIInfoViewSet)
 schema_view = get_schema_view(
