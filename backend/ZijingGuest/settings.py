@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'guest',
     'guard',
     'log',
+    'dorm',
     'drf_yasg',
     'api',
 ]
@@ -91,10 +92,11 @@ WSGI_APPLICATION = 'ZijingGuest.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ZijingGuest',
-        'USER': 'c02',
+        'NAME': 'zijingguest',
+        'USER': 'root',
         'PASSWORD': 'LDq1w2e3r4!',
-        'HOST': '49.232.106.46',
+        # 'HOST': '127.0.0.1',
+        'HOST': 'db',
         'PORT': '3306',
     }
 }
@@ -145,7 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # DRF settings
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend','django_filters.rest_framework.OrderingFilter'),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
 }
@@ -164,13 +166,12 @@ ASGI_APPLICATION = "ZijingGuest.asgi.application"
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://49.232.106.46:6379',
+        'LOCATION': 'redis://redis:6379/0',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     },
 }
-
 
 REDIS_TIMEOUT=7*24*60*60
 CUBES_REDIS_TIMEOUT=60*60
@@ -180,22 +181,15 @@ NEVER_REDIS_TIMEOUT=365*24*60*60
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    # '*'
-    # 'http://127.0.0.1:8080',
-    # 'http://127.0.0.1:8085',
-    # 'http://spylft.icu',
-)
 
 CORS_ALLOW_METHODS = (
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-    'VIEW',
-)
+     'GET', 
+     'POST', 
+     'PUT', 
+     'PATCH', 
+     'DELETE', 
+     'OPTIONS' 
+    ) 
 
 CORS_ALLOW_HEADERS = (
     '*',
