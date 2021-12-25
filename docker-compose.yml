@@ -49,7 +49,7 @@ services:
     volumes:
       # - static-volume:/code/application/static
       # - templates-volume:/code/application/templates
-      - ./config/nginx:/etc/nginx/conf.d
+      - ./nginx:/etc/nginx/conf.d
     depends_on:
       - app
   redis:
