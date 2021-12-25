@@ -3,7 +3,8 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "紫荆来客"
+				"navigationBarTitleText": "紫荆来客",
+				"enablePullDownRefresh": false
 			}
 		}
 	    ,{
@@ -26,18 +27,23 @@
         },
 		{
             "path" : "pages/guard-form/guard-form",
+			"style": {
+				"navigationBarTitleText": "紫荆来客"
+			}
+        }
+        ,{
+            "path" : "pages/guest-form/in-dorm",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "管理员入口",
-                "enablePullDownRefresh": false
+                "navigationBarTitleText": "宿舍访问中"
             }
             
         },
 		{
-		    "path" : "pages/guard-form/scan-qrcode",
+		    "path" : "pages/guard-form/guard-register",
 		    "style" :                                                                                    
 		    {
-		        "navigationBarTitleText": "扫码页面",
+		        "navigationBarTitleText": "管理员注册",
 		        "enablePullDownRefresh": false
 		    }
 		    
@@ -52,6 +58,15 @@
 		    
 		},
 		{
+		    "path" : "pages/guard-form/decide-leave",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "确认离开",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
 		    "path" : "pages/guard-form/check-backstage",
 		    "style" :                                                                                    
 		    {
@@ -59,7 +74,34 @@
 		        "enablePullDownRefresh": false
 		    }
 		    
-		}
+		},
+		{
+            "path" : "pages/guest-form/guest-register",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "注册表单",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/guest-form/exit-qrcode",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/guest-form/my-history",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -75,7 +117,7 @@
 		"list": [
 			{
 				"name": "", //模式名称
-				"path": "", //启动页面，必选
+				"path":  "", //启动页面，必选
 				"query": "" //启动参数，在页面的onLoad函数里面得到
 			}
 		]
