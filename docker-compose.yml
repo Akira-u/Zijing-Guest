@@ -47,9 +47,9 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      # - static-volume:/code/application/static
-      # - templates-volume:/code/application/templates
+      - ./web-frontend/dist:/code/Zijing-Guest/web-frontend/dist
       - ./nginx:/etc/nginx/conf.d
+      - ./backend:/code/Zijing-Guest/backend
     depends_on:
       - app
   redis:
