@@ -105,28 +105,30 @@ export default {
       if (!res.guest.credit) {
         this.$refs.credit_popup.open()
       }
-      registeredGuardRequest({
-        url: '/guard/',
-      }).then((resp) => {
-        console.log(resp)
-        if (resp.results[0].dormbuilding.id !== this.log.dormbuilding.id) {
-          this.building_unmatch_text = '注意：访客目的宿舍楼为' + this.log.dormbuilding.name + '，与您当前管理宿舍楼不同！'
-          this.$refs.building_unmatch_popup.open()
-        }
-        else if (resp.results[0].dormbuilding === undefined) {
-          uni.showToast({
-            title: '您尚未被分配宿舍楼！',
-            icon: 'error',
-            mask: true
-          })
-        }
-      })
-
-      registeredGuardRequest({
-        url: '/dorm/',
-        data: {
-          dormbuilding_id: that.log.dorm.dormbuilding_id,
-        }
+      // registeredGuardRequest({
+      //   url: '/guard/',
+      // }).then((resp) => {
+      //   console.log(resp)
+      //   if (resp.results[0].dormbuilding === undefined) {
+      //     uni.showToast({
+      //       title: '您尚未被分配宿舍楼！',
+      //       icon: 'error',
+      //       mask: true
+      //     })
+      //   }
+      //   else if(resp.results[0].dormbuilding.id !== this.log.dormbuilding.id) {
+      //     this.building_unmatch_text = '注意：访客目的宿舍楼为' + this.log.dormbuilding.name + '，与您当前管理宿舍楼不同！'
+      //     this.$refs.building_unmatch_popup.open()
+      //   }
+      // })
+      if (that.log.dorm == undefined) {
+        console.log("dorm undefined")
+      } else {
+          registeredGuardRequest({
+          url: '/dorm/',
+          data: {
+            dormbuilding_id: that.log.dorm.dormbuilding_id,
+          }
       }).then((resp) => {
         const dorm_list = resp.results
         dorm_list.forEach(item => {
@@ -144,12 +146,14 @@ export default {
             }
           }
         })
-
       })
+      }
+      
 
     }).catch((err) => {
       if (err.code === '无效二维码') { this.$refs.fail_popup.open() }
       else{
+        console.log("err:",err)
         uni.showToast({
           title: '网络错误！',
           icon: 'error',
