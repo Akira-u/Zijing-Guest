@@ -4,55 +4,55 @@
       <image class="img-xiaohui" src="@/static/xiaohui.jpg"></image>
     </view>
     <!-- https://ext.dcloud.net.cn/plugin?id=2773 -->
-    <view>
-    <uni-forms
-      class="inputList"
-      ref="form"
-      err-show-type="toast"
-      :modelValue="form_data"
-      :rules="rules"
-    >
-      <uni-forms-item required label="手机号" name="phone">
-        <uni-easyinput
-          v-model="form_data.phone"
-          placeholder="请填写您的手机号码"
-        />
-      </uni-forms-item>
-      <uni-forms-item required label="到访楼号" name="target_building">
-        <uni-combox 
-          class="targetBuilding"
-          :candidates="building_list" 
-          v-model="form_data.target_building" 
-          placeholder="请选择到访宿舍楼号"
-          @input="changeInfo"
-        />
-      </uni-forms-item>
-      <uni-forms-item required label="到访宿舍" name="target_dorm">
-        <uni-combox 
-          class="targetDorm"
-          :candidates="dorm_list" 
-          v-model="form_data.target_dorm" 
-          placeholder="请选择到访宿舍门牌号"
-        />
-      </uni-forms-item>
-      <uni-forms-item required label="接待人" name="host_student">
-        <uni-easyinput
-          v-model="form_data.host_student"
-          placeholder="请填写您要拜访的人姓名"
-        />
-      </uni-forms-item>
-      <uni-forms-item required label="访问事由" name="purpose">
-        <uni-easyinput
-          v-model="form_data.purpose"
-          type="textarea" autoHeight
-          placeholder="请描述访问事由"
-        />
-      </uni-forms-item>
-    </uni-forms>
-    <view class="buttonList">
-      <button @tap="submit">提交</button>
-      <button @tap="viewHistory">查看申请记录</button>
-    </view>
+      <view>
+      <uni-forms
+        class="inputList"
+        ref="form"
+        err-show-type="toast"
+        :modelValue="form_data"
+        :rules="rules"
+      >
+        <uni-forms-item required label="手机号" name="phone">
+          <uni-easyinput
+            v-model="form_data.phone"
+            placeholder="请填写您的手机号码"
+          />
+        </uni-forms-item>
+        <uni-forms-item required label="到访楼号" name="target_building">
+          <uni-combox 
+            class="targetBuilding"
+            :candidates="building_list" 
+            v-model="form_data.target_building" 
+            placeholder="请选择到访宿舍楼"
+            @input="changeInfo"
+          />
+        </uni-forms-item>
+        <uni-forms-item label="到访宿舍" name="target_dorm">
+          <uni-combox 
+            class="targetDorm"
+            :candidates="dorm_list" 
+            v-model="form_data.target_dorm" 
+            placeholder="请选择到访宿舍门牌号"
+          />
+        </uni-forms-item>
+        <uni-forms-item label="接待人" name="host_student">
+          <uni-easyinput
+            v-model="form_data.host_student"
+            placeholder="请填写您要拜访的人姓名"
+          />
+        </uni-forms-item>
+        <uni-forms-item required label="访问事由" name="purpose">
+          <uni-easyinput
+            v-model="form_data.purpose"
+            type="textarea" autoHeight
+            placeholder="请描述访问事由"
+          />
+        </uni-forms-item>
+      </uni-forms>
+      <view class="buttonList">
+        <button @tap="submit">提交</button>
+        <button @tap="viewHistory">查看申请记录</button>
+      </view>
     </view>
     <uni-popup ref="popupMessage" type="message">
       <uni-popup-message type="success" :message="msg_text" :duration="3000"/>
@@ -70,10 +70,10 @@ export default {
     return {
       form_data: {
         phone: '',
-        target_building: '',
+        target_building: '紫荆3号楼',
         target_dorm: '',
         host_student: '',
-        purpose: ''
+        purpose: '打扫卫生'
       },
       msg_text:"您好，欢迎。",
       building_list:[],
@@ -98,7 +98,7 @@ export default {
         name: {
           rules: [
             {
-              required: true,
+              required: false,
               errorMessage: "请输入接待人姓名",
             },
             {
@@ -129,30 +129,30 @@ export default {
             },
           ]
         },
-        target_dorm: {
-          rules: [
-            {
-              required: true,
-              errorMessage: "请选择到访宿舍门牌号",
-            },
-            {
-              maxLength: 4,
-              errorMessage: "宿舍门牌号长度最大为{maxLength}",
-            },
-            {
-              validateFunction: function(rule, value, data, callback){
-                console.log("validate2",that.dorm_list)
-                if(that.dorm_list.length === 0){
-                  callback("请检查到访宿舍楼是否正确")
-                }
-                var index = that.dorm_list.findIndex(i => i == value)
-                if(index === -1){
-                  callback("不存在该宿舍号")
-                }
-              }
-            },
-          ]
-        },
+        // target_dorm: {
+        //   rules: [
+        //     {
+        //       required: false,
+        //       errorMessage: "请选择到访宿舍门牌号",
+        //     },
+        //     {
+        //       maxLength: 4,
+        //       errorMessage: "宿舍门牌号长度最大为{maxLength}",
+        //     },
+        //     {
+        //       validateFunction: function(rule, value, data, callback){
+        //         console.log("validate2",that.dorm_list)
+        //         if(that.dorm_list.length === 0){
+        //           callback("请检查到访宿舍楼是否正确")
+        //         }
+        //         var index = that.dorm_list.findIndex(i => i == value)
+        //         if(index === -1){
+        //           callback("不存在该宿舍号")
+        //         }
+        //       }
+        //     },
+        //   ]
+        // },
         purpose:{
           rules: [
             {
@@ -228,7 +228,7 @@ export default {
           registeredGuestRequest({ url: "/log/", method: "POST", data: {
               phone: that.form_data.phone,
               target_building: that.building_info[index_building].id,
-              target_dorm: that.dorm_info[index_dorm].id,
+              target_dorm: that.dorm_info[index_dorm]?that.dorm_info[index_dorm].id:undefined,
               host_student: that.form_data.host_student,
               purpose: that.form_data.purpose
             }})
