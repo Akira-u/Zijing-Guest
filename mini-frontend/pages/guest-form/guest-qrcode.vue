@@ -123,5 +123,9 @@ button {
   left: 50%;
   transform: translate(-50%, 1000%);
 }
+
+.uni-popup{
+  text-align: center;
+}
 </style>
 

@@ -12,7 +12,7 @@
           type="text"
           name="name"
           placeholder="请输入姓名"
-          maxlength="20"
+          maxlength="10"
           v-model="name"
         />
       </view>
@@ -74,7 +74,7 @@ export default {
               navigateTo("/pages/guest-form/guest-form");
             });
           } else {
-            console.log("登陆失败！" + res1.errMsg);
+            console.log("登录失败！" + res1.errMsg);
           }
         },
       });
@@ -137,13 +137,11 @@ export default {
 }
 
 .container {
-  right: 20%;
   color: #fff;
   font-size: 24rpx;
   border-radius: 50rpx;
   height: 50rpx;
   line-height: 50rpx;
-  padding: 0 25rpx;
 }
 
 .container .t-d {
@@ -185,5 +183,11 @@ export default {
   visibility: hidden;
   height: 0;
   content: "\20";
+}
+
+.container {
+  height:100%;
+  font-size: 14px;
+  line-height: 24px;
 }
 </style>

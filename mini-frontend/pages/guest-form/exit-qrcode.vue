@@ -23,7 +23,8 @@ export default {
   data() {
     return {
       qrcode_text: '',
-      msg_text: '请让宿舍管理员扫码！'
+      msg_text: '请让宿舍管理员扫码！',
+      msg_type: 'warn'
     }
   },
   methods: {
@@ -34,6 +35,7 @@ export default {
           if (status_res.status === 'out') {
             this.$refs.exit_popup.open()
             this.msg_text = '签离成功！'
+            this.msg_type = 'success'
             setTimeout(() => {
               this.dialog_show = false
               reLaunch()
@@ -42,6 +44,7 @@ export default {
           else {
             this.$refs.exit_popup.open()
             this.msg_text = '请让宿舍管理员扫码！'
+            this.msg_type = 'warn'
           }
         })
 
@@ -83,11 +86,11 @@ export default {
 .tips {
   position: absolute;
   padding: 40rpx 0 20rpx 0;
-  width:120%;
+  width:100%;
   left: 50%;
   transform: translate(-50%, 0%);
   text-align:center;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 button {
@@ -106,6 +109,10 @@ button {
   width: 100%;
   left: 50%;
   transform: translate(-50%, 1000%);
+}
+
+.uni-popup{
+  text-align: center;
 }
 
 </style>

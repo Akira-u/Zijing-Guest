@@ -36,27 +36,8 @@
             ></view>
           </view>
           <view class="buttonList">
-            <button @tap="Remind(index)">提醒</button>
+            <button @tap="remind(index)">提醒</button>
           </view>
-          <uni-popup class="remindPopup" ref="remindInput" type="dialog">
-            <uni-popup ref="popupMessage" type="message">
-              <uni-popup-message
-                :type="msgType"
-                :message="errMsg"
-                :duration="1500"
-              />
-            </uni-popup>
-            <uni-popup-dialog
-              class="remindDialog"
-              mode="input"
-              title="提醒"
-              value="同学您好，请尽快签离。"
-              placeholder="请输入提醒信息"
-              before-close="true"
-              @close="dialogClose(index)"
-              @confirm="dialogInput"
-            />
-          </uni-popup>
         </uni-collapse-item>
         <view class="example-body">
           <uni-load-more
@@ -67,6 +48,25 @@
         </view>
       </uni-collapse>
     </scroll-view>
+    <uni-popup class="msgPopup" ref="popupMessage" type="message">
+      <uni-popup-message
+        :type="msgType"
+        :message="hintMsg"
+        :duration="1500"
+      />
+    </uni-popup>
+    <uni-popup class="remindPopup" ref="remindInput" type="dialog">
+      <uni-popup-dialog
+        class="remindDialog"
+        mode="input"
+        title="提醒"
+        :value="remindMsg"
+        placeholder="请输入提醒信息"
+        before-close="true"
+        @close="dialogClose(index)"
+        @confirm="dialogInput"
+      />
+    </uni-popup>
   </view>
 </template>
 
@@ -84,7 +84,11 @@ export default {
         contentnomore: '没有更多访客'
       },
       pageNum: 1,
-      currentIndex: 0
+      currentIndex: 0,
+      defaultMsg: "同学您好，请尽快签离。",
+      remindMsg: "同学您好，请尽快签离。",
+      hintMsg: '提醒信息长度应不多于25个字符',
+      msgType: 'error'
     };
   },
   onLoad() {
@@ -98,25 +102,22 @@ export default {
     });
   },
   methods: {
-    Remind(index) {
+    remind(index) {
       this.currentIndex = index;
-      this.$refs.remindInput[index].open();
+      this.remindMsg = this.defaultMsg;
+      this.$refs.remindInput.open();
     },
     dialogInput(remindMessage) {
-      console.log("remind",remindMessage);
       this.remindMsg = remindMessage;
 
       if (this.remindMsg.length > 25) {
-        this.errMsg = "提醒信息长度应不多于25个字符";
-        this.$refs.popupMessage[this.currentIndex].open();
+        this.hintMsg = "提醒信息长度应不多于25个字符";
+        this.$refs.popupMessage.open();
       } else {
         if (this.remindMsg.length == 0) {
           this.remindMsg = "同学您好，请尽快签离。";
         }
-
-        console.log(this.remindMsg);
-        this.$refs.remindInput[this.currentIndex].close();
-        console.log(this.logs[this.currentIndex].guest_id);
+        this.$refs.remindInput.close();
         let currentLog = this.logs[this.currentIndex];
         registeredGuardRequest({
           url: "/guard/remind/",
@@ -136,13 +137,15 @@ export default {
             },
           },
         }).then((res) => {
-          console.log({ res: res });
+          this.hintMsg = "发送成功！";
+          this.msgType = 'success';
+          this.$refs.popupMessage.open();
         });
       }
     },
     dialogClose(index) {
       console.log(index);
-      this.$refs.remindInput[index].close();
+      this.$refs.remindInput.close();
     },
     clickLoadMore() {
       this.status = 'loading';
@@ -223,13 +226,6 @@ export default {
   padding: 10px 10px 10px 50px;
 }
 
-/* .buttonList {
-  position: absolute;
-  width: 100%;
-  left: 50%;
-  transform: translate(-50%, 450%);
-} */
-
 button {
   font-size: 28rpx;
   background: #5677fc;
@@ -239,6 +235,10 @@ button {
   border-radius: 50rpx;
   margin: 20px;
   box-shadow: 0 5px 7px 0 rgba(86, 119, 252, 0.2);
+}
+
+.msgPopup {
+  text-align: center;
 }
 
 input {

@@ -11,6 +11,4 @@ class Guest(models.Model):
     department = models.CharField(max_length=20, null=True,default=None)
     student_id = models.CharField(max_length=12, null=True,default=None)
     is_student = models.BooleanField(default=True)
-
-    # def __str__(self):
-    #     return self.name
+    credit = models.BooleanField(default=True)

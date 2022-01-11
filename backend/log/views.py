@@ -1,10 +1,18 @@
+from datetime import date, time
+from logging import log
+from os import stat_result
 from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import status
+from rest_framework import viewsets
 from django_filters import rest_framework as filters
+from rest_framework import serializers
+from rest_framework.serializers import Serializer
 from .models import Log
 from guest.models import Guest
+from dorm.models import Dorm, DormBuilding
 from .utils import LogSerializer,LogFilter
 from Crypto.Cipher import AES
+from rest_framework.filters import OrderingFilter  # 导入排序
 
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -16,105 +24,106 @@ from guard.cipher import *
 
 from django.core.cache import cache
 # Create your views here.
-
+from django.utils import timezone
 class LogViewSet(viewsets.ModelViewSet):
     """ 来访日志 viewset """
     queryset = Log.objects.all()
     serializer_class = LogSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend,OrderingFilter)
     filter_class = LogFilter
+    ordering_fields = ('id',)
     """ POST """
+    # 创建来访记录（redis)
     def create(self, request, *args, **kwargs):
-        print(self.get_queryset())
-
         log_object = request.data
-        # print(log_object)
-        print(request.data.get("my_open_id"))
         try:
             qopen_id = decrypt(request.data.get("my_open_id"))
         except:
-            return Response({"errmsg":"Invalid open_id"})
+            return Response({"my_open_id":["please check your open_id in storage, it is invalid"]},status=status.HTTP_400_BAD_REQUEST)
         try:
-            guest_objects = Guest.objects.filter(open_id=qopen_id)
-            guest_object=list(guest_objects)[0]
+            guest_object = Guest.objects.get(open_id=qopen_id)
         except:
-            return Response({"errmsg":"Account Not Found"})
+            return Response({"my_open_id":["no corrsponding guest account with your open_id"]},status=status.HTTP_400_BAD_REQUEST)
+        if guest_object.is_student:
+            guest_object.phone=request.data.get("phone")
+            guest_object.save()
+        try:
+            dorm_object = Dorm.objects.get(id = request.data.get("target_dorm"))
+        except:
+            return Response({"dorm_object":["no corrsponding dorm with your target_dorm"]},status=status.HTTP_400_BAD_REQUEST)
+        try:
+            dormbuilding_object = DormBuilding.objects.get(id = request.data.get("target_building"))
+        except:
+            return Response({"dormbuilding_object":["no corrsponding dormbuilding with your target_dormbuilding"]},status=status.HTTP_400_BAD_REQUEST)
+        if dorm_object.dormbuilding != dormbuilding_object:
+            return Response({"dorm and building":["no target dorm in your target building"]},status=status.HTTP_400_BAD_REQUEST)
         try:
             open_id = guest_object.open_id
             log_object["guest_id"]=open_id # confusing???? 
-            print(log_object)
+            log_object["dorm_id"]=dorm_object.id
+            log_object["dorm_building_id"]=dormbuilding_object.id
             serializer = self.get_serializer(data=log_object)
             serializer.is_valid(raise_exception=True)
-            log_object = serializer.data
-            print(log_object)
-            log_object["guest_id"]=encrypt(log_object["guest_id"])
-            log_object["guest"] = guest_object.__dict__
-            # serializer=self.get_serializer(data=log_object)
-            # serializer.is_valid()
-            # print(serializer.errors)
-            del log_object["guest"]["_state"]
-            if cache.set(open_id,log_object, timeout=None):
-                print(cache.get(open_id))
-                return Response(log_object, status=status.HTTP_201_CREATED)
-            else:
-                return Response({"errmsg":"You have a proceeding log"})
         except:
-            print(serializer.errors)
-            return Response(serializer.errors)
-    
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        log_object = serializer.data
+        log_object["guest_id"]=encrypt(log_object["guest_id"])
+        log_object["guest"] = guest_object.__dict__
+        log_object["dorm"] = dorm_object.__dict__
+        log_object["dormbuilding"] = dormbuilding_object.__dict__
+        del log_object["guest"]["_state"]
+        del log_object["dorm"]["_state"]
+        del log_object["dormbuilding"]["_state"]
+        if cache.set(open_id,log_object, timeout=None):
+            cache.persist(open_id)
+            return Response(log_object, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"system cache":"cache error"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # 审批来访记录(mysql)
     @action(detail=False,methods=["POST"])
     def check(self,request,*args, **kwargs):
         kwargs['partial'] = True
-        print(request.data)
-        print("patch")
         try:
-            # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-            print(request.data.get("open_id"))
             open_id = decrypt(request.data.get("open_id"))
-            # print(open_id)
-            ex_log = cache.get(open_id)
-            print(ex_log)
-            print(request.data)
-            if ex_log:
-                if request.data.get("in_time"):
-                    ex_log["in_time"]=request.data.get("in_time")
-                    ex_log["approval"]=request.data.get("approval")
-                    if ex_log["approval"]=="reject":
-                        ex_log["guest_id"]=open_id
-                        ex_log["out_time"]=request.data.get("in_time")
-                        cache.delete_pattern(open_id)
-                        # del ex_log["guest"]
-                        serializer=self.get_serializer(data=ex_log)
-                        serializer.is_valid(raise_exception=False)
-                        if not serializer.errors:
-                            self.perform_create(serializer)
-                            return Response(serializer.data,status=status.HTTP_201_CREATED)
-                        else:
-                            return Response({"errmsg":serializer.errors})
-                    else:
-                        print("1")
-                        cache.delete_pattern(open_id)
-                        print("2")
-                        cache.set(open_id,ex_log,timeout=None)
-                        print("3")
-                        return Response({"msg":"Permit"})
-                elif request.data.get("out_time"):
-                    ex_log["out_time"]=request.data.get("out_time")
-                    cache.delete_pattern(open_id)
-                    ex_log["guest_id"]=open_id
-                    # del ex_log["guest"]
-                    serializer=self.get_serializer(data=ex_log)
-                    serializer.is_valid(raise_exception=False)
-                    if not serializer.errors:
-                        print("success")
-                        self.perform_create(serializer)
-                        return Response(serializer.data,status=status.HTTP_201_CREATED)
-                    else:
-                        return Response({"errmsg":serializer.errors})
-            else:
-                raise Exception
         except:
-            return Response({"errmsg":"proceeding log not found, maybe timeout."})
+            return Response({"open_id":["invalid open_id"]},status=status.HTTP_400_BAD_REQUEST)
+        ex_log = cache.get(open_id)
+        if not ex_log:
+            return Response({"log":["no pending log, maybe timeout"]},status=status.HTTP_400_BAD_REQUEST)
+        cache.persist(open_id)
+        if request.data.get("in_time"):
+            if ex_log.get("out_time"):
+                return Response({"in_time":["already have a out_time"]},status=status.HTTP_400_BAD_REQUEST)
+            ex_log["in_time"]=request.data.get("in_time")
+            ex_log["approval"]=request.data.get("approval")
+            if ex_log["approval"]=="reject":
+                ex_log["guest_id"]=open_id
+                ex_log["out_time"]=request.data.get("in_time")
+                cache.delete_pattern(open_id)
+                ex_log["dormbuilding_id"]=ex_log["dorm"]["dormbuilding_id"]
+                serializer=self.get_serializer(data=ex_log)
+                try:
+                    serializer.is_valid(raise_exception=True)
+                except:
+                    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+                self.perform_create(serializer)
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+            elif ex_log["approval"]=="permit":
+                cache.delete_pattern(open_id)
+                cache.set(open_id,ex_log,timeout=None)
+                return Response(ex_log,status=status.HTTP_200_OK)
+        elif request.data.get("out_time"):
+            ex_log["out_time"]=request.data.get("out_time")
+            cache.delete_pattern(open_id)
+            ex_log["guest_id"]=open_id
+            ex_log["dormbuilding_id"]=ex_log["dorm"]["dormbuilding_id"]
+            serializer=self.get_serializer(data=ex_log)
+            try:
+                serializer.is_valid(raise_exception=True)
+            except:
+                return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            self.perform_create(serializer)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
     @swagger_auto_schema(
     operation_summary='根据guset的code返回最近的一条log',
     manual_parameters=[
@@ -127,21 +136,81 @@ class LogViewSet(viewsets.ModelViewSet):
     responses={200:openapi.Response('response guest latest log info',LogSerializer)}
     )
     @action(detail=False,methods=["GET"])
+    # 查看申请信息
     def info(self,request,*args, **kwargs):
+        code = request.GET.get("code")
+        log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
+        open_id = log_info.get("open_id")
+        if not open_id:
+            if not log_info.get("errmsg"):
+                return Response({"code":"无效二维码"},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"code":log_info["errmsg"]},status=status.HTTP_400_BAD_REQUEST)
         try:
-            code = request.GET.get("code")
-            log_info = code2Session(appId=guest_appId, appSecret=guest_appSecret,code=code)
-        except:
-            return Response({"errmsg":log_info["errmsg"]})
-        try:    
-            open_id = log_info.get("open_id")
             log_object = cache.get(open_id)
-            # print(log_object)
+            cache.persist(open_id)
             if not log_object:
                 raise Exception
             log_object["guest_id"]= encrypt(open_id)
-            print(log_object)
-            return Response(log_object)
+            return Response(log_object,status=status.HTTP_200_OK)
         except:
-            return Response({"errmsg":"Log Not Found"})
+            return Response({"log":["no log info for this guest,please fill in the form again"]},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False,methods=["GET"])
+    # 统计信息
+    def static(self,request,*args,**kwargs):
+        from datetime import datetime,timedelta
+        from django.utils.timezone import get_current_timezone
+        dt_s = datetime.now(tz=get_current_timezone()).date()-timedelta(6)
+        student_log=[]
+        other_log=[]
+        total_log=[]
+        student_log_weekday=[]
+        other_log_weekday=[]
+        total_log_weekday=[]
+        student_log_hour=[]
+        other_log_hour=[]
+        total_log_hour=[]
+        for i in range(7):
+            dt_e=dt_s+timedelta(1)
+            query = Log.objects.filter(in_time__range=[dt_s,dt_e])
+            total = query.count()
+            total_log.append(total)
+            student_total=query.filter(guest__is_student=True).count()
+            student_log.append(student_total)
+            other_log.append(total-student_total)
+            dt_s+=timedelta(1)
+        for i in [2,3,4,5,6,7,1]:
+            query = Log.objects.filter(in_time__week_day=i)
+            total = query.count()
+            total_log_weekday.append(total)
+            student_total=query.filter(guest__is_student=True).count()
+            student_log_weekday.append(student_total)
+            other_log_weekday.append(total-student_total)
+        hour=0
+        for i in range(4):
+            query = Log.objects.filter(in_time__hour__range=[hour,hour+5])
+            total = query.count()
+            total_log_hour.append({"name":f"{hour}-{hour+5}","value":total})
+            hour+=6
+        total_count = Log.objects.all().count()
+        resp={
+            "logs":{
+                "student":student_log,
+                "other":other_log,
+                "total":total_log,
+            },
+            "logs_weekday":{
+                "student":student_log_weekday,
+                "other":other_log_weekday,
+                "total":total_log_weekday,
+            },
+            "logs_hour":total_log_hour,
+            "total_count":total_count
+        }
+        return Response(resp,status=status.HTTP_200_OK)
+
+        
+
+        
+        
 

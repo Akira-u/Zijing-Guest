@@ -34,10 +34,8 @@ function request(options = {}) {
                     if (isSuccess) {  // 成功的请求状态
                         res(r.data);
                     } else {
-                        rej({
-                            msg: `网络错误:${r.statusCode}`,
-                            detail: r
-                        });
+                        console.log(r)
+                        rej(r.data);
                     }
                 },
                 fail: rej,
@@ -66,7 +64,6 @@ function registeredGuardRequest(options = {}) {
                 success: function (login_res) {
                     request({ url: "/guard/login/", data: { code: login_res.code, } })
                         .then((resp) => {
-                            console.log(resp.open_id)
                             options.data.my_open_id = resp.open_id
                             uni.setStorage({
                                 key: 'my_open_id',
@@ -74,12 +71,14 @@ function registeredGuardRequest(options = {}) {
                             })
                             request(options).then((resp2) => {
                                 res(resp2)
+                            }).catch((err) => {
+                                rej(err)
                             })
 
-                        })
-                        .catch((err) => {
+                        }).catch((err) => {
                             rej(err)
                         })
+
                 }
             })
         });
@@ -95,14 +94,13 @@ function registeredGuestRequest(options = {}) {
     if (options.data.my_open_id) {
         return request(options)
     }
-    else{
+    else {
         // local storage can't get open id due to storage loss
         return new Promise((res, rej) => {
             wx.login({
                 success: function (login_res) {
                     request({ url: "/guest/login/", data: { code: login_res.code, } })
                         .then((resp) => {
-                            console.log(resp.open_id)
                             options.data.my_open_id = resp.open_id
                             uni.setStorage({
                                 key: 'my_open_id',
@@ -110,15 +108,17 @@ function registeredGuestRequest(options = {}) {
                             })
                             request(options).then((resp2) => {
                                 res(resp2)
+                            }).catch((err) => {
+                                rej(err)
                             })
-                            
+
                         })
                         .catch((err) => {
                             rej(err)
                         })
                 }
             })
-        }); 
+        });
     }
 }
 export { registeredGuardRequest, registeredGuestRequest }

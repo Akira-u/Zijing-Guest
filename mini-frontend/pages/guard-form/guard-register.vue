@@ -11,7 +11,7 @@
           type="text"
           name="name"
           placeholder="请输入姓名"
-          maxlength="20"
+          maxlength="10"
           v-model="name"
         />
       </view>
@@ -91,6 +91,12 @@ export default {
               else { 
                 navigateTo("/pages/guard-form/guard-form"); 
               }
+            }).catch((err)=>{
+              uni.showToast({
+                title: err.errmsg[0],
+                icon: 'none',
+                mask: true
+              })
             });
           } else {
             console.log("登录失败！" + res1.errMsg);

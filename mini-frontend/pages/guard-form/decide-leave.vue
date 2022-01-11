@@ -18,15 +18,25 @@
       </uni-list>
       </view>
       <view class="buttonList">
-        <button @tap="Leave">离开</button>
+        <button @tap="leave">离开</button>
       </view>
     </view>
+    <uni-popup ref="fail_popup" type="dialog">
+      <uni-popup-dialog
+        type="error"
+        mode="base"
+        content="无效二维码！"
+        @close="back"
+        @confirm="back"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
 <script>
 import { registeredGuardRequest } from "@/api/request";
 import { decodeOption, reLaunch } from "@/api/navigate";
+import DateFormat from "@/api/date";
 export default {
   data() {
     return {
@@ -36,7 +46,6 @@ export default {
   },
   onLoad(options) {
     decodeOption(options);
-    console.log(options.code); //TO DO
     var that = this;
     registeredGuardRequest({
       url: "/log/info/",
@@ -51,12 +60,20 @@ export default {
       else{
         that.detail_title='访客申请（学生）'
       }
-    });
+    }).catch((err)=>{
+      if (err.code === '无效二维码') { this.$refs.fail_popup.open() }
+      else{
+        uni.showToast({
+          title: '网络错误！',
+          icon: 'error',
+          mask: true
+        })
+      }
+    })
   },
   methods: {
-    Leave() {
+    leave() {
       var date = new Date();
-      console.log(date);
       registeredGuardRequest({
         url: "/log/check/",
         method: "POST",
@@ -68,7 +85,13 @@ export default {
       reLaunch("/pages/guard-form/guard-form");
     },
     getInTime() {
-      return this.log.in_time.format("yyyy-MM-dd hh:mm:ss");
+      if(this.log.in_time){
+        var date=new DateFormat();
+        return date.setTime(new Date(this.log.in_time)).toString('yyyy-0m-0d 0h:0f:0s');
+      }
+    },
+    back(){
+      uni.navigateBack({ delta: 1 })
     }
   },
 };

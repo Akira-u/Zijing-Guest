@@ -39,7 +39,7 @@ export default {
       success: (login_res) => {
         request({ url: "/guest/status/", data: { code: login_res.code } })
           .then((req_res) => {
-            console.log('index onShow ', req_res.status)
+            console.log(req_res.status)
             if (req_res.status === 'still in') {
               // if user is in dorm, jump to in-dorm page directly
               uni.redirectTo({ url: '/pages/guest-form/in-dorm' })
@@ -53,6 +53,9 @@ export default {
               uni.redirectTo({ url: '/pages/guard-form/guard-form' })
             }
             // else: a new user
+          })
+          .catch((err)=>{
+            this.showFailPopup()
           })
       }
     })

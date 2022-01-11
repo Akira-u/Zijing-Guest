@@ -50,6 +50,7 @@
 
 <script>
 import { registeredGuestRequest } from "@/api/request";
+import DateFormat from "@/api/date"
 export default {
   data() {
     return {
@@ -100,8 +101,8 @@ export default {
       else if (this.logs[index].approval === 'reject') {
         approval_text = '审批未通过'
       }
-      let in_time = new Date(this.logs[index].in_time)
-      return in_time.toLocaleString() + '  ' + approval_text;
+      let in_time = new DateFormat()
+      return in_time.setTime(new Date(this.logs[index].in_time)).toString('yyyy-0m-0d 0h:0f:0s') + '  ' + approval_text;
     },
     checkNum: function (index) {
       if (index == 0) {
